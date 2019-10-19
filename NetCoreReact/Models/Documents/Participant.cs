@@ -5,6 +5,7 @@ namespace NetCoreReact.Models.Documents
 {
 	public class Participant
 	{
+		[EmailAddress]
 		[Required]
 		[BsonRequired]
 		public string Email { get; set; }
