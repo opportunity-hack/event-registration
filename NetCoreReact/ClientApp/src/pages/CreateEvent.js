@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   avatar: {
-    backgroundColor: "green"
+    backgroundColor: "green",
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -61,6 +62,14 @@ export default function CreateEvent() {
     setEndDate(date);
   };
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setSuccess(false);
+  };
+
   const handleSubmit = async () => {
     const response = await post(config.CREATE_EVENT_POST_URL, {
       Title: title,
@@ -80,13 +89,15 @@ export default function CreateEvent() {
       <Box display="flex" flexDirection="column" className={classes.form}>
         {success ? (
           <>
-            <Typography variant="h4" gutterBottom>
+            <Box display="flex">
               <Avatar className={classes.avatar}>
                 <CheckIcon />
               </Avatar>
-              Event Created!
-            </Typography>
-            <Box>
+              <Typography variant="h4" gutterBottom>
+                Event Created!
+              </Typography>
+            </Box>
+            <Box className={classes.submit}>
               <Button
                 color="primary"
                 variant="contained"
@@ -95,9 +106,10 @@ export default function CreateEvent() {
                 Go to event
               </Button>
               <Button
-                color="primary"
+                color="default"
                 variant="contained"
                 className={classes.margin}
+                onClick={resetForm}
               >
                 Create another
               </Button>
@@ -116,6 +128,8 @@ export default function CreateEvent() {
               onChange={handleTitleChange}
               margin="normal"
               variant="outlined"
+              error={Boolean(errors["Title"])}
+              helperText={errors["Title"]}
             />
             <TextField
               label="Description *"
@@ -126,6 +140,8 @@ export default function CreateEvent() {
               variant="outlined"
               multiline
               rows="4"
+              error={Boolean(errors["Description"])}
+              helperText={errors["Description"]}
             />
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Box>
@@ -143,6 +159,8 @@ export default function CreateEvent() {
                   }}
                   className={classes.margin}
                   disablePast
+                  error={Boolean(errors["StartDate"])}
+                  helperText={errors["StartDate"]}
                 />
                 <KeyboardDatePicker
                   disableToolbar
@@ -158,6 +176,8 @@ export default function CreateEvent() {
                   }}
                   className={classes.margin}
                   disablePast
+                  error={Boolean(errors["EndDate"])}
+                  helperText={errors["EndDate"]}
                 />
               </Box>
             </MuiPickersUtilsProvider>
