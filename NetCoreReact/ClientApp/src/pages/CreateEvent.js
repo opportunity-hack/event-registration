@@ -43,7 +43,7 @@ export default function CreateEvent() {
   const [endDate, setEndDate] = useState(new Date());
   const [errors, setErrors] = useState([]);
   const { post } = useRequest();
-  const [success, setSuccess] = useState(true);
+  const [success, setSuccess] = useState(false);
 
   const handleTitleChange = e => {
     setTitle(e.target.value);
