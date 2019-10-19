@@ -15,6 +15,7 @@ namespace NetCoreReact.Services.WebSocket
             this._eventService = santaService;
         }
 
+		/**
         public async Task SampleGet()
         {
             try
@@ -27,5 +28,6 @@ namespace NetCoreReact.Services.WebSocket
                 LoggerHelper.Log(ex);
             }
         }
+	**/
     }
 }
