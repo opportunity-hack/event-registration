@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NetCoreReact.Enums;
 using NetCoreReact.Helpers;
-using NetCoreReact.Models;
+using NetCoreReact.Models.Documents;
+using NetCoreReact.Models.DTO;
 using NetCoreReact.Models.ML;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.ML.Interfaces;
@@ -17,21 +17,21 @@ namespace NetCoreReact.Controllers
     [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
-		private readonly IEventService _sampleService;
+		private readonly IEventService _eventService;
 		private readonly IPredictionService _predictionService;
 
 		public EventController(IEventService santaService, IPredictionService predictionService)
 		{
-			this._sampleService = santaService;
+			this._eventService = santaService;
 			this._predictionService = predictionService;
 		}
-
+		/**
 		[HttpGet("[action]")]
 		public async Task<ParticipantsModel> UnauthenticatedSampleGet()
 		{
 			try
 			{
-				return await _sampleService.UnauthenticatedSampleGet();
+				return await _eventService.UnauthenticatedSampleGet();
 			}
 			catch (Exception ex)
 			{
@@ -46,7 +46,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				return await _sampleService.AuthenticatedSampleGet(name);
+				return await _eventService.AuthenticatedSampleGet(name);
 			}
 			catch (Exception ex)
 			{
@@ -83,12 +83,34 @@ namespace NetCoreReact.Controllers
 				};
 				var listResult = _predictionService.Predict(inputList);
 
-                return await _sampleService.AuthenticatedSamplePost(user);
+                return await _eventService.AuthenticatedSamplePost(user);
 			}
 			catch (Exception ex)
 			{
 				LoggerHelper.Log(ex);
 				return eResponse.Failure;
+			}
+		}
+		**/
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpPost("[action]")]
+		public async Task<Response> CreateEvent([FromBody] Event newEvent)
+		{
+			try
+			{
+				return await _eventService.CreateEvent(newEvent);
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new Response()
+				{
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
 			}
 		}
 	}

@@ -1,11 +1,8 @@
-﻿using NetCoreReact.Enums;
-using NetCoreReact.Models;
-using NetCoreReact.Models.Documents;
+﻿using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business
@@ -18,7 +15,7 @@ namespace NetCoreReact.Services.Business
 		{
 			this._eventDAO = eventDAO;
 		}
-
+		/**
 		public async Task<PresentModel> AuthenticatedSampleGet(string participantName)
 		{
 			if (participantName.Equals("Please Select Your Name"))
@@ -140,28 +137,16 @@ namespace NetCoreReact.Services.Business
 				throw e;
 			}
 		}
-
-		public async Task<eResponse> AuthenticatedSamplePost(InputModel user)
+	**/
+		public async Task<Response> CreateEvent(Event newEvent)
 		{
 			try
 			{
-				var participants = await _eventDAO.GetAll();
-				if (!participants.Data.Any(x => x.Name.Equals(user.Name)))
+				var participants = await _eventDAO.Add(newEvent);
+				return new Response()
 				{
-					await _eventDAO.Add(new Event()
-					{
-						Name = user.Name,
-						Taken = false,
-						HaveDrawn = false,
-						WishList = user.Wishlist,
-						WhoTheyDrew = string.Empty
-					});
-					return eResponse.Success;
-				}
-				else
-				{
-					return eResponse.Failure;
-				}
+					Success = true,
+				};
 			}
 			catch (Exception e)
 			{

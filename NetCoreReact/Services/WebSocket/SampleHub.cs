@@ -8,18 +8,18 @@ namespace NetCoreReact.Services.WebSocket
 {
     public class SampleHub : Hub
     {
-        private readonly IEventService _sampleService;
+        private readonly IEventService _eventService;
 
         public SampleHub(IEventService santaService)
         {
-            this._sampleService = santaService;
+            this._eventService = santaService;
         }
 
         public async Task SampleGet()
         {
             try
             {
-                var participants = await _sampleService.UnauthenticatedSampleGet();
+                var participants = await _eventService.UnauthenticatedSampleGet();
                 await Clients.All.SendAsync("SampleGet", participants);
             }
             catch (Exception ex)

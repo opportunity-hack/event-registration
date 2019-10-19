@@ -1,13 +1,16 @@
 ﻿using NetCoreReact.Enums;
-using NetCoreReact.Models;
+using NetCoreReact.Models.Documents;
+using NetCoreReact.Models.DTO;
 using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business.Interfaces
 {
 	public interface IEventService
 	{
+		/**
 		Task<PresentModel> AuthenticatedSampleGet(string name);
 		Task<ParticipantsModel> UnauthenticatedSampleGet();
-		Task<eResponse> AuthenticatedSamplePost(InputModel user);
+		**/
+		Task<Response> CreateEvent (Event newEvent);
 	}
 }

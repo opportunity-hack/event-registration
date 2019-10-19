@@ -11,15 +11,15 @@ namespace NetCoreReact.Services.Data
 {
 	public class EventDAO : IDAO<Event, DataResponse<Event>>
 	{
-		private readonly IMongoCollection<Event> _participants;
+		private readonly IMongoCollection<Event> _events;
 
-		public EventDAO(string connectionString, string databaseName, string collectionName)
+		public EventDAO(string connectionString, string databaseName, string eventCollection)
 		{
 			try
 			{
 				var client = new MongoClient(connectionString);
 				var database = client.GetDatabase(databaseName);
-				_participants = database.GetCollection<Event>(collectionName);
+				_events = database.GetCollection<Event>(eventCollection);
 			}
 			catch (Exception e)
 			{
@@ -32,11 +32,11 @@ namespace NetCoreReact.Services.Data
 		{
 			try
 			{ 
-				var participants = await _participants.FindAsync(x => true);
-				var participantsList = await participants.ToListAsync();
+				var events = await _events.FindAsync(x => true);
+				var eventsList = await events.ToListAsync();
 				return new DataResponse<Event>()
 				{
-					Data = participantsList,
+					Data = eventsList,
 					Success = true
 				};
 			}
@@ -50,11 +50,11 @@ namespace NetCoreReact.Services.Data
 		{
 			try
 			{
-				var participants = await _participants.FindAsync(x => x.Id.Equals(index));
-				var participant = await participants.FirstOrDefaultAsync();
+				var events = await _events.FindAsync(x => x.Id.Equals(index));
+				var foundEvent = await events.FirstOrDefaultAsync();
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>() { participant },
+					Data = new List<Event>() { foundEvent },
 					Success = true
 				};
 			}
@@ -64,14 +64,14 @@ namespace NetCoreReact.Services.Data
 			}
 		}
 
-		public async Task<DataResponse<Event>> Add(Event participant)
+		public async Task<DataResponse<Event>> Add(Event newEvent)
 		{
 			try
 			{ 
-				await _participants.InsertOneAsync(participant);
+				await _events.InsertOneAsync(newEvent);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>() { participant },
+					Data = new List<Event>() { newEvent },
 					Success = true
 				};
 			}
@@ -81,14 +81,14 @@ namespace NetCoreReact.Services.Data
 			}
 		}
 
-		public async Task<DataResponse<Event>> Update(string index, Event participant)
+		public async Task<DataResponse<Event>> Update(string index, Event updatedEvent)
 		{
 			try
 			{
-				await _participants.ReplaceOneAsync(x => x.Id.Equals(index), participant);
+				await _events.ReplaceOneAsync(x => x.Id.Equals(index), updatedEvent);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>() { participant },
+					Data = new List<Event>() { updatedEvent },
 					Success = true
 				};
 			}
@@ -102,7 +102,7 @@ namespace NetCoreReact.Services.Data
 		{
 			try
 			{
-				await _participants.DeleteOneAsync(x => x.Id.Equals(index));
+				await _events.DeleteOneAsync(x => x.Id.Equals(index));
 				return new DataResponse<Event>()
 				{
 					Data = new List<Event>(),
