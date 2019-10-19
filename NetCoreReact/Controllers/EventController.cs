@@ -20,9 +20,9 @@ namespace NetCoreReact.Controllers
 		private readonly IEventService _eventService;
 		private readonly IPredictionService _predictionService;
 
-		public EventController(IEventService santaService, IPredictionService predictionService)
+		public EventController(IEventService eventService, IPredictionService predictionService)
 		{
-			this._eventService = santaService;
+			this._eventService = eventService;
 			this._predictionService = predictionService;
 		}
 		/**
@@ -94,7 +94,7 @@ namespace NetCoreReact.Controllers
 		**/
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<Response> CreateEvent([FromBody] Event newEvent)
+		public async Task<DataResponse<Event>> CreateEvent([FromBody] Event newEvent)
 		{
 			try
 			{
@@ -103,8 +103,9 @@ namespace NetCoreReact.Controllers
 			catch (Exception ex)
 			{
 				LoggerHelper.Log(ex);
-				return new Response()
+				return new DataResponse<Event>()
 				{
+					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },

@@ -1,10 +1,17 @@
-﻿namespace NetCoreReact.Models.Documents
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
+
+namespace NetCoreReact.Models.Documents
 {
 	public class Participant
 	{
+		[Required]
+		[BsonRequired]
 		public string Email { get; set; }
-		public string DateEntered { get; set; }
+		[Required]
+		[BsonRequired]
 		public ParticipantType Type { get; set; }
-		public bool IsConfirmed { get; set; }
+		public string DateEntered { get; set; }
+		public bool IsConfirmed { get; set; } = false;
 	}
 }
