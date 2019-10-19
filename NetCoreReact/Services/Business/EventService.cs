@@ -17,6 +17,19 @@ namespace NetCoreReact.Services.Business
 			this._eventDAO = eventDAO;
 		}
 
+		public async Task<DataResponse<Event>> GetAllEvents()
+		{
+			try
+			{
+				var result = await _eventDAO.GetAll();
+				return result;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
 		public async Task<DataResponse<Event>> CreateEvent(Event newEvent)
 		{
 			try
