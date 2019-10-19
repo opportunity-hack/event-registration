@@ -8,9 +8,9 @@ namespace NetCoreReact.Services.WebSocket
 {
     public class SampleHub : Hub
     {
-        private readonly ISampleService _sampleService;
+        private readonly IEventService _sampleService;
 
-        public SampleHub(ISampleService santaService)
+        public SampleHub(IEventService santaService)
         {
             this._sampleService = santaService;
         }

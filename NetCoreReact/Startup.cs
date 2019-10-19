@@ -20,7 +20,7 @@ using NetCoreReact.Attributes;
 using Newtonsoft.Json;
 using NetCoreReact.Services.Data.Interfaces;
 using NetCoreReact.Services.Business.Interfaces;
-using NetCoreReact.Models.DB;
+using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 
 namespace NetCoreReact
@@ -94,21 +94,21 @@ namespace NetCoreReact
 			// Change development environment here (connection string to db or anything else necessary):
 			if (CurrentEnvironment.IsDevelopment())
 			{
-				services.AddSingleton<IDAO<SampleDocument, DataResponse<SampleDocument>>>(service => new SampleDAO(
+				services.AddSingleton<IDAO<Event, DataResponse<Event>>>(service => new EventDAO(
 					Configuration["ConnectionStrings:HerokuMongoDBConnection"],
 					Configuration["ConnectionStrings:HerokuMongoDBDatabase"],
 					Configuration["ConnectionStrings:HerokuMongoDBCollection"]));
 			}
 			else
 			{
-				services.AddSingleton<IDAO<SampleDocument, DataResponse<SampleDocument>>>(service => new SampleDAO(
+				services.AddSingleton<IDAO<Event, DataResponse<Event>>>(service => new EventDAO(
 					Configuration["ConnectionStrings:HerokuMongoDBConnection"],
 					Configuration["ConnectionStrings:HerokuMongoDBDatabase"],
 					Configuration["ConnectionStrings:HerokuMongoDBCollection"]));
 			}
 
 			// Inject dependencies here:
-			services.AddSingleton<ISampleService, SampleService>();
+			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();
 			services.AddSingleton<MLContext>();

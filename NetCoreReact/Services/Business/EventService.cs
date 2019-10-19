@@ -1,6 +1,6 @@
 ﻿using NetCoreReact.Enums;
 using NetCoreReact.Models;
-using NetCoreReact.Models.DB;
+using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business
 {
-	public class SampleService : ISampleService
+	public class EventService : IEventService
 	{
-		private readonly IDAO<SampleDocument, DataResponse<SampleDocument>> _santaDAO;
+		private readonly IDAO<Event, DataResponse<Event>> _eventDAO;
 
-		public SampleService(IDAO<SampleDocument, DataResponse<SampleDocument>> santaDAO)
+		public EventService(IDAO<Event, DataResponse<Event>> eventDAO)
 		{
-			this._santaDAO = santaDAO;
+			this._eventDAO = eventDAO;
 		}
 
 		public async Task<PresentModel> AuthenticatedSampleGet(string participantName)
@@ -33,7 +33,7 @@ namespace NetCoreReact.Services.Business
 
 			try
 			{
-				var participants = await _santaDAO.GetAll();
+				var participants = await _eventDAO.GetAll();
 
 				if (participants.Data.Count() <= 1)
 				{
@@ -75,9 +75,9 @@ namespace NetCoreReact.Services.Business
 
 					if (secretSanta != null)
 					{
-						await _santaDAO.Update(
+						await _eventDAO.Update(
 							secretSanta.Id, 
-							new SampleDocument()
+							new Event()
 							{
 								Id = secretSanta.Id,
 								Name = secretSanta.Name,
@@ -87,9 +87,9 @@ namespace NetCoreReact.Services.Business
 								WhoTheyDrew = secretSanta.WhoTheyDrew
 
 							});
-						await _santaDAO.Update(
+						await _eventDAO.Update(
 							participant.Id,
-							new SampleDocument()
+							new Event()
 							{
 								Id = participant.Id,
 								Name = participant.Name,
@@ -129,7 +129,7 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				var participants = await _santaDAO.GetAll();
+				var participants = await _eventDAO.GetAll();
 				return new ParticipantsModel()
 				{
 					Participants = participants.Data.Select(x => x.Name)
@@ -145,10 +145,10 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				var participants = await _santaDAO.GetAll();
+				var participants = await _eventDAO.GetAll();
 				if (!participants.Data.Any(x => x.Name.Equals(user.Name)))
 				{
-					await _santaDAO.Add(new SampleDocument()
+					await _eventDAO.Add(new Event()
 					{
 						Name = user.Name,
 						Taken = false,

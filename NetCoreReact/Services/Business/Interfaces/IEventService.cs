@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business.Interfaces
 {
-	public interface ISampleService
+	public interface IEventService
 	{
 		Task<PresentModel> AuthenticatedSampleGet(string name);
 		Task<ParticipantsModel> UnauthenticatedSampleGet();

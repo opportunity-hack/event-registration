@@ -15,12 +15,12 @@ namespace NetCoreReact.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SampleController : ControllerBase
+    public class EventController : ControllerBase
     {
-		private readonly ISampleService _sampleService;
+		private readonly IEventService _sampleService;
 		private readonly IPredictionService _predictionService;
 
-		public SampleController(ISampleService santaService, IPredictionService predictionService)
+		public EventController(IEventService santaService, IPredictionService predictionService)
 		{
 			this._sampleService = santaService;
 			this._predictionService = predictionService;
