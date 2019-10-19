@@ -16,7 +16,7 @@ export default function Logo({ className }) {
   return (
     <div className={className}>
       <Typography variant="h6" component={Link} to="/" className={classes.root}>
-        Hack 2019
+        Z Dashboard
       </Typography>
     </div>
   );

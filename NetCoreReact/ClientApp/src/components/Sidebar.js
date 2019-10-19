@@ -109,7 +109,7 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
           <ListItemIcon className={classes.icon}>
             <DataIcon />
           </ListItemIcon>
-          <ListItemText primary={"Surveys"} />
+          <ListItemText primary={"Events"} />
           {surveyOpen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={surveyOpen} timeout="auto" unmountOnExit>
@@ -118,14 +118,19 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
               button
               className={classes.nested}
               component={Link}
-              to="sample-route"
+              to="/event/all"
             >
               <ListItemIcon>
                 <ListIcon className={classes.icon} />
               </ListItemIcon>
               <ListItemText primary="View All" />
             </ListItem>
-            <ListItem button className={classes.nested}>
+            <ListItem
+              button
+              className={classes.nested}
+              component={Link}
+              to="/event/create"
+            >
               <ListItemIcon>
                 <CreateIcon className={classes.icon} />
               </ListItemIcon>
