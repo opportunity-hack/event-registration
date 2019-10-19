@@ -114,5 +114,28 @@ namespace NetCoreReact.Controllers
 				};
 			}
 		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("[action]")]
+		public async Task<DataResponse<Event>> GetEvent(string eventID)
+		{
+			try
+			{
+				return await _eventService.GetEvent(eventID);
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Data = new List<Event>(),
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
+			}
+		}
 	}
 }

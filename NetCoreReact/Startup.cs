@@ -108,6 +108,7 @@ namespace NetCoreReact
 			}
 
 			// Inject dependencies here:
+			services.AddSingleton<IEmailService>(service => new EmailService(Configuration["APIKeys:SendGridAPIKey"]));
 			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();

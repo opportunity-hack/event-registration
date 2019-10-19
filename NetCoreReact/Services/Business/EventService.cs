@@ -30,6 +30,19 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
+		public async Task<DataResponse<Event>> GetEvent(string eventID)
+		{
+			try
+			{
+				var result = await _eventDAO.Get(eventID);
+				return result;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
 		public async Task<DataResponse<Event>> AddParticipant(DataParticipant newParticipant)
 		{
 			try
