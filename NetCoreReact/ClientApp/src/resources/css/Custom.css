@@ -1,0 +1,36 @@
+﻿
+.custom-green {
+	color: white !important;
+	background-color: #00C000 !important;
+	border-color: #00C000 !important;
+}
+
+.custom-green:hover {
+	background-color: green !important;
+	border-color: green !important;
+}
+
+.custom-blue {
+	color: white !important;
+	background-color: #5190ED !important;
+	border-color: #5190ED !important;
+}
+
+.custom-blue:hover {
+	background-color: #3063A5 !important;
+	border-color: #3063A5 !important;
+}
+
+.custom-image {
+	height: 50px;
+	width: 50px;
+	float: left;
+}
+
+.user-input {
+	max-width: 280px;
+}
+
+.custom-label {
+	max-width: 100% !important;
+}
