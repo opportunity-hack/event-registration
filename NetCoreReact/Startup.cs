@@ -116,14 +116,6 @@ namespace NetCoreReact
 			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();
-			services.AddSingleton<MLContext>();
-			services.AddSingleton<ITransformer, TransformerChain<ITransformer>>((context) =>
-			{
-				DataViewSchema predictionPipelineSchema;
-				return (TransformerChain<ITransformer>)context
-					.GetRequiredService<MLContext>()
-					.Model.Load(Configuration["MLModels:SentimentMLModelFilePath"], out predictionPipelineSchema);
-			});
 
 			// In production, the React files will be served from this directory:
 			services.AddSpaStaticFiles(configuration =>
