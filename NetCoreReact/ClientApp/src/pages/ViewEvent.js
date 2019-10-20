@@ -305,7 +305,7 @@ export default function ViewEvent() {
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
           <Box display="flex" flexDirection="column" className={classes.form}>
-            <Typography variant="h6">Send mass email</Typography>
+            <Typography variant="h6">Send Mass Email</Typography>
             <TextField
               label="Subject"
               autoFocus

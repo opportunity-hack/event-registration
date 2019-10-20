@@ -61,10 +61,10 @@ export default function Home() {
       className={classes.root}
     >
       <Typography variant="h4" gutterBottom>
-        Opportunity Hack 2019
+        Zuri's Circle
       </Typography>
       <Typography gutterBottom color="textSecondary">
-        .NET Core 3.0 + React-Redux + ML.NET = Awesomeness
+        Opportunity Hack 2019
       </Typography>
 
       {authState.isAuthenticated && (
