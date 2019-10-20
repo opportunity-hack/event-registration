@@ -120,13 +120,7 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newParticipant.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (currentEvent.Participants == null)
-				{
-					currentEvent.Participants = new List<Participant>() { newParticipant.Data };
-					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
-					return result;
-				}
-				else if (currentEvent.Participants?.Count() > 0 && !currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
+				if (currentEvent.Participants.Count() == 0 || !currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
 				{
 					currentEvent.Participants.Add(newParticipant.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
@@ -150,15 +144,9 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newFeedback.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (currentEvent.Feedback == null)
+				if (currentEvent.Feedback.Count() == 0 || !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
 				{
 					currentEvent.Feedback = new List<Feedback>() { newFeedback.Data };
-					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
-					return result;
-				}
-				else if (currentEvent.Feedback?.Count() > 0 && !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
-				{
-					currentEvent.Feedback.Add(newFeedback.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
 					return result;
 				}
