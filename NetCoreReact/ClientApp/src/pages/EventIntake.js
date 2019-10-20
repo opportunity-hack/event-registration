@@ -66,9 +66,9 @@ export default function EventIntake() {
   const handleSubmit = async () => {
     setErrors([]);
     setSubmitting(true);
-    const response = await post(config.ADD_PARTICIPANT_POST_URL, {
+    const response = await post(config.ADD_EMAIL_POST_URL, {
       EventId: id,
-      Participant: {
+      Data: {
         Email: email,
         Type: parseInt(participantType, 10),
         DateEntered: new Date()
@@ -77,7 +77,7 @@ export default function EventIntake() {
     if (response.success) {
       setSuccessOpen(true);
       setEmail("");
-      setParticipantType(0);
+      setParticipantType("0");
     } else {
       setErrors(response.errors);
     }

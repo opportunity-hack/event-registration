@@ -11,9 +11,6 @@ import {
   Typography,
   Box
 } from "@material-ui/core";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import Axios from "axios";
 import useAuth from "../hooks/useAuth";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";

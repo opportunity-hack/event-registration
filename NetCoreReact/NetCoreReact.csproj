@@ -39,6 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ParticipantController.cs" />
+    <Compile Remove="Models\DTO\DataParticipant.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Pages\Error.cshtml" />
     <None Include="Pages\_ViewImports.cshtml" />
   </ItemGroup>

@@ -10,6 +10,7 @@ import Box from "@material-ui/core/Box";
 import { useParams } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
+import { Button } from "@material-ui/core";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -50,7 +51,7 @@ export default function ViewEvent() {
   const { get, post } = useRequest();
   const [event, setEvent] = useState({});
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -72,6 +73,18 @@ export default function ViewEvent() {
 
     return () => {};
   }, []);
+
+  const handleFeedbackSubmit = async () => {
+    let response = await get(config.SEND_FEEDBACK_EMAIL_GET_URL, {
+      eventID: id
+    });
+
+    if (response.success) {
+      let tempEvent = { ...event };
+      tempEvent.sentFeedback = true;
+      setEvent(tempEvent);
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -112,10 +125,16 @@ export default function ViewEvent() {
           Item One
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          Item Three
+          <Box>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={event.sentFeedback}
+              onClick={handleFeedbackSubmit}
+            >
+              Send Feedback Request Emails
+            </Button>
+          </Box>
         </TabPanel>
       </SwipeableViews>
     </div>
