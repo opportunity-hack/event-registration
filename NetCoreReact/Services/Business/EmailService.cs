@@ -39,10 +39,10 @@ namespace NetCoreReact.Services.Business
 				var emailMessage = new SendGridMessage();
 
 				emailMessage.SetFrom("trevomoo@gmail.com");// TO DO: emailMessage.SetFrom(_fromEmail);
-				emailMessage.AddTo("trevomoo@gmail.com");// TO DO: emailMessage.AddTo(participant.Participant.Email);
+				emailMessage.AddTo("jordanr3@live.com");// TO DO: emailMessage.AddTo(participant.Participant.Email);
 				emailMessage.SetTemplateId(_confirmationTemplateID);
 
-				var jwt = TokenHelper.GenerateToken("trevomoo@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);// TO DO: var jwt = TokenHelper.GenerateToken(participant.Participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				var jwt = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);// TO DO: var jwt = TokenHelper.GenerateToken(participant.Participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
