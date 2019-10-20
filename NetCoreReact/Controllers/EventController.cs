@@ -174,6 +174,7 @@ namespace NetCoreReact.Controllers
 			{
 				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
 				feedback.Data.Email = authenticate.Data[0];
+				feedback.EventId = authenticate.Data[1];
 
 				if (!string.IsNullOrEmpty(feedback.Data.Body))
 				{
