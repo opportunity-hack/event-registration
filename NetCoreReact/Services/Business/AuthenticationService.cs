@@ -22,7 +22,7 @@ namespace NetCoreReact.Services.Business
 			{
 				var payload = await GoogleJsonWebSignature.ValidateAsync(token.tokenId, new GoogleJsonWebSignature.ValidationSettings());
 
-				if (AppSettingsModel.appSettings.ValidEmails.Contains(payload.Email))
+				if (AppSettingsModel.appSettings.ValidEmails.Contains(payload.Email, StringComparer.OrdinalIgnoreCase))
 				{
 					var jwt = TokenHelper.GenerateToken(payload.Email, AppSettingsModel.appSettings.JwtSecret, string.Empty);
 
