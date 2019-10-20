@@ -77,10 +77,12 @@ export default function CreateEvent() {
   const handleSubmit = async () => {
     setSubmitting(true);
     const response = await post(config.CREATE_EVENT_POST_URL, {
-      Title: title,
-      Description: description,
-      StartDate: startDate,
-      EndDate: endDate
+      Data: {
+        Title: title,
+        Description: description,
+        StartDate: startDate,
+        EndDate: endDate
+      }
     });
     if (response.success) {
       setSuccess(true);

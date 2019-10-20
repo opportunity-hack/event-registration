@@ -19,7 +19,7 @@ export default function Feedback({ token }) {
   const classes = useStyles();
   const { post } = useRequest();
   const [body, setBody] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(true);
   const [errors, setErrors] = useState([]);
 
   const handleBodyChange = e => {
@@ -28,7 +28,7 @@ export default function Feedback({ token }) {
 
   const handleFeedbackSubmit = async () => {
     let response = await post(config.POST_FEEDBACK_RESPONSE_POST_URL, {
-      Date: {
+      Data: {
         Body: body,
         DateEntered: new Date(),
         Token: token
@@ -44,7 +44,15 @@ export default function Feedback({ token }) {
   return (
     <div>
       {success ? (
-        <Box flexDirection="column" alignItems="center">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          alignContent="center"
+          justifyContent="center"
+          p={2}
+          className={classes.root}
+        >
           <Avatar style={{ backgroundColor: "#00cc00" }}>
             <CheckIcon fontSize="large" />
           </Avatar>
@@ -71,8 +79,8 @@ export default function Feedback({ token }) {
             rows="4"
             defaultValue="Default Value"
             className={classes.textField}
-            error={Boolean(errors["Feedback"])}
-            helperText={errors["Feedback"]}
+            error={Boolean(errors["Data.Body"])}
+            helperText={errors["Data.Body"]}
             margin="normal"
             variant="outlined"
             value={body}
