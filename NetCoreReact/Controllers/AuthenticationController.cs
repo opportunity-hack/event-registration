@@ -40,7 +40,7 @@ namespace NetCoreReact.Controllers
 					Data = new List<string>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Sorry, an error occured while logging in with Google." },
 					},
 					Success = false
 				};

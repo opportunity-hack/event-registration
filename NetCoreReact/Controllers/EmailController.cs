@@ -46,7 +46,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Sorry, that email has already been added for this event." },
 					},
 					Success = false
 				};
@@ -61,6 +61,34 @@ namespace NetCoreReact.Controllers
 				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(token.Data);
 				var currentEvent = await _eventService.ConfirmEmail(authenticate.Data[0], authenticate.Data[1]);
 				return currentEvent;
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Data = new List<Event>(),
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
+			}
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("[action]")]
+		public async Task<DataResponse<Event>> SendGenericEmail(string eventID)
+		{
+			try
+			{
+				var currentEvent = await _eventService.GetEvent(eventID);
+				var feedbackEvent = currentEvent.Data.FirstOrDefault();
+				var sendFeedback = await _emailService.SendFeedbackEmail(feedbackEvent);
+				feedbackEvent.SentFeedback = true;
+				var update = await _eventService.UpdateEvent(feedbackEvent);
+				return update;
 			}
 			catch (Exception ex)
 			{

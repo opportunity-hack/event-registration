@@ -68,7 +68,7 @@ namespace NetCoreReact.Controllers
 					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Sorry, event does not exist." },
 					},
 					Success = false
 				};
@@ -193,7 +193,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Sorry, feedback has already been submitted for your email." },
 					},
 					Success = false
 				};
