@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
+using NetCoreReact.Models.Email;
 using NetCoreReact.Services.Business;
 using NetCoreReact.Services.Business.Interfaces;
 
@@ -78,17 +79,15 @@ namespace NetCoreReact.Controllers
 		}
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpGet("[action]")]
-		public async Task<DataResponse<Event>> SendGenericEmail(string eventID)
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> SendGenericEmail([FromBody] DataInput<EmailTemplateData> email)
 		{
 			try
 			{
-				var currentEvent = await _eventService.GetEvent(eventID);
-				var feedbackEvent = currentEvent.Data.FirstOrDefault();
-				var sendFeedback = await _emailService.SendFeedbackEmail(feedbackEvent);
-				feedbackEvent.SentFeedback = true;
-				var update = await _eventService.UpdateEvent(feedbackEvent);
-				return update;
+				var currentEvent = await _eventService.GetEvent(email.EventId);
+				var eventData = currentEvent.Data.FirstOrDefault();
+				var sendEmail = await _emailService.SendGenericEmail(email, eventData);
+				return sendEmail;
 			}
 			catch (Exception ex)
 			{
@@ -98,7 +97,7 @@ namespace NetCoreReact.Controllers
 					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Emails failed to send. Please try again." },
 					},
 					Success = false
 				};
@@ -126,7 +125,7 @@ namespace NetCoreReact.Controllers
 					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { "Emails failed to send. Please try again." },
 					},
 					Success = false
 				};

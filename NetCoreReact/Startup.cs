@@ -108,7 +108,8 @@ namespace NetCoreReact
 				Configuration["APIKeys:SendGridAPIKey"],
 				Configuration["APIKeys:FromEmail"],
 				Configuration["SendGrid:ConfirmationTemplateID"],
-				Configuration["SendGrid:FeedbackTemplateID"]));
+				Configuration["SendGrid:FeedbackTemplateID"],
+				Configuration["SendGrid:GenericTemplateID"]));
 			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();

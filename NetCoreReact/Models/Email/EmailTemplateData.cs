@@ -11,5 +11,11 @@ namespace NetCoreReact.Models.Email
 
 		[JsonProperty("Feedback_Url")]
 		public string Feedback_Url { get; set; }
+		[JsonProperty("Title_Header")]
+		public string Title_Header { get; set; }
+		[JsonProperty("Body_Copy")]
+		public string Body_Copy { get; set; }
+		[JsonProperty("Signature")]
+		public string Signature { get; set; }
 	}
 }

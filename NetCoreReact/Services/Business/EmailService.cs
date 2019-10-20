@@ -20,13 +20,15 @@ namespace NetCoreReact.Services.Business
 		private readonly string _fromEmail;
 		private readonly string _confirmationTemplateID;
 		private readonly string _feedbackTemplateID;
+		private readonly string _genericTemplateID;
 
-		public EmailService(string aPIKey, string fromEmail, string confirmationTemplateID, string feedbackTemplateID)
+		public EmailService(string aPIKey, string fromEmail, string confirmationTemplateID, string feedbackTemplateID, string genericTemplateID)
 		{
 			this._sendGridApiKey = aPIKey;
 			this._fromEmail = fromEmail;
 			this._confirmationTemplateID = confirmationTemplateID;
 			this._feedbackTemplateID = feedbackTemplateID;
+			this._genericTemplateID = genericTemplateID;
 		}
 
 		public async Task<DataResponse<Event>> SendConfirmationEmail(DataInput<Participant> participant, Event currentEvent)
@@ -60,14 +62,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					return new DataResponse<Event>()
-					{
-						Success = false,
-						Errors = new Dictionary<string, List<string>>()
-						{
-							["*"] = new List<string> { "An exception occurred, please try again." },
-						}
-					};
+					throw new Exception();
 				}
 			}
 			catch (Exception e)
@@ -103,15 +98,15 @@ namespace NetCoreReact.Services.Business
 				**/
 
 				emailList.Add(new EmailAddress("jordanr3@live.com"));
-				var jwt3 = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				var jwt = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
 				dynamicTemplateDataList.Add
-					(
-						new EmailTemplateData
-						{
-							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://localhost:44384/feedback?token={jwt3}"
-						}
-					);
+				(
+					new EmailTemplateData
+					{
+						Event_Name = currentEvent.Title,
+						Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
+					}
+				);
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
 				(
@@ -132,14 +127,55 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
+					throw new Exception();
+				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email, Event currentEvent)
+		{
+			try
+			{
+				var client = new SendGridClient(_sendGridApiKey);
+				var emailList = new List<EmailAddress>();
+				var dynamicTemplateDataList = new List<object>();
+
+				// TO DO:
+				/**
+				foreach(var participant in currentEvent.Participants)
+				{
+					emailList.Add(new EmailAddress(participant.Email));
+					dynamicTemplateDataList.Add(email.Data);
+				}
+				**/
+
+				emailList.Add(new EmailAddress("jordanr3@live.com"));
+				dynamicTemplateDataList.Add(email.Data);
+
+				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
+				(
+					new EmailAddress("trevomoo@gmail.com"),// TO DO: new EmailAddress(_fromEmail),
+					emailList,
+					_genericTemplateID,
+					dynamicTemplateDataList
+				);
+
+				var response = await client.SendEmailAsync(emailMessage);
+
+				if (response.StatusCode == HttpStatusCode.Accepted)
+				{
 					return new DataResponse<Event>()
 					{
-						Success = false,
-						Errors = new Dictionary<string, List<string>>()
-						{
-							["*"] = new List<string> { "An exception occurred while trying to send feedback emails, please try again." },
-						}
+						Success = true
 					};
+				}
+				else
+				{
+					throw new Exception();
 				}
 			}
 			catch (Exception e)
