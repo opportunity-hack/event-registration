@@ -127,19 +127,6 @@ export default function NavigationBar({ handleDrawerOpen, open }) {
             </IconButton>
           )}
           {!open && <Logo />}
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
           <Button
             color="inherit"
             className={classes.button}
@@ -177,7 +164,6 @@ export default function NavigationBar({ handleDrawerOpen, open }) {
                   horizontal: "center"
                 }}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>

@@ -153,7 +153,7 @@ export default function ViewEvent() {
         hoverBorderColor: "rgba(255,99,132,1)",
         data: [
           event.participants.length,
-          event.participants.filter(e => e.confirmation === true).length,
+          event.participants.filter(e => e.isConfirmed === true).length,
           event.sentFeedback ? event.participants.length : 0,
           event.feedback.length
         ]
