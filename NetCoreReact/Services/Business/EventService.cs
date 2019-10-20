@@ -3,6 +3,7 @@ using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -99,6 +100,19 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
+		public async Task<DataResponse<Event>> DeleteEvent(string eventID)
+		{
+			try
+			{
+				var result = await _eventDAO.Delete(eventID);
+				return result;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
 		public async Task<DataResponse<Event>> AddParticipant(DataInput<Participant> newParticipant)
 		{
 			try
@@ -106,7 +120,13 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newParticipant.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
+				if (currentEvent.Participants == null)
+				{
+					currentEvent.Participants = new List<Participant>() { newParticipant.Data };
+					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+					return result;
+				}
+				else if (currentEvent.Participants?.Count() > 0 && !currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
 				{
 					currentEvent.Participants.Add(newParticipant.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
@@ -130,7 +150,13 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newFeedback.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (!currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
+				if (currentEvent.Feedback == null)
+				{
+					currentEvent.Feedback = new List<Feedback>() { newFeedback.Data };
+					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+					return result;
+				}
+				else if (currentEvent.Feedback?.Count() > 0 && !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
 				{
 					currentEvent.Feedback.Add(newFeedback.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);

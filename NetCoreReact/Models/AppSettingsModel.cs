@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace NetCoreReact.Models
 {
     public class AppSettingsModel
@@ -8,6 +10,7 @@ namespace NetCoreReact.Models
 		public string GoogleClientId  { get; set; }
         public string GoogleClientSecret  { get; set; }
         public string JwtEmailEncryption { get; set; }
+		public List<string> ValidEmails { get; set; }
 		public string AppDomain { get; set; }
 		public string AppAudience { get; set; }
 	}

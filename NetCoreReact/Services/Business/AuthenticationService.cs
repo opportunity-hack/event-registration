@@ -18,29 +18,35 @@ namespace NetCoreReact.Services.Business
 	{
 		public async Task<DataResponse<string>> AuthenticateGoogleToken(TokenModel token, HttpResponse response)
 		{
-            var res = new DataResponse<string>();
-
 			try
 			{
 				var payload = await GoogleJsonWebSignature.ValidateAsync(token.tokenId, new GoogleJsonWebSignature.ValidationSettings());
-				var jwt = TokenHelper.GenerateToken(payload.Email, AppSettingsModel.appSettings.JwtSecret, string.Empty);
 
-				LoggerHelper.Log(payload.ExpirationTimeSeconds.ToString());
-				CookieHelper.AddCookie(response, "User-Email", payload.Email);
-				CookieHelper.AddCookie(response, "Authorization-Token", jwt);
-                CookieHelper.AddCookie(response, "Avatar-Url", payload.Picture);
+				if (AppSettingsModel.appSettings.ValidEmails.Contains(payload.Email))
+				{
+					var jwt = TokenHelper.GenerateToken(payload.Email, AppSettingsModel.appSettings.JwtSecret, string.Empty);
 
-                res.Success = true;
-                res.Data = new List<string>() { jwt };
+					LoggerHelper.Log(payload.ExpirationTimeSeconds.ToString());
+					CookieHelper.AddCookie(response, "User-Email", payload.Email);
+					CookieHelper.AddCookie(response, "Authorization-Token", jwt);
+					CookieHelper.AddCookie(response, "Avatar-Url", payload.Picture);
+
+					return new DataResponse<string>()
+					{
+						Success = true,
+						Data = new List<string>() { jwt }
+					};
+				}
+				else
+				{
+					throw new Exception();
+				}
 
             }
 			catch (Exception e)
 			{
-				res.Success = false;
-				res.AddError("*", "Error authenticating with Google");
+				throw e;
             }
-
-            return res;
         }
 
 		public DataResponse<string> AuthenticateConfirmEmailToken(string token)

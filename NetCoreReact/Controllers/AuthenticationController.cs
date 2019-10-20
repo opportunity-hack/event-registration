@@ -7,6 +7,8 @@ using NetCoreReact.Helpers;
 using NetCoreReact.Services.Business;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using NetCoreReact.Models.DTO;
+using System.Collections.Generic;
 
 namespace NetCoreReact.Controllers
 {
@@ -24,20 +26,25 @@ namespace NetCoreReact.Controllers
 
         [AllowAnonymous]
         [HttpPost("Google")]
-        public async Task<IActionResult> AuthenticateGoogleToken([FromBody]TokenModel token)
+        public async Task<DataResponse<string>> AuthenticateGoogleToken([FromBody]TokenModel token)
         {
             try
             {
-				return Ok
-				(
-					await _authenticationService.AuthenticateGoogleToken(token, HttpContext.Response)
-				);
+				return await _authenticationService.AuthenticateGoogleToken(token, HttpContext.Response);
             }
             catch (Exception ex)
             {
 				LoggerHelper.Log(ex);
-				return BadRequest(ex.Message);
-            }
+				return new DataResponse<string>()
+				{
+					Data = new List<string>(),
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
+			}
         }
 	}
 }
