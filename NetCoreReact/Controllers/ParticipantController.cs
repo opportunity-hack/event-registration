@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
 using NetCoreReact.Models.DTO;
+using NetCoreReact.Models.Email;
 using NetCoreReact.Services.Business.Interfaces;
 
 namespace NetCoreReact.Controllers
@@ -15,12 +16,12 @@ namespace NetCoreReact.Controllers
 	public class ParticipantController : ControllerBase
 	{
 		private readonly IEventService _eventService;
-		// todo email service
+		private readonly IEmailService _emailService;
 
-		public ParticipantController(IEventService eventService)
+		public ParticipantController(IEventService eventService, IEmailService emailService)
 		{
 			this._eventService = eventService;
-			// todo email service
+			this._emailService = emailService;
 		}
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -29,8 +30,9 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				return await _eventService.AddParticipant(newParticipant);
-				// todo email service
+				var response = await _eventService.AddParticipant(newParticipant);
+				var email = await _emailService.SendConfirmationEmail(new Email());
+				return response;
 			}
 			catch (Exception ex)
 			{

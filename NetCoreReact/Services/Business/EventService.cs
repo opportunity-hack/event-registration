@@ -51,7 +51,7 @@ namespace NetCoreReact.Services.Business
 			{
 				var result = await _eventDAO.GetAll();
 				DateTime now = DateTime.UtcNow;
-				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.StartDate)) > 0).ToList();
+				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.EndDate)) > 0).ToList();
 				return result;
 			}
 			catch (Exception e)
