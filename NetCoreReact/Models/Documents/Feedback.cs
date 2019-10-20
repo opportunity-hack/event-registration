@@ -9,6 +9,7 @@ namespace NetCoreReact.Models.Documents
 		[Required]
 		[BsonRequired]
 		public string Body { get; set; }
+		public ParticipantType Type { get; set; }
 		[Required]
 		[BsonRequired]
 		public string DateEntered { get; set; }

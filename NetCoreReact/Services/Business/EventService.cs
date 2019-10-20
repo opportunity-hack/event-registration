@@ -3,7 +3,6 @@ using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -146,7 +145,11 @@ namespace NetCoreReact.Services.Business
 
 				if (currentEvent.Feedback.Count() == 0 || !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
 				{
-					currentEvent.Feedback = new List<Feedback>() { newFeedback.Data };
+					if (currentEvent.Participants.Count() > 0)
+					{
+						newFeedback.Data.Type = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(newFeedback.Data.Email))?.Type ?? ParticipantType.Attendee;
+					}
+					currentEvent.Feedback.Add(newFeedback.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
 					return result;
 				}
