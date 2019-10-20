@@ -35,7 +35,7 @@ namespace NetCoreReact.Services.Business
 			try
 			{
 				var result = await _eventDAO.GetAll();
-				DateTime now = DateTime.UtcNow;
+				DateTime now = DateTime.UtcNow.Date;
 				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.StartDate)) <= 0).ToList();
 				return result;
 			}
@@ -50,7 +50,7 @@ namespace NetCoreReact.Services.Business
 			try
 			{
 				var result = await _eventDAO.GetAll();
-				DateTime now = DateTime.UtcNow;
+				DateTime now = DateTime.UtcNow.Date;
 				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.EndDate)) > 0).ToList();
 				return result;
 			}
