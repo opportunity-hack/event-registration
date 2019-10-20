@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
+using NetCoreReact.Services.Business;
 using NetCoreReact.Services.Business.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,12 @@ namespace NetCoreReact.Controllers
 	public class CsvController : ControllerBase
 	{
 		private readonly IEventService _eventService;
+		private readonly IAuthenticationService _authenticationService;
 
-		public CsvController(IEventService eventService)
+		public CsvController(IEventService eventService, IAuthenticationService authenticationService)
 		{
 			this._eventService = eventService;
+			this._authenticationService = authenticationService;
 		}
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -98,12 +101,12 @@ namespace NetCoreReact.Controllers
 			}
 		}
 
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet("[action]")]
-		public async Task<IActionResult> Download(string eventID)
+		public async Task<IActionResult> Download(string eventID, string token)
 		{
 			try
 			{
+				var authenticate = _authenticationService.AuthenticateDownloadToken(token);
 				var response = await _eventService.GetEvent(eventID);
 				var emails = response?.Data?.FirstOrDefault()?.Participants?.Select(x => x.Email)?.ToList() ?? new List<string>();
 				var result = Helpers.CsvHelper.WriteCsvToMemory(emails);

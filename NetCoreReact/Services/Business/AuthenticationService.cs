@@ -51,8 +51,6 @@ namespace NetCoreReact.Services.Business
 
 		public DataResponse<string> AuthenticateConfirmEmailToken(string token)
 		{
-			var res = new DataResponse<string>();
-
 			try
 			{
 				var validationParameters = new TokenValidationParameters()
@@ -82,6 +80,41 @@ namespace NetCoreReact.Services.Business
 							user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
 							user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Azp)?.Value ?? string.Empty
 						}
+					};
+				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		public DataResponse<string> AuthenticateDownloadToken(string token)
+		{
+			try
+			{
+				var validationParameters = new TokenValidationParameters()
+				{
+					ValidIssuer = AppSettingsModel.appSettings.AppDomain,
+					ValidAudiences = new[] { AppSettingsModel.appSettings.AppAudience },
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettingsModel.appSettings.JwtSecret)),
+					ValidateIssuer = true,
+					ValidateAudience = true,
+					ValidateIssuerSigningKey = true
+				};
+
+				JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+				var user = handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+				if (validatedToken == null)
+				{
+					throw new Exception();
+				}
+				else
+				{
+					return new DataResponse<string>()
+					{
+						Success = true,
 					};
 				}
 			}
