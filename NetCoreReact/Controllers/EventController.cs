@@ -150,7 +150,8 @@ namespace NetCoreReact.Controllers
 			try
 			{
 				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
-				
+				feedback.Data.Email = authenticate.Data[0];
+
 				if (!string.IsNullOrEmpty(feedback.Data.Body))
 				{
 					var analysis = _predictionService.Predict(new PredictionInput() { Sentiment = feedback.Data.Body });

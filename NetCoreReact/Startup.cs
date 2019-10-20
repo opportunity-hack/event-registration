@@ -10,12 +10,9 @@ using Microsoft.Extensions.ML;
 using NetCoreReact.Models.ML;
 using NetCoreReact.Services.Business;
 using NetCoreReact.Services.Data;
-using NetCoreReact.Services.WebSocket;
 using System.Text;
 using NetCoreReact.Services.ML;
 using NetCoreReact.Services.ML.Interfaces;
-using Microsoft.ML;
-using Microsoft.ML.Data;
 using NetCoreReact.Attributes;
 using Newtonsoft.Json;
 using NetCoreReact.Services.Data.Interfaces;
@@ -87,7 +84,6 @@ namespace NetCoreReact
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
-			services.AddSignalR();
 			services.AddPredictionEnginePool<PredictionInput, PredictionOutput>()
 				.FromFile(modelName: "MLModel", filePath: Configuration["MLModels:SentimentMLModelFilePath"], watchForChanges: true);
 
@@ -152,8 +148,6 @@ namespace NetCoreReact
 				endpoints.MapControllerRoute(
 					name: "default",
 					pattern: "{controller}/{action=Index}/{id?}");
-				// Map the SignalR Hub here (don't forget to change the route):
-				endpoints.MapHub<SampleHub>("/SampleHub");
 			});
 
 			app.UseSpa(spa =>
