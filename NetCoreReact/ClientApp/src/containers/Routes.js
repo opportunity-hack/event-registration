@@ -7,6 +7,8 @@ import Home from "../pages/Home";
 import CreateEvent from "../pages/CreateEvent";
 import EventIntake from "../pages/EventIntake";
 import UpcomingEvents from "../pages/UpcomingEvents";
+import PastEvents from "../pages/PastEvents";
+import ViewEvent from "../pages/ViewEvent";
 
 export default function Routes() {
   return (
@@ -18,6 +20,8 @@ export default function Routes() {
       <Route path="/event/create" component={CreateEvent} />
       <Route path="/event/intake/:id" component={EventIntake} />
       <Route path="/event/upcoming" component={UpcomingEvents} />
+      <Route path="/event/past" component={PastEvents} />
+      <Route path="/event/:id" component={ViewEvent} />
 
       <Route component={NotFound} />
     </Switch>

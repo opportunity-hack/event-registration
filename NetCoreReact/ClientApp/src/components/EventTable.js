@@ -19,6 +19,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import { is } from "@babel/types";
+import { Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -61,16 +64,10 @@ const headCells = [
   },
   { id: "endDate", numeric: true, disablePadding: false, label: "End Date" },
   {
-    id: "totlaParticipants",
+    id: "participants",
     numeric: true,
     disablePadding: false,
-    label: "Total Participants"
-  },
-  {
-    id: "confirmedParticipants",
-    numeric: true,
-    disablePadding: false,
-    label: "Confirmed Participants"
+    label: "Participants"
   }
 ];
 
@@ -120,6 +117,7 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell align={"center"}>Actions</TableCell>
       </TableRow>
     </TableHead>
   );
@@ -165,17 +163,13 @@ const EnhancedTableToolbar = props => {
         [classes.highlight]: numSelected > 0
       })}
     >
-      {numSelected > 0 ? (
+      {numSelected > 0 && (
         <Typography
           className={classes.title}
           color="inherit"
           variant="subtitle1"
         >
           {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle">
-          Nutrition
         </Typography>
       )}
 
@@ -254,7 +248,8 @@ export default function EventTable({ events }) {
   const handleClick = (event, title) => {
     const selectedIndex = selected.indexOf(title);
     let newSelected = [];
-
+    console.log(selectedIndex);
+    console.log(title);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, title);
     } else if (selectedIndex === 0) {
@@ -284,16 +279,13 @@ export default function EventTable({ events }) {
     setDense(event.target.checked);
   };
 
-  const isSelected = name => selected.indexOf(name) !== -1;
+  const isSelected = title => selected.indexOf(title) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, events.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
-      <Typography variant="h4" gutterBottom>
-        Upcoming Events
-      </Typography>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <div className={classes.tableWrapper}>
@@ -322,7 +314,7 @@ export default function EventTable({ events }) {
                   return (
                     <TableRow
                       hover
-                      onClick={event => handleClick(event, event.title)}
+                      onClick={e => handleClick(e, event.title)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -343,13 +335,28 @@ export default function EventTable({ events }) {
                       >
                         {event.title}
                       </TableCell>
-                      <TableCell align="right">{event.startDate}</TableCell>
-                      <TableCell align="right">{event.endDate}</TableCell>
                       <TableCell align="right">
-                        {event.participants.length}
+                        {new Date(event.startDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell align="right">
+                        {new Date(event.endDate).toLocaleDateString()}
                       </TableCell>
                       <TableCell align="right">
                         {event.participants.length}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          component={Link}
+                          to={`/event/${event.id}`}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          component={Link}
+                          to={`/event/intake/${event.id}`}
+                        >
+                          Intake
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );

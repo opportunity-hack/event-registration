@@ -7,7 +7,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import useRequest from "../hooks/useRequest";
@@ -18,9 +23,13 @@ import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles(theme => ({
   form: {
-    maxWidth: 500
+    maxWidth: 500,
+    marginTop: theme.spacing(2)
   },
   submit: {
+    marginTop: theme.spacing(2)
+  },
+  formControl: {
     marginTop: theme.spacing(2)
   }
 }));
@@ -34,6 +43,7 @@ export default function EventIntake() {
   const { id } = useParams();
   const [successOpen, setSuccessOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [participantType, setParticipantType] = useState("0");
 
   useEffect(() => {
     async function getEvent() {
@@ -58,11 +68,16 @@ export default function EventIntake() {
     setSubmitting(true);
     const response = await post(config.ADD_PARTICIPANT_POST_URL, {
       EventId: id,
-      Participant: { Email: email }
+      Participant: {
+        Email: email,
+        Type: parseInt(participantType, 10),
+        DateEntered: new Date()
+      }
     });
     if (response.success) {
       setSuccessOpen(true);
       setEmail("");
+      setParticipantType(0);
     } else {
       setErrors(response.errors);
     }
@@ -73,6 +88,10 @@ export default function EventIntake() {
     setSuccessOpen(false);
   };
 
+  const handleParticipantTypeChange = e => {
+    setParticipantType(e.target.value);
+  };
+
   return (
     <>
       <Typography variant="h4" gutterBottom>
@@ -80,6 +99,7 @@ export default function EventIntake() {
       </Typography>
       <Typography gutterBottom>{event.description}</Typography>
       <Box display="flex" flexDirection="column" className={classes.form}>
+        <FormLabel component="legend">Enter your email address</FormLabel>
         <TextField
           autoFocus
           label="Email Address *"
@@ -87,11 +107,37 @@ export default function EventIntake() {
           value={email}
           onChange={handleEmailChange}
           margin="normal"
-          handleEmailChange
           variant="outlined"
           error={Boolean(errors["Participant.Email"])}
           helperText={errors["Participant.Email"]}
         />
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormLabel
+            component="legend"
+            error={Boolean(errors["Participant.Type"])}
+            helperText={errors["Participant.Type"]}
+          >
+            Who are you?
+          </FormLabel>
+          <RadioGroup
+            aria-label="gender"
+            name="gender1"
+            value={participantType}
+            onChange={handleParticipantTypeChange}
+          >
+            <FormControlLabel
+              value={"0"}
+              control={<Radio />}
+              label="Volunteer"
+            />
+            <FormControlLabel
+              value={"1"}
+              control={<Radio />}
+              label="Attendee"
+            />
+            <FormControlLabel value={"2"} control={<Radio />} label="Donor" />
+          </RadioGroup>
+        </FormControl>
         <Button
           color="primary"
           variant="contained"
