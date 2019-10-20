@@ -86,6 +86,19 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
+		public async Task<DataResponse<Event>> UpdateEvent(Event currentEvent)
+		{
+			try
+			{
+				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+				return result;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
 		public async Task<DataResponse<Event>> AddParticipant(DataInput<Participant> newParticipant)
 		{
 			try
@@ -114,13 +127,12 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				/**
-				var response = await _eventDAO.Get(newParticipant.EventId);
+				var response = await _eventDAO.Get(newFeedback.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
+				if (!currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
 				{
-					currentEvent.Participants.Add(newParticipant.Data);
+					currentEvent.Feedback.Add(newFeedback.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
 					return result;
 				}
@@ -128,8 +140,6 @@ namespace NetCoreReact.Services.Business
 				{
 					throw new Exception();
 				}
-	**/
-				return null;
 			}
 			catch (Exception e)
 			{

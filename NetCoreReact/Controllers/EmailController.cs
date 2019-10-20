@@ -84,8 +84,11 @@ namespace NetCoreReact.Controllers
 			try
 			{
 				var currentEvent = await _eventService.GetEvent(eventID);
-				var sendFeedback = await _emailService.SendFeedbackEmail(currentEvent.Data.FirstOrDefault());
-				return sendFeedback;
+				var feedbackEvent = currentEvent.Data.FirstOrDefault();
+				var sendFeedback = await _emailService.SendFeedbackEmail(feedbackEvent);
+				feedbackEvent.SentFeedback = true;
+				var update = await _eventService.UpdateEvent(feedbackEvent);
+				return update;
 			}
 			catch (Exception ex)
 			{
