@@ -218,6 +218,10 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     top: 20,
     width: 1
+  },
+  button: {
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5)
   }
 }));
 
@@ -348,12 +352,16 @@ export default function EventTable({ events }) {
                         <Button
                           component={Link}
                           to={`/event/${event.id}`}
+                          variant="outlined"
+                          className={classes.button}
                         >
                           View
                         </Button>
                         <Button
                           component={Link}
                           to={`/event/intake/${event.id}`}
+                          variant="outlined"
+                          className={classes.button}
                         >
                           Intake
                         </Button>
