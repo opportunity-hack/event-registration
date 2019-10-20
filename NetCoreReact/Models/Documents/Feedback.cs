@@ -5,11 +5,10 @@ namespace NetCoreReact.Models.Documents
 {
 	public class Feedback
 	{
+		public string Email { get; set; }
 		[Required]
 		[BsonRequired]
-		public string Email { get; set; }
 		public string Body { get; set; }
-		public int Rating { get; set; }
 		[Required]
 		[BsonRequired]
 		public string DateEntered { get; set; }

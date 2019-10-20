@@ -58,8 +58,8 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var response = _authenticationService.AuthenticateConfirmEmailToken(token.Data);
-				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
+				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(token.Data);
+				var currentEvent = await _eventService.ConfirmEmail(authenticate.Data[0], authenticate.Data[1]);
 				return currentEvent;
 			}
 			catch (Exception ex)
