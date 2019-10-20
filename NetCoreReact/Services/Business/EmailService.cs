@@ -44,7 +44,7 @@ namespace NetCoreReact.Services.Business
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
-					Confirm_Url = $"http://localhost:44384/confirm?token={jwt}"
+					Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
 					// TO DO: Confirm_Url = $"LIVEURL/confirm?token={jwt}"
 				};
 
@@ -95,7 +95,7 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"http://localhost:44384/feedback?token={jwt}"
+							Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
 							// TO DO: Confirm_Url = $"LIVEURL/feedback?token={jwt}"
 						}
 					);
@@ -111,7 +111,7 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"http://localhost:44384/feedback?token={jwt1}"
+							Feedback_Url = $"https://localhost:44384/feedback?token={jwt1}"
 						}
 					);
 				var jwt2 = TokenHelper.GenerateToken("carterlrice@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
@@ -120,7 +120,7 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"http://localhost:44384/feedback?token={jwt2}"
+							Feedback_Url = $"https://localhost:44384/feedback?token={jwt2}"
 						}
 					);
 				var jwt3 = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
@@ -129,7 +129,7 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"http://localhost:44384/feedback?token={jwt3}"
+							Feedback_Url = $"https://localhost:44384/feedback?token={jwt3}"
 						}
 					);
 
