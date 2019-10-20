@@ -9,6 +9,7 @@ import EventIntake from "../pages/EventIntake";
 import UpcomingEvents from "../pages/UpcomingEvents";
 import PastEvents from "../pages/PastEvents";
 import ViewEvent from "../pages/ViewEvent";
+import Reports from "../pages/Reports";
 
 export default function Routes() {
   return (
@@ -22,6 +23,8 @@ export default function Routes() {
       <Route path="/event/upcoming" component={UpcomingEvents} />
       <Route path="/event/past" component={PastEvents} />
       <Route path="/event/:id" component={ViewEvent} />
+
+      <Route path="/reports" component={Reports} />
 
       <Route component={NotFound} />
     </Switch>

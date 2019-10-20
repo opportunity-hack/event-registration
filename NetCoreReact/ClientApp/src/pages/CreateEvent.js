@@ -141,8 +141,8 @@ export default function CreateEvent() {
             onChange={handleTitleChange}
             margin="normal"
             variant="outlined"
-            error={Boolean(errors["Title"])}
-            helperText={errors["Title"]}
+            error={Boolean(errors["Data.Title"])}
+            helperText={errors["Data.Title"]}
           />
           <TextField
             label="Description *"
@@ -153,8 +153,8 @@ export default function CreateEvent() {
             variant="outlined"
             multiline
             rows="4"
-            error={Boolean(errors["Description"])}
-            helperText={errors["Description"]}
+            error={Boolean(errors["Data.Description"])}
+            helperText={errors["Data.Description"]}
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Box>
@@ -172,8 +172,8 @@ export default function CreateEvent() {
                 }}
                 className={classes.margin}
                 disablePast
-                error={Boolean(errors["StartDate"])}
-                helperText={errors["StartDate"]}
+                error={Boolean(errors["Data.StartDate"])}
+                helperText={errors["Data.StartDate"]}
               />
               <KeyboardDatePicker
                 disableToolbar
@@ -189,8 +189,8 @@ export default function CreateEvent() {
                 }}
                 className={classes.margin}
                 disablePast
-                error={Boolean(errors["EndDate"])}
-                helperText={errors["EndDate"]}
+                error={Boolean(errors["Data.EndDate"])}
+                helperText={errors["Data.EndDate"]}
               />
             </Box>
           </MuiPickersUtilsProvider>

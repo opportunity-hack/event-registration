@@ -125,7 +125,8 @@ EnhancedTableHead.propTypes = {
 const useToolbarStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1)
+    paddingRight: theme.spacing(1),
+    marginTop: theme.spacing(1)
   },
   highlight:
     theme.palette.type === "light"
@@ -167,7 +168,8 @@ EnhancedTableToolbar.propTypes = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%"
+    width: "100%",
+    marginTop: theme.spacing(1)
   },
   paper: {
     width: "100%",
