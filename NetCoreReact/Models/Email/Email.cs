@@ -6,16 +6,7 @@ namespace NetCoreReact.Models.Email
 {
 	public class Email
 	{
-		public Email()
-		{
-			{
-				To = new List<EmailAddress>() { new EmailAddress("carterlrice@gmail.com") };
-				From = new EmailAddress("trevomoo@gmail.com");
-				Subject = new List<string>() { "test" };
-				HtmlContent = "test";
-				PlainTextContent = "test";
-			};
-		}
+		public Email() { }
 		public Email(List<string> to, string from, string subject, string htmlContent, string plainTextContent)
 		{
 			var emailList = new List<EmailAddress>();

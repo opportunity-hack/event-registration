@@ -9,15 +9,16 @@ namespace NetCoreReact.Helpers
 {
     public class TokenHelper
     {
-        public static string GenerateToken(string email)
+        public static string GenerateToken(string email, string secret, string eventID)
         {
 			var claims = new[]
 			{
 				new Claim(JwtRegisteredClaimNames.Sub, SecurityHelper.Encrypt(AppSettingsModel.appSettings.JwtEmailEncryption, email)),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim(JwtRegisteredClaimNames.Azp, eventID)
 			};
 
-			var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AppSettingsModel.appSettings.JwtSecret));
+			var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 			var token = new JwtSecurityToken

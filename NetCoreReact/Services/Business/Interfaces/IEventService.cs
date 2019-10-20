@@ -12,5 +12,6 @@ namespace NetCoreReact.Services.Business.Interfaces
 		Task<DataResponse<Event>> CreateEvent (Event newEvent);
 		Task<DataResponse<Event>> GetEvent(string eventID);
 		Task<DataResponse<Event>> AddParticipant(DataParticipant newParticipant);
+		Task<DataResponse<Event>> ConfirmEmail(string email, string eventID);
 	}
 }

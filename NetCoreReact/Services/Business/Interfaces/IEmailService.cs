@@ -1,10 +1,11 @@
-﻿using NetCoreReact.Models.Email;
+﻿using NetCoreReact.Models.Documents;
+using NetCoreReact.Models.DTO;
 using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business.Interfaces
 {
 	public interface IEmailService
 	{
-		Task<Models.DTO.Response> SendConfirmationEmail(Email email);
+		Task<DataResponse<Event>> SendConfirmationEmail(DataParticipant email, Event currentEvent);
 	}
 }

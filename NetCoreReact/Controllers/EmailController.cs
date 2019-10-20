@@ -15,29 +15,51 @@ namespace NetCoreReact.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class ParticipantController : ControllerBase
+	public class EmailController : ControllerBase
 	{
 		private readonly IEventService _eventService;
 		private readonly IEmailService _emailService;
 		private readonly IAuthenticationService _authenticationService;
 
-		public ParticipantController(IEventService eventService, IEmailService emailService, IAuthenticationService authenticationService)
+		public EmailController(IEventService eventService, IEmailService emailService, IAuthenticationService authenticationService)
 		{
 			this._eventService = eventService;
 			this._emailService = emailService;
 			this._authenticationService = authenticationService;
 		}
 
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> AddParticipant([FromBody] DataParticipant newParticipant)
+		public async Task<DataResponse<Event>> ConfirmEmail([FromBody] string token)
 		{
 			try
 			{
-				var response = await _eventService.AddParticipant(newParticipant);
-				var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
-				var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
-				return email;
+				var response = _authenticationService.AuthenticateConfirmEmailToken(token);
+				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
+				return currentEvent;
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
+			}
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> SendFeedbackEmail(string token)
+		{
+			try
+			{
+				var response = _authenticationService.AuthenticateConfirmEmailToken(token);
+				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
+				return currentEvent;
 			}
 			catch (Exception ex)
 			{

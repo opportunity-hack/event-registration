@@ -7,6 +7,7 @@ namespace NetCoreReact.Services.Business
 {
 	public interface IAuthenticationService
 	{
-		Task<Response> AuthenticateGoogleToken(TokenModel token, HttpResponse response);
+		Task<DataResponse<string>> AuthenticateGoogleToken(TokenModel token, HttpResponse response);
+		DataResponse<string> AuthenticateConfirmEmailToken(string token);
 	}
 }

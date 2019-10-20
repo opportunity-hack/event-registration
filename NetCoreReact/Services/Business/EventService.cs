@@ -3,6 +3,7 @@ using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -93,10 +94,60 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newParticipant.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				currentEvent.Participants.Add(newParticipant.Participant);
+				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Participant.Email)))
+				{
+					currentEvent.Participants.Add(newParticipant.Participant);
+					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+					return result;
+				}
+				else
+				{
+					return new DataResponse<Event>()
+					{
+						Data = new List<Event>(),
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "Email has already been added for this event." },
+						},
+						Success = false
+					};
+				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
 
-				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
-				return result;
+		public async Task<DataResponse<Event>> ConfirmEmail(string email, string eventID)
+		{
+			try
+			{
+				var response = await _eventDAO.Get(eventID);
+				var currentEvent = response.Data.FirstOrDefault();
+				var participants = currentEvent.Participants;
+
+				var participant = participants.FirstOrDefault(x => x.Email.Equals(email));
+				if (participant != null)
+				{
+					participant.IsConfirmed = true;
+					currentEvent.Participants = participants;
+
+					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+					return result;
+				}
+				else
+				{
+					return new DataResponse<Event>()
+					{
+						Data = new List<Event>(),
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "Could not find email for this event." },
+						},
+						Success = false
+					};
+				}
 			}
 			catch (Exception e)
 			{
