@@ -42,7 +42,7 @@ namespace NetCoreReact.Controllers
 				{
 					for (int i = 0; i < fileCount; i++)
 					{
-						if (files[i].ContentType == null || files[i].Length == 0 || !files[i].ContentType.Equals("text/csv"))
+						if (files[i].ContentType == null || files[i].Length == 0)
 						{
 							return new DataResponse<string>()
 							{
