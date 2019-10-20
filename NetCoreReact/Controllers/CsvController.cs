@@ -133,10 +133,10 @@ namespace NetCoreReact.Controllers
 			{
 				var authenticate = _authenticationService.AuthenticateDownloadToken(token);
 				var response = await _eventService.GetAllEvents();
-				var emails = response?.Data?.FirstOrDefault()?.Participants?.Select(x => x.Email)?.ToList() ?? new List<string>();
+				var emails = response?.Data?.SelectMany(x => x.Participants.Select(y => y.Email));
 				var result = Helpers.CsvHelper.WriteCsvToMemory(emails);
 				var memoryStream = new MemoryStream(result);
-				return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = $"{response.Data.FirstOrDefault().Title}-Email-Data.csv" };
+				return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = $"All-Zuris-Circle-Email-Data.csv" };
 			}
 			catch (Exception ex)
 			{
