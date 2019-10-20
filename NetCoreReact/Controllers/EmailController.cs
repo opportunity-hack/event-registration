@@ -28,14 +28,16 @@ namespace NetCoreReact.Controllers
 			this._authenticationService = authenticationService;
 		}
 
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> ConfirmEmail([FromBody] string token)
+		public async Task<DataResponse<Event>> AddEmail([FromBody] DataParticipant newParticipant)
 		{
 			try
 			{
-				var response = _authenticationService.AuthenticateConfirmEmailToken(token);
-				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
-				return currentEvent;
+				var response = await _eventService.AddParticipant(newParticipant);
+				var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
+				var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
+				return email;
 			}
 			catch (Exception ex)
 			{
@@ -51,9 +53,8 @@ namespace NetCoreReact.Controllers
 			}
 		}
 
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> SendFeedbackEmail(string token)
+		public async Task<DataResponse<Event>> ConfirmEmail([FromBody] string token)
 		{
 			try
 			{
@@ -66,6 +67,32 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
+					Data = new List<Event>(),
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
+					},
+					Success = false
+				};
+			}
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("[action]")]
+		public async Task<DataResponse<Event>> SendFeedbackEmail(string eventID)
+		{
+			try
+			{
+				var currentEvent = await _eventService.GetEvent(eventID);
+				var sendFeedback = await _emailService.SendFeedbackEmail(currentEvent.Data.FirstOrDefault());
+				return sendFeedback;
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },

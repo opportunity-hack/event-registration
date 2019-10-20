@@ -69,10 +69,98 @@ namespace NetCoreReact.Services.Business
 						}
 					};
 				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
 
-				// for sending feedback
-				//var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients(email.From, email.To, email.Subject, email.PlainTextContent, email.HtmlContent, new List<Dictionary<string, string>>());
-				//var response = await client.SendEmailAsync(emailMessage);
+		public async Task<DataResponse<Event>> SendFeedbackEmail(Event currentEvent)
+		{
+			try
+			{
+				var client = new SendGridClient(_sendGridApiKey);
+				var emailList = new List<EmailAddress>();
+				var dynamicTemplateDataList = new List<object>();
+
+				// TO DO:
+				/**
+				foreach(var participant in currentEvent.Participants)
+				{
+					emailList.Add(new EmailAddress(participant.Email));
+					var jwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+					dynamicTemplateDataList.Add
+					(
+						new EmailTemplateData
+						{
+							Event_Name = currentEvent.Title,
+							Confirm_Url = $"http://localhost:44384/feedback?token={jwt}"
+							// TO DO: Confirm_Url = $"LIVEURL/feedback?token={jwt}"
+						}
+					);
+				}
+				**/
+
+				emailList.Add(new EmailAddress("trevomoo@gmail.com"));
+				emailList.Add(new EmailAddress("carterlrice@gmail.com"));
+				emailList.Add(new EmailAddress("jordanr3@live.com"));
+				var jwt1 = TokenHelper.GenerateToken("trevomoo@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				dynamicTemplateDataList.Add
+					(
+						new EmailTemplateData
+						{
+							Event_Name = currentEvent.Title,
+							Confirm_Url = $"http://localhost:44384/feedback?token={jwt1}"
+						}
+					);
+				var jwt2 = TokenHelper.GenerateToken("carterlrice@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				dynamicTemplateDataList.Add
+					(
+						new EmailTemplateData
+						{
+							Event_Name = currentEvent.Title,
+							Confirm_Url = $"http://localhost:44384/feedback?token={jwt2}"
+						}
+					);
+				var jwt3 = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				dynamicTemplateDataList.Add
+					(
+						new EmailTemplateData
+						{
+							Event_Name = currentEvent.Title,
+							Confirm_Url = $"http://localhost:44384/feedback?token={jwt3}"
+						}
+					);
+
+				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
+				(
+					new EmailAddress("trevomoo@gmail.com"),// TO DO: new EmailAddress(_fromEmail),
+					emailList,
+					_feedbackTemplateID,
+					dynamicTemplateDataList
+				);
+
+				var response = await client.SendEmailAsync(emailMessage);
+
+				if (response.StatusCode == HttpStatusCode.Accepted)
+				{
+					return new DataResponse<Event>()
+					{
+						Success = true
+					};
+				}
+				else
+				{
+					return new DataResponse<Event>()
+					{
+						Success = false,
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "An exception occurred while trying to send feedback emails, please try again." },
+						}
+					};
+				}
 			}
 			catch (Exception e)
 			{
