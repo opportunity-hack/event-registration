@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace NetCoreReact.Helpers
@@ -13,15 +14,14 @@ namespace NetCoreReact.Helpers
 			using (var writer = new StreamWriter(mem))
 			using (var csvWriter = new CsvWriter(writer))
 			{
-				csvWriter.Configuration.Delimiter = ",";
-				csvWriter.Configuration.HasHeaderRecord = true;
-				csvWriter.Configuration.AutoMap<string>();
-
-				csvWriter.WriteHeader<string>();
-				csvWriter.WriteRecords(records);
+				foreach (var email in records)
+				{
+					csvWriter.WriteField(email);
+					csvWriter.NextRecord();
+				}
 
 				writer.Flush();
-				return mem.ToArray();
+				return mem.ToArray());
 			}
 			/**
 			using (var memoryStream = new MemoryStream())
