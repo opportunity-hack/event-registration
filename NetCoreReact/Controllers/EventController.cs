@@ -207,8 +207,8 @@ namespace NetCoreReact.Controllers
 			}
 		}
 
-		[HttpGet("[action]")]
-		public async Task<DataResponse<Event>> PostFeedbackResponse()
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] Event newEvent)
 		{
 			try
 			{
