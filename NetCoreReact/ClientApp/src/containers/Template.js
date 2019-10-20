@@ -47,28 +47,22 @@ export default function Template() {
 
   return (
     <>
-      {authState.isAuthenticated ? (
-        <>
-          <NavigationBar open={open} handleDrawerOpen={handleDrawerOpen} />
-          <Sidebar
-            open={open}
-            handleDrawerOpen={handleDrawerOpen}
-            handleDrawerClose={handleDrawerClose}
-          />
-          <div className={classes.toolbar} />
-          <main
-            className={clsx(classes.content, {
-              [classes.contentShift]: open
-            })}
-          >
-            <div className={classes.root}>
-              <Routes />
-            </div>
-          </main>
-        </>
-      ) : (
-        <>Logged out</>
-      )}
+      <NavigationBar open={open} handleDrawerOpen={handleDrawerOpen} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
+      <div className={classes.toolbar} />
+      <main
+        className={clsx(classes.content, {
+          [classes.contentShift]: open
+        })}
+      >
+        <div className={classes.root}>
+          <Routes />
+        </div>
+      </main>
     </>
   );
 }
