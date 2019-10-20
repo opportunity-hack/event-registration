@@ -21,18 +21,8 @@ namespace NetCoreReact.Helpers
 				}
 
 				writer.Flush();
-				return mem.ToArray());
+				return mem.ToArray();
 			}
-			/**
-			using (var memoryStream = new MemoryStream())
-			using (var streamWriter = new StreamWriter(memoryStream))
-			using (var csvWriter = new CsvWriter(streamWriter))
-			{
-				csvWriter.WriteRecords(records);
-				streamWriter.Flush();
-				return memoryStream.ToArray();
-			}
-	**/
 		}
 	}
 }
