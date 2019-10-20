@@ -9,7 +9,7 @@ namespace NetCoreReact.Services.Business.Interfaces
 		Task<DataResponse<Event>> GetAllEvents();
 		Task<DataResponse<Event>> GetUpcomingEvents();
 		Task<DataResponse<Event>> GetPastEvents();
-		Task<DataResponse<Event>> CreateEvent (Event newEvent);
+		Task<DataResponse<Event>> CreateEvent (DataInput<Event> newEvent);
 		Task<DataResponse<Event>> GetEvent(string eventID);
 		Task<DataResponse<Event>> AddParticipant(DataInput<Participant> newParticipant);
 		Task<DataResponse<Event>> ConfirmEmail(string email, string eventID);

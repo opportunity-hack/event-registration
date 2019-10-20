@@ -61,11 +61,11 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
-		public async Task<DataResponse<Event>> CreateEvent(Event newEvent)
+		public async Task<DataResponse<Event>> CreateEvent(DataInput<Event> newEvent)
 		{
 			try
 			{
-				var result = await _eventDAO.Add(newEvent);
+				var result = await _eventDAO.Add(newEvent.Data);
 				return result;
 			}
 			catch (Exception e)

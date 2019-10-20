@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NetCoreReact.Models.DTO
+﻿namespace NetCoreReact.Models.DTO
 {
 	public class DataInput<T> : Input
 	{

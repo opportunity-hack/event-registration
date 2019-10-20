@@ -15,5 +15,7 @@ namespace NetCoreReact.Models.Documents
 		public string DateEntered { get; set; }
 		public double Score { get; set; }
 		public bool IsPositive { get; set; }
+		[BsonIgnore]
+		public string Token { get; set; }
 	}
 }

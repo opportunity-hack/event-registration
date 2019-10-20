@@ -6,14 +6,10 @@ using NetCoreReact.Helpers;
 using Microsoft.AspNetCore.Http;
 using NetCoreReact.Models.DTO;
 using System.Collections.Generic;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Protocols;
-using System.Threading;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 
 namespace NetCoreReact.Services.Business
 {
@@ -39,7 +35,8 @@ namespace NetCoreReact.Services.Business
             }
 			catch (Exception e)
 			{
-                res.AddError("*", "Error authenticating with Google");
+				res.Success = false;
+				res.AddError("*", "Error authenticating with Google");
             }
 
             return res;
@@ -70,20 +67,21 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					res.Success = true;
-					res.Data = new List<string>()
+					return new DataResponse<string>()
 					{
-						SecurityHelper.Decrypt(AppSettingsModel.appSettings.JwtEmailEncryption, user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty),
-						user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Azp)?.Value ?? string.Empty
+						Success = true,
+						Data = new List<string>()
+						{
+							SecurityHelper.Decrypt(AppSettingsModel.appSettings.JwtEmailEncryption, user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty),
+							user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Azp)?.Value ?? string.Empty
+						}
 					};
 				}
 			}
 			catch (Exception e)
 			{
-				res.AddError("*", "Error confirming email for event.");
+				throw e;
 			}
-
-			return res;
 		}
 	}
 }

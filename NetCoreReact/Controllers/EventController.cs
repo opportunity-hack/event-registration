@@ -8,6 +8,7 @@ using NetCoreReact.Helpers;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Models.ML;
+using NetCoreReact.Services.Business;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.ML.Interfaces;
 
@@ -19,11 +20,13 @@ namespace NetCoreReact.Controllers
     {
 		private readonly IEventService _eventService;
 		private readonly IPredictionService _predictionService;
+		private readonly IAuthenticationService _authenticationService;
 
-		public EventController(IEventService eventService, IPredictionService predictionService)
+		public EventController(IEventService eventService, IPredictionService predictionService, IAuthenticationService authenticationService)
 		{
 			this._eventService = eventService;
 			this._predictionService = predictionService;
+			this._authenticationService = authenticationService;
 		}
 		/**
 		[HttpGet("[action]")]
@@ -94,7 +97,7 @@ namespace NetCoreReact.Controllers
 		**/
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> CreateEvent([FromBody] Event newEvent)
+		public async Task<DataResponse<Event>> CreateEvent([FromBody] DataInput<Event> newEvent)
 		{
 			try
 			{
@@ -208,15 +211,17 @@ namespace NetCoreReact.Controllers
 		}
 
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] DataInput<Feedback> newParticipant)
+		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] DataInput<Feedback> feedback)
 		{
 			try
 			{
+				var response = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
+				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
+				return currentEvent;
 				//var response = await _eventService.AddParticipant(newParticipant);
 				//var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
 				//var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
 				//return email;
-				return null;
 			}
 			catch (Exception ex)
 			{

@@ -54,11 +54,11 @@ namespace NetCoreReact.Controllers
 		}
 
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> ConfirmEmail([FromBody] string token)
+		public async Task<DataResponse<Event>> ConfirmEmail([FromBody] DataInput<string> token)
 		{
 			try
 			{
-				var response = _authenticationService.AuthenticateConfirmEmailToken(token);
+				var response = _authenticationService.AuthenticateConfirmEmailToken(token.Data);
 				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
 				return currentEvent;
 			}
