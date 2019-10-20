@@ -72,7 +72,7 @@ namespace NetCoreReact.Services.Business
 						Success = true,
 						Data = new List<string>()
 						{
-							SecurityHelper.Decrypt(AppSettingsModel.appSettings.JwtEmailEncryption, user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty),
+							user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value ?? string.Empty,
 							user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Azp)?.Value ?? string.Empty
 						}
 					};

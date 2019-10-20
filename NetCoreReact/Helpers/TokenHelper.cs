@@ -13,7 +13,7 @@ namespace NetCoreReact.Helpers
         {
 			var claims = new[]
 			{
-				new Claim(JwtRegisteredClaimNames.Sub, SecurityHelper.Encrypt(AppSettingsModel.appSettings.JwtEmailEncryption, email)),
+				new Claim(JwtRegisteredClaimNames.Sub, email),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 				new Claim(JwtRegisteredClaimNames.Azp, eventID)
 			};
