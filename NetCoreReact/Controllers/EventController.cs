@@ -215,13 +215,11 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var response = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
-				var currentEvent = await _eventService.ConfirmEmail(response.Data[0], response.Data[1]);
-				return currentEvent;
+				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
 				//var response = await _eventService.AddParticipant(newParticipant);
 				//var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
 				//var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
-				//return email;
+				return null;//authenticate;
 			}
 			catch (Exception ex)
 			{

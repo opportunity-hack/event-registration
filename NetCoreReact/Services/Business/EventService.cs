@@ -3,7 +3,6 @@ using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business.Interfaces;
 using NetCoreReact.Services.Data.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -102,16 +101,35 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					return new DataResponse<Event>()
-					{
-						Data = new List<Event>(),
-						Errors = new Dictionary<string, List<string>>()
-						{
-							["*"] = new List<string> { "Email has already been added for this event." },
-						},
-						Success = false
-					};
+					throw new Exception();
 				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		public async Task<DataResponse<Event>> AddFeedback(DataInput<Feedback> newFeedback)
+		{
+			try
+			{
+				/**
+				var response = await _eventDAO.Get(newParticipant.EventId);
+				var currentEvent = response.Data.FirstOrDefault();
+
+				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
+				{
+					currentEvent.Participants.Add(newParticipant.Data);
+					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+					return result;
+				}
+				else
+				{
+					throw new Exception();
+				}
+	**/
+				return null;
 			}
 			catch (Exception e)
 			{
@@ -138,15 +156,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					return new DataResponse<Event>()
-					{
-						Data = new List<Event>(),
-						Errors = new Dictionary<string, List<string>>()
-						{
-							["*"] = new List<string> { "Could not find email for this event." },
-						},
-						Success = false
-					};
+					throw new Exception();
 				}
 			}
 			catch (Exception e)
