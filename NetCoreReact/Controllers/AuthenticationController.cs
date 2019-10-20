@@ -37,7 +37,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<string>()
 				{
-					Data = new List<string>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "Sorry, an error occured while logging in with Google." },

@@ -42,7 +42,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },
@@ -65,7 +64,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "Sorry, event does not exist." },
@@ -88,7 +86,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },
@@ -111,7 +108,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },
@@ -134,7 +130,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },
@@ -157,7 +152,6 @@ namespace NetCoreReact.Controllers
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },

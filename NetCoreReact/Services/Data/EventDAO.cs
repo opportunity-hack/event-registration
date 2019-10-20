@@ -105,7 +105,6 @@ namespace NetCoreReact.Services.Data
 				await _events.DeleteOneAsync(x => x.Id.Equals(index));
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Success = true
 				};
 			}
