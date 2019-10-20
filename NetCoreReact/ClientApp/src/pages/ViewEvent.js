@@ -14,6 +14,9 @@ import { Button, TextField, Grid } from "@material-ui/core";
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { FilePicker } from "react-file-picker";
+import Axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,6 +47,10 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     backgroundColor: theme.palette.background.paper
+  },
+  button: {
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(0.5)
   }
 }));
 
@@ -54,9 +61,10 @@ export default function ViewEvent() {
   const { get, post } = useRequest();
   const [event, setEvent] = useState({ feedback: [], participants: [] });
   const theme = useTheme();
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(0);
   const [body, setBody] = useState([]);
   const [subject, setSubject] = useState("");
+  const { authState } = useAuth();
 
   const handleBodyChange = e => {
     setBody(e.target.value);
@@ -153,6 +161,29 @@ export default function ViewEvent() {
     ]
   };
 
+  const handleFileChange = file => {
+    if (file) {
+      let formData = new FormData();
+      formData.append("file", file);
+      Axios.post(
+        config.UPLOAD_EMAILS_POST_URL + "?eventID=" + event.id,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + authState.token
+          }
+        }
+      )
+        .then(function() {
+          console.log("SUCCESS!!");
+        })
+        .catch(function() {
+          console.log("FAILURE!!");
+        });
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
@@ -190,6 +221,35 @@ export default function ViewEvent() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
+          <Box display="flex">
+            <FilePicker
+              extensions={["csv"]}
+              onChange={handleFileChange}
+              onError={errMsg => {}}
+            >
+              <Button
+                color="primary"
+                variant="contained"
+                className={classes.button}
+              >
+                Upload CSV
+              </Button>
+            </FilePicker>
+            <Button
+              color="primary"
+              variant="contained"
+              className={classes.button}
+              component="a"
+              href={
+                "/api/Csv/Download?eventID=" +
+                event.id +
+                "&token=" +
+                authState.token
+              }
+            >
+              Download CSV
+            </Button>
+          </Box>
           {event.participants && (
             <ParticipantTable participants={event.participants} />
           )}

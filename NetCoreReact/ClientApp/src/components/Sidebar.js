@@ -161,7 +161,12 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
           </List>
         </Collapse>
 
-        <ListItem button component={Link} to="/">
+        <ListItem
+          button
+          component={Link}
+          to="/reports"
+          selected={location.pathname === "/reports"}
+        >
           <ListItemIcon className={classes.icon}>
             <EqualizerIcon />
           </ListItemIcon>
