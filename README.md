@@ -1,4 +1,4 @@
-# Team-3
+# Team-3: Zuri's Circle
 ## Inspiration
 Zuri's Circle seeks to provide temporary relief during unforeseen circumstances to families, elderly and the homeless. 
 Some of the services that Zuri's Circle provides includes:
@@ -38,11 +38,11 @@ The frontend solution for **Zuri's Dashboard** includes:
 - Chart.js
 
 The cloud solution for **Zuri's Dashboard** is:
-- Azure for the webapp
+- Azure for the WebApp
 - Heroku for the MongoDB database
 
 ## Challenges we ran into
-One unfortunate challenge we ran into was the inability to successfully deploy a Docker image of our webapp because of the lack of Docker documentation as well as version/incompatibility issues with .NET Core 3.0 (due to the framework being quite new at the time of this submission).
+One unfortunate challenge we ran into was the inability to successfully deploy a Docker image of our WebApp because of the lack of Docker documentation as well as version/incompatibility issues with .NET Core 3.0 (due to the framework being quite new at the time of this submission).
 
 ## Accomplishments that we're proud of
 We are quite proud of our implementation of Machine Learning .NET (ML.NET) into this solution. To do this, we trained a supervised model with labeled data using a logistic regression algorithm to perform binary classification of sentiments. With our model, we were able to make accurate predictions on whether or not the feedback received from participants was positive or negative for analysis purposes; this also provided a "one-glance" view of whether or not an event was successful/positively received.
