@@ -20,6 +20,8 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import ListIcon from "@material-ui/icons/FormatListBulleted";
 import CreateIcon from "@material-ui/icons/Create";
+import HistoryIcon from "@material-ui/icons/History";
+import { useLocation } from "react-router";
 
 const drawerWidth = 240;
 
@@ -76,6 +78,7 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
   const classes = useStyles();
 
   const [surveyOpen, setSurveyOpen] = useState(true);
+  const location = useLocation();
 
   const toggleSurveys = () => {
     setSurveyOpen(!surveyOpen);
@@ -99,7 +102,12 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
       </div>
       <Divider />
       <List>
-        <ListItem button component={Link} to="/">
+        <ListItem
+          button
+          component={Link}
+          to="/"
+          selected={location.pathname === "/"}
+        >
           <ListItemIcon className={classes.icon}>
             <HomeIcon />
           </ListItemIcon>
@@ -118,23 +126,37 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
               button
               className={classes.nested}
               component={Link}
-              to="/event/all"
-            >
-              <ListItemIcon>
-                <ListIcon className={classes.icon} />
-              </ListItemIcon>
-              <ListItemText primary="View All" />
-            </ListItem>
-            <ListItem
-              button
-              className={classes.nested}
-              component={Link}
               to="/event/create"
+              selected={location.pathname === "/event/create"}
             >
               <ListItemIcon>
                 <CreateIcon className={classes.icon} />
               </ListItemIcon>
               <ListItemText primary="Create" />
+            </ListItem>
+            <ListItem
+              button
+              className={classes.nested}
+              component={Link}
+              to="/event/upcoming"
+              selected={location.pathname === "/event/upcoming"}
+            >
+              <ListItemIcon>
+                <ListIcon className={classes.icon} />
+              </ListItemIcon>
+              <ListItemText primary="Upcoming" />
+            </ListItem>
+            <ListItem
+              button
+              className={classes.nested}
+              component={Link}
+              to="/event/past"
+              selected={location.pathname === "/event/past"}
+            >
+              <ListItemIcon>
+                <HistoryIcon className={classes.icon} />
+              </ListItemIcon>
+              <ListItemText primary="Past" />
             </ListItem>
           </List>
         </Collapse>

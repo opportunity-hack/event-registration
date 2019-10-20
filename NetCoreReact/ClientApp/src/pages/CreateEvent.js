@@ -17,6 +17,7 @@ import {
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import CheckIcon from "@material-ui/icons/Check";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -45,6 +46,8 @@ export default function CreateEvent() {
   const [errors, setErrors] = useState([]);
   const { post } = useRequest();
   const [success, setSuccess] = useState(false);
+  const [eventId, setEventId] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleTitleChange = e => {
     setTitle(e.target.value);
@@ -68,9 +71,11 @@ export default function CreateEvent() {
     setStartDate(new Date());
     setEndDate(new Date());
     setSuccess(false);
+    setEventId(0);
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
     const response = await post(config.CREATE_EVENT_POST_URL, {
       Title: title,
       Description: description,
@@ -79,119 +84,125 @@ export default function CreateEvent() {
     });
     if (response.success) {
       setSuccess(true);
+      setEventId(response.data[0].id);
     } else {
       setErrors(response.errors);
     }
+    setSubmitting(false);
   };
 
   return (
-    <div>
-      <Box display="flex" flexDirection="column" className={classes.form}>
-        {success ? (
-          <>
-            <Box display="flex">
-              <Avatar className={classes.avatar}>
-                <CheckIcon />
-              </Avatar>
-              <Typography variant="h4" gutterBottom>
-                Event Created!
-              </Typography>
-            </Box>
-            <Box className={classes.submit}>
-              <Button
-                color="primary"
-                variant="contained"
-                className={classes.margin}
-              >
-                Go to event
-              </Button>
-              <Button
-                color="default"
-                variant="contained"
-                className={classes.margin}
-                onClick={resetForm}
-              >
-                Create another
-              </Button>
-            </Box>
-          </>
-        ) : (
-          <>
+    <Box display="flex" flexDirection="column" className={classes.form}>
+      {success ? (
+        <>
+          <Box display="flex">
+            <Avatar className={classes.avatar}>
+              <CheckIcon />
+            </Avatar>
             <Typography variant="h4" gutterBottom>
-              Create an Event
+              Event Created!
             </Typography>
-            <TextField
-              autoFocus
-              label="Title *"
-              className={classes.textField}
-              value={title}
-              onChange={handleTitleChange}
-              margin="normal"
-              variant="outlined"
-              error={Boolean(errors["Title"])}
-              helperText={errors["Title"]}
-            />
-            <TextField
-              label="Description *"
-              className={classes.textField}
-              value={description}
-              onChange={handleDescriptionChange}
-              margin="normal"
-              variant="outlined"
-              multiline
-              rows="4"
-              error={Boolean(errors["Description"])}
-              helperText={errors["Description"]}
-            />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Box>
-                <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label="Start Date *"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date"
-                  }}
-                  className={classes.margin}
-                  disablePast
-                  error={Boolean(errors["StartDate"])}
-                  helperText={errors["StartDate"]}
-                />
-                <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label="End Date *"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  KeyboardButtonProps={{
-                    "aria-label": "change date"
-                  }}
-                  className={classes.margin}
-                  disablePast
-                  error={Boolean(errors["EndDate"])}
-                  helperText={errors["EndDate"]}
-                />
-              </Box>
-            </MuiPickersUtilsProvider>
+          </Box>
+          <Box className={classes.submit}>
             <Button
               color="primary"
               variant="contained"
-              className={classes.submit}
-              onClick={handleSubmit}
+              className={classes.margin}
+              component={Link}
+              to={`/event/intake/${eventId}`}
             >
-              Submit
+              Go to event
             </Button>
-          </>
-        )}
-      </Box>
-    </div>
+            <Button
+              color="default"
+              variant="contained"
+              className={classes.margin}
+              onClick={resetForm}
+            >
+              Create another
+            </Button>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Typography variant="h4" gutterBottom>
+            Create an Event
+          </Typography>
+          <Typography color="textSecondary">
+            Fill out the form below to create an event.
+          </Typography>
+          <TextField
+            autoFocus
+            label="Title *"
+            className={classes.textField}
+            value={title}
+            onChange={handleTitleChange}
+            margin="normal"
+            variant="outlined"
+            error={Boolean(errors["Title"])}
+            helperText={errors["Title"]}
+          />
+          <TextField
+            label="Description *"
+            className={classes.textField}
+            value={description}
+            onChange={handleDescriptionChange}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows="4"
+            error={Boolean(errors["Description"])}
+            helperText={errors["Description"]}
+          />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Box>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="Start Date *"
+                value={startDate}
+                onChange={handleStartDateChange}
+                KeyboardButtonProps={{
+                  "aria-label": "change date"
+                }}
+                className={classes.margin}
+                disablePast
+                error={Boolean(errors["StartDate"])}
+                helperText={errors["StartDate"]}
+              />
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="MM/dd/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="End Date *"
+                value={endDate}
+                onChange={handleEndDateChange}
+                KeyboardButtonProps={{
+                  "aria-label": "change date"
+                }}
+                className={classes.margin}
+                disablePast
+                error={Boolean(errors["EndDate"])}
+                helperText={errors["EndDate"]}
+              />
+            </Box>
+          </MuiPickersUtilsProvider>
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.submit}
+            onClick={handleSubmit}
+            disabled={submitting}
+          >
+            Submit
+          </Button>
+        </>
+      )}
+    </Box>
   );
 }
