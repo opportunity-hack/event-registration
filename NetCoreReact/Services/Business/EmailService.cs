@@ -34,7 +34,7 @@ namespace NetCoreReact.Services.Business
 
 				var dynamicTemplateData = new EmailTemplateData
 				{
-					Event_Name = "Fucking 'Ell",
+					Event_Name = "Test Event",
 					Confirm_Url = "https://www.youtube.com/watch?v=oHg5SJYRHA0"
 				};
 
