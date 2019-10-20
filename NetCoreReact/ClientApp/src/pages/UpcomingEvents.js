@@ -25,7 +25,7 @@ export default function UpcomingEvents() {
       <Typography variant="h4" gutterBottom>
         Upcoming Events
       </Typography>
-      <EventTable events={events} />
+      <EventTable events={events} setEvents={setEvents} />
     </div>
   );
 }

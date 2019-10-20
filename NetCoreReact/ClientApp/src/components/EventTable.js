@@ -22,6 +22,8 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { is } from "@babel/types";
 import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import useRequest from "../hooks/useRequest";
+import config from "../config.json";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -155,7 +157,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, handleDelete } = props;
 
   return (
     <Toolbar
@@ -175,7 +177,7 @@ const EnhancedTableToolbar = props => {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -225,7 +227,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function EventTable({ events }) {
+export default function EventTable({ events, setEvents }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -233,6 +235,7 @@ export default function EventTable({ events }) {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const { post } = useRequest();
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === "desc";
@@ -242,20 +245,18 @@ export default function EventTable({ events }) {
 
   const handleSelectAllClick = event => {
     if (event.target.checked) {
-      const newSelecteds = events.map(n => n.title);
+      const newSelecteds = events.map(n => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, title) => {
-    const selectedIndex = selected.indexOf(title);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
-    console.log(selectedIndex);
-    console.log(title);
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, title);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -288,10 +289,24 @@ export default function EventTable({ events }) {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, events.length - page * rowsPerPage);
 
+  const handleDelete = async () => {
+    let response = await post(config.DELETE_EVENT_POST_URL, {
+      Data: selected
+    });
+    if (response.success) {
+      setEvents([...events].filter(e => !selected.includes(e.id)));
+      setSelected([]);
+    } else {
+    }
+  };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          handleDelete={handleDelete}
+        />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -312,17 +327,17 @@ export default function EventTable({ events }) {
               {stableSort(events, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((event, index) => {
-                  const isItemSelected = isSelected(event.title);
+                  const isItemSelected = isSelected(event.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={e => handleClick(e, event.title)}
+                      onClick={e => handleClick(e, event.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={event.title}
+                      key={event.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

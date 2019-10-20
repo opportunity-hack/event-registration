@@ -25,7 +25,7 @@ export default function PastEvents() {
       <Typography variant="h4" gutterBottom>
         Past Events
       </Typography>
-      <EventTable events={events} />
+      <EventTable events={events} setEvents={setEvents} />
     </div>
   );
 }

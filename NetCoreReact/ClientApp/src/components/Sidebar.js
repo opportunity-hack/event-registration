@@ -172,13 +172,23 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
           </ListItemIcon>
           <ListItemText primary={"Reports"} />
         </ListItem>
-        <ListItem button component={Link} to="/">
+        <ListItem
+          button
+          component={Link}
+          to="/settings"
+          selected={location.pathname === "/settings"}
+        >
           <ListItemIcon className={classes.icon}>
             <SettingsIcon />
           </ListItemIcon>
           <ListItemText primary={"Settings"} />
         </ListItem>
-        <ListItem button component={Link} to="/">
+        <ListItem
+          button
+          component={Link}
+          to="/help"
+          selected={location.pathname === "/help"}
+        >
           <ListItemIcon className={classes.icon}>
             <HelpIcon />
           </ListItemIcon>

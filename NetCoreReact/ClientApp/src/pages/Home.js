@@ -39,7 +39,6 @@ export default function Home() {
           allDay: "false",
           event: event.description
         }));
-        console.log("newData: ", newData);
         setData(newData);
         const calevents = newData;
       } else {

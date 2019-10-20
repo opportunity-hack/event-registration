@@ -67,6 +67,12 @@ const headCells = [
     numeric: false,
     disablePadding: true,
     label: "Body"
+  },
+  {
+    id: "score",
+    numeric: false,
+    disablePadding: true,
+    label: "Score"
   }
 ];
 
@@ -309,6 +315,9 @@ export default function FeedbackTable({ feedbacks, title }) {
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row">
                             {feedback.body}
+                          </TableCell>
+                          <TableCell component="th" id={labelId} scope="row">
+                            {feedback.score}
                           </TableCell>
                         </TableRow>
                       );

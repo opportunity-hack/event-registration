@@ -175,12 +175,8 @@ export default function ViewEvent() {
           }
         }
       )
-        .then(function() {
-          console.log("SUCCESS!!");
-        })
-        .catch(function() {
-          console.log("FAILURE!!");
-        });
+        .then(function() {})
+        .catch(function() {});
     }
   };
 
@@ -275,7 +271,14 @@ export default function ViewEvent() {
                     <Doughnut data={data} />
                   </Grid>
                   <Grid item xs={6}>
-                    <Bar data={data2} />
+                    <Bar
+                      data={data2}
+                      width={100}
+                      height={50}
+                      options={{
+                        maintainAspectRatio: false
+                      }}
+                    />
                   </Grid>
                 </Grid>
                 <FeedbackTable
