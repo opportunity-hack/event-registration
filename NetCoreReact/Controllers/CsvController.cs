@@ -125,5 +125,24 @@ namespace NetCoreReact.Controllers
 				return BadRequest(ex);
 			}
 		}
+
+		[HttpGet("[action]")]
+		public async Task<IActionResult> DownloadAll(string token)
+		{
+			try
+			{
+				var authenticate = _authenticationService.AuthenticateDownloadToken(token);
+				var response = await _eventService.GetAllEvents();
+				var emails = response?.Data?.FirstOrDefault()?.Participants?.Select(x => x.Email)?.ToList() ?? new List<string>();
+				var result = Helpers.CsvHelper.WriteCsvToMemory(emails);
+				var memoryStream = new MemoryStream(result);
+				return new FileStreamResult(memoryStream, "text/csv") { FileDownloadName = $"{response.Data.FirstOrDefault().Title}-Email-Data.csv" };
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return BadRequest(ex);
+			}
+		}
 	}
 }

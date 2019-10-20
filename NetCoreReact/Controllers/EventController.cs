@@ -75,11 +75,18 @@ namespace NetCoreReact.Controllers
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> DeleteEvent([FromBody] DataInput<string> deleteEvent)
+		public async Task<DataResponse<Event>> DeleteEvent([FromBody] DataInput<List<string>> deleteEvents)
 		{
 			try
 			{
-				return await _eventService.DeleteEvent(deleteEvent.Data);
+				foreach (var eventID in deleteEvents.Data)
+				{
+					await _eventService.DeleteEvent(eventID);
+				}
+				return new DataResponse<Event>()
+				{
+					Success = true
+				};
 			}
 			catch (Exception ex)
 			{
