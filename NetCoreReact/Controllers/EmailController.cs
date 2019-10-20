@@ -30,7 +30,7 @@ namespace NetCoreReact.Controllers
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> AddEmail([FromBody] DataParticipant newParticipant)
+		public async Task<DataResponse<Event>> AddEmail([FromBody] DataInput<Participant> newParticipant)
 		{
 			try
 			{

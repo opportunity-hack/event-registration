@@ -29,7 +29,7 @@ namespace NetCoreReact.Services.Business
 			this._feedbackTemplateID = feedbackTemplateID;
 		}
 
-		public async Task<DataResponse<Event>> SendConfirmationEmail(DataParticipant participant, Event currentEvent)
+		public async Task<DataResponse<Event>> SendConfirmationEmail(DataInput<Participant> participant, Event currentEvent)
 		{
 			try
 			{

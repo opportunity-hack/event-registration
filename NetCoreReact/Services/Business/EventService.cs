@@ -87,16 +87,16 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
-		public async Task<DataResponse<Event>> AddParticipant(DataParticipant newParticipant)
+		public async Task<DataResponse<Event>> AddParticipant(DataInput<Participant> newParticipant)
 		{
 			try
 			{
 				var response = await _eventDAO.Get(newParticipant.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Participant.Email)))
+				if (!currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
 				{
-					currentEvent.Participants.Add(newParticipant.Participant);
+					currentEvent.Participants.Add(newParticipant.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
 					return result;
 				}

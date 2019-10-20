@@ -12,6 +12,8 @@ namespace NetCoreReact.Models.Documents
 		[Required]
 		[BsonRequired]
 		public ParticipantType Type { get; set; }
+		[Required]
+		[BsonRequired]
 		public string DateEntered { get; set; }
 		public bool IsConfirmed { get; set; } = false;
 	}

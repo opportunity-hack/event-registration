@@ -208,18 +208,21 @@ namespace NetCoreReact.Controllers
 		}
 
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] Event newEvent)
+		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] DataInput<Feedback> newParticipant)
 		{
 			try
 			{
-				return await _eventService.GetPastEvents();
+				//var response = await _eventService.AddParticipant(newParticipant);
+				//var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
+				//var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
+				//return email;
+				return null;
 			}
 			catch (Exception ex)
 			{
 				LoggerHelper.Log(ex);
 				return new DataResponse<Event>()
 				{
-					Data = new List<Event>(),
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "An exception occurred, please try again." },
