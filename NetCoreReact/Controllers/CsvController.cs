@@ -61,7 +61,13 @@ namespace NetCoreReact.Controllers
 							using (var reader = new StreamReader(stream))
 							using (var csv = new CsvReader(reader))
 							{
-								emails.AddRange(csv.GetRecords<string>());
+								while (csv.Read())
+								{
+									for (int x = 0; csv.TryGetField(x, out string value); x++)
+									{
+										emails.Add(value);
+									}
+								}
 							}
 						}
 					}
