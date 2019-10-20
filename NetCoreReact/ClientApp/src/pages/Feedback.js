@@ -19,7 +19,7 @@ export default function Feedback({ token }) {
   const classes = useStyles();
   const { post } = useRequest();
   const [body, setBody] = useState("");
-  const [success, setSuccess] = useState(true);
+  const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState([]);
 
   const handleBodyChange = e => {

@@ -140,7 +140,14 @@ export default function NavigationBar({ handleDrawerOpen, open }) {
               inputProps={{ "aria-label": "search" }}
             />
           </div>
-          <Button color="inherit" className={classes.button} variant="outlined">
+          <Button
+            color="inherit"
+            className={classes.button}
+            variant="outlined"
+            component="a"
+            target="_blank"
+            href="https://www.zuriscircle.org/"
+          >
             About
           </Button>
           <div className={classes.grow} />
@@ -171,7 +178,6 @@ export default function NavigationBar({ handleDrawerOpen, open }) {
                 }}
               >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Settings</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>

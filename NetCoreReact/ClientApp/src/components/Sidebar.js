@@ -172,7 +172,7 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
           </ListItemIcon>
           <ListItemText primary={"Reports"} />
         </ListItem>
-        <ListItem
+        {/*<ListItem
           button
           component={Link}
           to="/settings"
@@ -182,7 +182,7 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
             <SettingsIcon />
           </ListItemIcon>
           <ListItemText primary={"Settings"} />
-        </ListItem>
+        </ListItem>*/}
         <ListItem
           button
           component={Link}

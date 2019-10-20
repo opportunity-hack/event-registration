@@ -95,10 +95,13 @@ export default function EventIntake() {
   return (
     <>
       <Typography variant="h4" gutterBottom>
-        {event.title}
+        {event.title} Sign up
       </Typography>
       <Typography gutterBottom>{event.description}</Typography>
       <Box display="flex" flexDirection="column" className={classes.form}>
+        {Boolean(errors["*"]) && (
+          <Typography color="error">{errors["*"]}</Typography>
+        )}
         <FormLabel component="legend">Enter your email address</FormLabel>
         <TextField
           autoFocus

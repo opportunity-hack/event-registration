@@ -40,10 +40,12 @@ export default function Reports() {
             if (f.score > 0) totalPositive++;
             else totalNegative++;
           });
-          scores.push(total / e.feedback.length);
-          labels.push(e.title);
-          positives.push(totalPositive);
-          negatives.push(totalNegative);
+          if (total > 0) {
+            scores.push(total / e.feedback.length);
+            labels.push(e.title);
+            positives.push(totalPositive);
+            negatives.push(totalNegative);
+          }
         });
 
         let newData = {
