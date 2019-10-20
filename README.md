@@ -2,11 +2,11 @@
 ## Inspiration
 Zuri's Circle seeks to provide temporary relief during unforeseen circumstances to families, elderly and the homeless. 
 Some of the services that Zuri's Circle provides includes:
-- _ Food _
-- _ Clothing _
-- _ Furniture _
-- _ Programs _
-- _ Resources _
+- Food
+- Clothing
+- Furniture
+- Programs
+- Resources
 
 A challenge that Zuri's Circle faced was gathering and managing emails at volunteer or regular events - their process involved participants writing down their contact information by hand. This introduced problems with deciphering the contact info and proved to be ineffective. As a result, they were looking for a way to easily track and manage participant involvement in order to keep in contact with and retain their donors, recipients, and volunteers.
 
