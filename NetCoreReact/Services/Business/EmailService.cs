@@ -8,7 +8,6 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -38,16 +37,16 @@ namespace NetCoreReact.Services.Business
 				var client = new SendGridClient(_sendGridApiKey);
 				var emailMessage = new SendGridMessage();
 
-				emailMessage.SetFrom("trevomoo@gmail.com");// TO DO: emailMessage.SetFrom(_fromEmail);
-				emailMessage.AddTo("jordanr3@live.com");// TO DO: emailMessage.AddTo(participant.Participant.Email);
+				emailMessage.SetFrom(_fromEmail);
+				emailMessage.AddTo(participant.Data.Email);
 				emailMessage.SetTemplateId(_confirmationTemplateID);
 
-				var jwt = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);// TO DO: var jwt = TokenHelper.GenerateToken(participant.Participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				var jwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
-					Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
-					// TO DO: Confirm_Url = $"LIVEURL/confirm?token={jwt}"
+					Confirm_Url = $"https://zuris-dashboard.azurewebsites.net/confirm?token={jwt}"
+					// Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
 				};
 
 				emailMessage.SetTemplateData(dynamicTemplateData);
@@ -79,8 +78,6 @@ namespace NetCoreReact.Services.Business
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
 
-				// TO DO:
-				/**
 				foreach(var participant in currentEvent.Participants)
 				{
 					emailList.Add(new EmailAddress(participant.Email));
@@ -90,27 +87,15 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
-							// TO DO: Confirm_Url = $"LIVEURL/feedback?token={jwt}"
+							Feedback_Url = $"https://zuris-dashboard.azurewebsites.net/feedback?token={jwt}"
+							// Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
 						}
 					);
 				}
-				**/
-
-				emailList.Add(new EmailAddress("jordanr3@live.com"));
-				var jwt = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-				dynamicTemplateDataList.Add
-				(
-					new EmailTemplateData
-					{
-						Event_Name = currentEvent.Title,
-						Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
-					}
-				);
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
 				(
-					new EmailAddress("trevomoo@gmail.com"),// TO DO: new EmailAddress(_fromEmail),
+					new EmailAddress(_fromEmail),
 					emailList,
 					_feedbackTemplateID,
 					dynamicTemplateDataList
@@ -144,21 +129,15 @@ namespace NetCoreReact.Services.Business
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
 
-				// TO DO:
-				/**
 				foreach(var participant in currentEvent.Participants)
 				{
 					emailList.Add(new EmailAddress(participant.Email));
 					dynamicTemplateDataList.Add(email.Data);
 				}
-				**/
-
-				emailList.Add(new EmailAddress("jordanr3@live.com"));
-				dynamicTemplateDataList.Add(email.Data);
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
 				(
-					new EmailAddress("trevomoo@gmail.com"),// TO DO: new EmailAddress(_fromEmail),
+					new EmailAddress(_fromEmail),
 					emailList,
 					_genericTemplateID,
 					dynamicTemplateDataList
