@@ -102,27 +102,7 @@ namespace NetCoreReact.Services.Business
 				}
 				**/
 
-				emailList.Add(new EmailAddress("trevomoo@gmail.com"));
-				emailList.Add(new EmailAddress("carterlrice@gmail.com"));
 				emailList.Add(new EmailAddress("jordanr3@live.com"));
-				var jwt1 = TokenHelper.GenerateToken("trevomoo@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-				dynamicTemplateDataList.Add
-					(
-						new EmailTemplateData
-						{
-							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://localhost:44384/feedback?token={jwt1}"
-						}
-					);
-				var jwt2 = TokenHelper.GenerateToken("carterlrice@gmail.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-				dynamicTemplateDataList.Add
-					(
-						new EmailTemplateData
-						{
-							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://localhost:44384/feedback?token={jwt2}"
-						}
-					);
 				var jwt3 = TokenHelper.GenerateToken("jordanr3@live.com", AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
 				dynamicTemplateDataList.Add
 					(
