@@ -45,7 +45,7 @@ namespace NetCoreReact.Services.Business
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
-					Confirm_Url = $"https://zuris-dashboard.azurewebsites.net/confirm?token={jwt}"
+					Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={jwt}"
 					// Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
 				};
 
@@ -87,7 +87,7 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://zuris-dashboard.azurewebsites.net/feedback?token={jwt}"
+							Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={jwt}"
 							// Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
 						}
 					);
