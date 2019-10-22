@@ -39,7 +39,7 @@ export default function Confirm({ token }) {
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent align="center">
           <Typography gutterBottom>
-            {confirming ? "Loading" : "Successfully confirmed email"}
+            {confirming ? "Loading" : "Your email has been confirmed! Keep an eye out for future emails to stay up to date with our events :)"}
           </Typography>
         </DialogContent>
       </Dialog>

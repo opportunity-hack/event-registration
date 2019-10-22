@@ -135,7 +135,7 @@ export default function NavigationBar({ handleDrawerOpen, open }) {
             target="_blank"
             href="https://www.zuriscircle.org/"
           >
-            About
+            Zuri's Circle
           </Button>
           <div className={classes.grow} />
           {authState.isAuthenticated ? (

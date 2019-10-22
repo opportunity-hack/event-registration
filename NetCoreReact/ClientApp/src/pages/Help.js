@@ -22,19 +22,21 @@ export default function Help() {
         Help Center
       </Typography>
 
-      <Typography variant="h6">How to create an event</Typography>
+	  <Typography variant="h6">
+		How to create an event:
+	  </Typography>
       <Typography color="textSecondary" gutterBottom>
-        Navigate to the event page and fill out the form.
+        Navigate to Events > Create and fill out the form to create a new event.
       </Typography>
       <img src={Help0} className={classes.image} />
 
       <Typography variant="h6" className={classes.section}>
-        How to collect emails
+        How to collect emails for an event:
       </Typography>
       <Typography color="textSecondary" gutterBottom>
-        Find the event in the 'upcoming events' page and click on the intake
-        button. This will take you to an intake form where people can start
-        signing up to the event.
+        Find the event in Events > Upcoming Events and click on the "Add Emails"
+		button. This will take you to an input form where people can start
+		signing up for the event.
       </Typography>
       <img src={Help1} className={classes.image} />
       <img src={Help2} className={classes.image} />

@@ -111,7 +111,7 @@ export default function CreateEvent() {
               variant="contained"
               className={classes.margin}
               component={Link}
-              to={`/event/intake/${eventId}`}
+			  to={`/event/add-email/${eventId}`}
             >
               Go to event
             </Button>
@@ -171,7 +171,6 @@ export default function CreateEvent() {
                   "aria-label": "change date"
                 }}
                 className={classes.margin}
-                disablePast
                 error={Boolean(errors["Data.StartDate"])}
                 helperText={errors["Data.StartDate"]}
               />
@@ -188,7 +187,6 @@ export default function CreateEvent() {
                   "aria-label": "change date"
                 }}
                 className={classes.margin}
-                disablePast
                 error={Boolean(errors["Data.EndDate"])}
                 helperText={errors["Data.EndDate"]}
               />

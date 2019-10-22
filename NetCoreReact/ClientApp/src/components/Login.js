@@ -26,13 +26,15 @@ export default function Login({ open, close }) {
   const classes = useStyles();
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const { post } = useRequest();
 
   useEffect(() => {
     if (open) {
-      setSuccess(false);
+	  setSuccess(false);
+	  setFailure(false);
       setErrors([]);
     }
   }, [open]);
@@ -49,7 +51,8 @@ export default function Login({ open, close }) {
       if (response.success) {
         login(response.data[0]);
         setSuccess(true);
-      } else {
+	  } else {
+		setFailure(true);
         setErrors(response.errors);
       }
       setSubmitting(false);
@@ -66,26 +69,21 @@ export default function Login({ open, close }) {
       >
         {!success && (
           <>
-            <DialogTitle>Sign in</DialogTitle>
+			<DialogTitle>{failure ? "Oops :(" : "Welcome to Zuri's Dashboard!"}</DialogTitle>
             <DialogContent align="center">
               <Typography gutterBottom>
-                Only Google sign in is currently supported.
+				{failure ? "Looks like that account isn't allowed access to Zuri's Dashboard. Please try again:" : "Please sign in with your Google account:"}
               </Typography>
               <GoogleLogin
                 clientId={config.GOOGLE_CLIENT_ID}
-                buttonText="Login with Google"
+                buttonText="Google Login"
                 onSuccess={responseGoogle}
                 onFailure={responseGoogle}
-                theme="dark"
               />
             </DialogContent>
-            <DialogActions>
-              <Button onClick={close} variant="contained">
-                Close
-              </Button>
-            </DialogActions>
+            <br/>
           </>
-        )}
+		)}
         {success && (
           <>
             <DialogTitle align="center">Successfully Signed in</DialogTitle>

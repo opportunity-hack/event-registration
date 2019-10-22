@@ -50,7 +50,10 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5)
+	marginRight: theme.spacing(0.5)
+  },
+  label: {
+	backgroundColor: "white"
   }
 }));
 
@@ -111,8 +114,7 @@ export default function ViewEvent() {
     let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
       Data: {
         Title_Header: subject,
-        Body_Copy: body,
-        Signature: "Zuri's Circle"
+        Body_Copy: body
       },
       EventId: id
     });
@@ -123,15 +125,16 @@ export default function ViewEvent() {
     }
   };
   const data = {
-    labels: ["Negative", "Positive"],
+    labels: ["Negative", "Neutral", "Positive"],
     datasets: [
       {
         data: [
-          event.feedback.filter(e => e.score < 0).length,
-          event.feedback.filter(e => e.score > 0).length
+		  event.feedback.filter(e => e.score <= -0.05).length,
+		  event.feedback.filter(e => e.score > -0.05 && e.score < 0.05).length,
+          event.feedback.filter(e => e.score >= 0.05).length
         ],
-        backgroundColor: ["#FF6384", "#36A2EB"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB"]
+		backgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"],
+		hoverBackgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"]
       }
     ]
   };
@@ -156,8 +159,8 @@ export default function ViewEvent() {
           event.participants.filter(e => e.isConfirmed === true).length,
           event.sentFeedback ? event.participants.length : 0,
           event.feedback.length
-        ]
-      }
+		]
+	  }
     ]
   };
 
@@ -208,7 +211,7 @@ export default function ViewEvent() {
               ")"
             }
           />
-          <Tab label={"Email"} />
+          <Tab label={"Send Email"} />
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -303,33 +306,44 @@ export default function ViewEvent() {
             )}
           </Box>
         </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          <Box display="flex" flexDirection="column" className={classes.form}>
-            <Typography variant="h6">Send Mass Email</Typography>
+		<TabPanel value={value} index={2} dir={theme.direction}>
+		  <Box display="flex" flexDirection="column">
+            <Typography variant="h6">Send Email</Typography>
             <TextField
-              label="Subject"
               autoFocus
+              label="Subject *"
               className={classes.textField}
+              value={subject}
+			  onChange={handleSubjectChange}
+			  InputLabelProps={{
+			  classes: {
+			      root: classes.label
+				}
+			  }}
+			  margin="normal"
+			  variant="outlined"
               error={Boolean(errors["Data.Subject"])}
               helperText={errors["Data.Subject"]}
-              margin="normal"
-              variant="outlined"
-              value={subject}
-              onChange={handleSubjectChange}
-            />
+			/>
             <TextField
               id="outlined-multiline-static"
-              label="Body"
-              multiline
-              rows="4"
+              label="Body *"
               className={classes.textField}
-              error={Boolean(errors["Data.Body"])}
-              helperText={errors["Data.Body"]}
+              value={body}
+			  onChange={handleBodyChange}
+			  InputLabelProps={{
+			  classes: {
+				  root: classes.label
+			    }
+			  }}
               margin="normal"
               variant="outlined"
-              value={body}
-              onChange={handleBodyChange}
-            />
+              multiline
+              rows="10"
+              error={Boolean(errors["Data.Body"])}
+              helperText={errors["Data.Body"]}
+			/>
+			<br/>
             <Button
               color="primary"
               variant="contained"
@@ -337,7 +351,7 @@ export default function ViewEvent() {
             >
               Send Email
             </Button>
-          </Box>
+		  </Box>
         </TabPanel>
       </SwipeableViews>
     </div>

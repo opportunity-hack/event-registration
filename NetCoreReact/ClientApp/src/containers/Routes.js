@@ -21,7 +21,7 @@ export default function Routes() {
       <Route path="/logout" component={Logout} />
 
       <Route path="/event/create" component={CreateEvent} />
-      <Route path="/event/intake/:id" component={EventIntake} />
+	  <Route path="/event/add-email/:id" component={EventIntake} />
       <Route path="/event/upcoming" component={UpcomingEvents} />
       <Route path="/event/past" component={PastEvents} />
       <Route path="/event/:id" component={ViewEvent} />

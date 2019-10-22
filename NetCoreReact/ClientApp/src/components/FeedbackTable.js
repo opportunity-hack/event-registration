@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
+import Emoji from 'react-emoji-render';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -72,7 +73,7 @@ const headCells = [
     id: "score",
     numeric: false,
     disablePadding: true,
-    label: "Score"
+    label: "Analysis"
   }
 ];
 
@@ -296,7 +297,15 @@ export default function FeedbackTable({ feedbacks, title }) {
                   {stableSort(feedbacks, getSorting(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((feedback, index) => {
-                      const labelId = `enhanced-table-checkbox-${index}`;
+						const labelId = `enhanced-table-checkbox-${index}`;
+						const feedbackScore = feedback.score;
+						let emoji = <Emoji text=":neutral_face:" />
+						if (feedbackScore >= 0.05) {
+							emoji = <Emoji text=":smiley:" />
+						}
+						else if (feedbackScore <= -0.05) {
+							emoji = <Emoji text=":white_frowning_face:" />
+						}
 
                       return (
                         <TableRow
@@ -317,7 +326,7 @@ export default function FeedbackTable({ feedbacks, title }) {
                             {feedback.body}
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row">
-                            {feedback.score}
+							{emoji}
                           </TableCell>
                         </TableRow>
                       );

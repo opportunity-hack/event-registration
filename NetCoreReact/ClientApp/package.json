@@ -33,6 +33,7 @@
     "react-big-calendar": "^0.22.1",
     "react-chartjs-2": "^2.8.0",
     "react-dom": "^16.10.2",
+    "react-emoji-render": "^1.0.0",
     "react-event-calendar": "^0.3.0",
     "react-file-picker": "0.0.6",
     "react-google-login": "^5.0.5",

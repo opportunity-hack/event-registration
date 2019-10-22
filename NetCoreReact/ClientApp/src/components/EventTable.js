@@ -366,19 +366,19 @@ export default function EventTable({ events, setEvents }) {
                       <TableCell align="center">
                         <Button
                           component={Link}
+                          to={`/event/add-email/${event.id}`}
+                          variant="outlined"
+                          className={classes.button}
+                        >
+                          Add Emails
+                        </Button>
+                        <Button
+                          component={Link}
                           to={`/event/${event.id}`}
                           variant="outlined"
                           className={classes.button}
                         >
-                          View
-                        </Button>
-                        <Button
-                          component={Link}
-                          to={`/event/intake/${event.id}`}
-                          variant="outlined"
-                          className={classes.button}
-                        >
-                          Intake
+                          View Event
                         </Button>
                       </TableCell>
                     </TableRow>
