@@ -77,7 +77,6 @@ export default function Feedback({ token }) {
             autoFocus
             multiline
             rows="4"
-            defaultValue="Default Value"
             className={classes.textField}
             error={Boolean(errors["Data.Body"])}
             helperText={errors["Data.Body"]}
