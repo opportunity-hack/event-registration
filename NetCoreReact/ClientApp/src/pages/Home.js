@@ -61,10 +61,10 @@ export default function Home() {
       className={classes.root}
     >
       <Typography variant="h4" gutterBottom>
-        Zuri's Circle
+        Zuri's Dashboard
       </Typography>
       <Typography gutterBottom color="textSecondary">
-        Opportunity Hack 2019
+        An event management tool built for Zuri's Circle at Opportunity Hack 2019
       </Typography>
 
       {authState.isAuthenticated && (

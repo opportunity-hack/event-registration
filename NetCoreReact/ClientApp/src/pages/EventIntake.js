@@ -23,7 +23,7 @@ import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles(theme => ({
   form: {
-    maxWidth: 500,
+    width: 500,
     marginTop: theme.spacing(2)
   },
   submit: {
@@ -93,7 +93,12 @@ export default function EventIntake() {
   };
 
   return (
-    <>
+	  <Box
+		  display="flex"
+		  alignItems="center"
+		  justifyContent="center"
+		  flexDirection="column"
+	  >
       <Typography variant="h4" gutterBottom>
         {event.title} Sign up
       </Typography>
@@ -170,7 +175,7 @@ export default function EventIntake() {
             Close
           </Button>
         </DialogActions>
-      </Dialog>
-    </>
+	  </Dialog>
+	</Box>
   );
 }
