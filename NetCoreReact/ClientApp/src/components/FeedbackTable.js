@@ -300,10 +300,10 @@ export default function FeedbackTable({ feedbacks, title }) {
 						const labelId = `enhanced-table-checkbox-${index}`;
 						const feedbackScore = feedback.score;
 						let emoji = <Emoji text=":neutral_face:" />
-						if (feedbackScore >= 0.05) {
+						if (feedbackScore >= 0.5) {
 							emoji = <Emoji text=":smiley:" />
 						}
-						else if (feedbackScore <= -0.05) {
+						else if (feedbackScore <= -0.5) {
 							emoji = <Emoji text=":white_frowning_face:" />
 						}
 

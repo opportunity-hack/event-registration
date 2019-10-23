@@ -37,7 +37,7 @@ namespace NetCoreReact.Services.Business
 				var client = new SendGridClient(_sendGridApiKey);
 				var emailMessage = new SendGridMessage();
 
-				emailMessage.SetFrom(_fromEmail);
+				emailMessage.SetFrom(_fromEmail, "Zuri's Circle");
 				emailMessage.AddTo(participant.Data.Email);
 				emailMessage.SetTemplateId(_confirmationTemplateID);
 
@@ -95,7 +95,7 @@ namespace NetCoreReact.Services.Business
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
 				(
-					new EmailAddress(_fromEmail),
+					new EmailAddress(_fromEmail, "Zuri's Circle"),
 					emailList,
 					_feedbackTemplateID,
 					dynamicTemplateDataList
@@ -137,7 +137,7 @@ namespace NetCoreReact.Services.Business
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
 				(
-					new EmailAddress(_fromEmail),
+					new EmailAddress(_fromEmail, "Zuri's Circle"),
 					emailList,
 					_genericTemplateID,
 					dynamicTemplateDataList

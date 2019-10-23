@@ -10,7 +10,17 @@ import Box from "@material-ui/core/Box";
 import { useParams } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
-import { Button, TextField, Grid } from "@material-ui/core";
+import {
+	Button,
+	TextField,
+	Grid,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions
+} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
+import CheckIcon from "@material-ui/icons/Check";
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
 import { Line, Doughnut, Bar } from "react-chartjs-2";
@@ -68,6 +78,11 @@ export default function ViewEvent() {
   const [body, setBody] = useState([]);
   const [subject, setSubject] = useState("");
   const { authState } = useAuth();
+  const [successOpen, setSuccessOpen] = useState(false);
+
+  const handleSuccessClose = () => {
+	  setSuccessOpen(false);
+  };
 
   const handleBodyChange = e => {
     setBody(e.target.value);
@@ -120,18 +135,21 @@ export default function ViewEvent() {
     });
 
     if (response.success) {
+	  setSuccessOpen(true);
       setSubject("");
-      setBody("");
-    }
+	  setBody("");
+	} else {
+	  setErrors(response.errors);
+	}
   };
   const data = {
     labels: ["Negative", "Neutral", "Positive"],
     datasets: [
       {
         data: [
-		  event.feedback.filter(e => e.score <= -0.05).length,
-		  event.feedback.filter(e => e.score > -0.05 && e.score < 0.05).length,
-          event.feedback.filter(e => e.score >= 0.05).length
+		  event.feedback.filter(e => e.score <= -0.5).length,
+		  event.feedback.filter(e => e.score > -0.5 && e.score < 0.5).length,
+          event.feedback.filter(e => e.score >= 0.5).length
         ],
 		backgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"],
 		hoverBackgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"]
@@ -149,11 +167,11 @@ export default function ViewEvent() {
     datasets: [
       {
         label: "Engagement",
-        backgroundColor: "rgba(255,99,132,0.2)",
-        borderColor: "rgba(255,99,132,1)",
+		backgroundColor: "rgba(121,7,242,0.3)",
+		borderColor: "rgba(121,7,242,1)",
         borderWidth: 1,
-        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-        hoverBorderColor: "rgba(255,99,132,1)",
+		hoverBackgroundColor: "rgba(121,7,242,0.5)",
+		hoverBorderColor: "rgba(121,7,242,1)",
         data: [
           event.participants.length,
           event.participants.filter(e => e.isConfirmed === true).length,
@@ -162,6 +180,19 @@ export default function ViewEvent() {
 		]
 	  }
     ]
+  };
+
+  const options = {
+	scales: {
+	  yAxes: [{
+		display: true,
+		ticks: {
+		  beginAtZero: true,
+		  steps: 10,
+		  max: (event.participants.length+10)-((event.participants.length+10)%10)
+		}
+	  }]
+	}
   };
 
   const handleFileChange = file => {
@@ -271,36 +302,20 @@ export default function ViewEvent() {
                 </Typography>
                 <Grid container>
                   <Grid item xs={6}>
-                    <Doughnut data={data} />
+					<Doughnut data={data} />
                   </Grid>
                   <Grid item xs={6}>
                     <Bar
                       data={data2}
                       width={100}
                       height={50}
-                      options={{
-                        maintainAspectRatio: false
-                      }}
+                      options={options}
                     />
                   </Grid>
                 </Grid>
                 <FeedbackTable
-                  feedbacks={event.feedback.filter(
-                    feedback => feedback.type === 0
-                  )}
-                  title="Volunteers"
-                />
-                <FeedbackTable
-                  feedbacks={event.feedback.filter(
-                    feedback => feedback.type === 1
-                  )}
-                  title="Attendees"
-                />
-                <FeedbackTable
-                  feedbacks={event.feedback.filter(
-                    feedback => feedback.type === 2
-                  )}
-                  title="Donors"
+                  feedbacks={event.feedback}
+                  title="Participants"
                 />
               </>
             )}
@@ -351,7 +366,26 @@ export default function ViewEvent() {
             >
               Send Email
             </Button>
-		  </Box>
+			</Box>
+			<Dialog
+				onClose={handleSuccessClose}
+				open={successOpen}
+				fullWidth
+				PaperProps={{ style: { maxWidth: 400 } }}
+			>
+				<DialogTitle align="center">
+					<Avatar style={{ backgroundColor: "#00cc00" }}>
+						<CheckIcon fontSize="large" />
+					</Avatar>
+					Email sent!
+				</DialogTitle>
+				<DialogContent align="center"></DialogContent>
+				<DialogActions>
+					<Button onClick={handleSuccessClose} variant="contained">
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
         </TabPanel>
       </SwipeableViews>
     </div>
