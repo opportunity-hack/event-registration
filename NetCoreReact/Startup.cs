@@ -91,16 +91,16 @@ namespace NetCoreReact
 			if (CurrentEnvironment.IsDevelopment())
 			{
 				services.AddSingleton<IDAO<Event, DataResponse<Event>>>(service => new EventDAO(
-					Configuration["ConnectionStrings:HerokuMongoDBConnection"],
-					Configuration["ConnectionStrings:HerokuMongoDBDatabase"],
-					Configuration["ConnectionStrings:HerokuMongoDBCollection"]));
+					Configuration["ConnectionStrings:MongoDBAtlasClusterConnection"],
+					Configuration["ConnectionStrings:MongoDBAtlasDatabase"],
+					Configuration["ConnectionStrings:MongoDBAtlasCollection"]));
 			}
 			else
 			{
 				services.AddSingleton<IDAO<Event, DataResponse<Event>>>(service => new EventDAO(
-					Configuration["ConnectionStrings:HerokuMongoDBConnection"],
-					Configuration["ConnectionStrings:HerokuMongoDBDatabase"],
-					Configuration["ConnectionStrings:HerokuMongoDBCollection"]));
+					Configuration["ConnectionStrings:MongoDBAtlasClusterConnection"],
+					Configuration["ConnectionStrings:MongoDBAtlasDatabase"],
+					Configuration["ConnectionStrings:MongoDBAtlasCollection"]));
 			}
 
 			// Inject dependencies here:
