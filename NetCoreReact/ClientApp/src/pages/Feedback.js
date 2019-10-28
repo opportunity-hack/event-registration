@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import NavigationBar from "../components/NavigationBar";
 import { Box, Typography, Button, TextField, Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import useRequest from "../hooks/useRequest";

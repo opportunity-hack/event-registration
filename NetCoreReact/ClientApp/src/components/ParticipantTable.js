@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,19 +8,17 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import { is } from "@babel/types";
-import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
+import CheckIcon from "@material-ui/icons/Check";
+import {
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions
+} from "@material-ui/core";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -50,24 +47,30 @@ function getSorting(order, orderBy) {
 }
 
 const headCells = [
-  {
-    id: "email",
-    numeric: false,
-    disablePadding: true,
-    label: "Email"
-  },
-  {
-    id: "dateEntered",
-    numeric: false,
-    disablePadding: true,
-    label: "Date Entered"
-  },
-  {
-    id: "type",
-    numeric: false,
-    disablePadding: true,
-    label: "Type"
-  }
+	{
+		id: "email",
+		numeric: false,
+		disablePadding: true,
+		label: "Email"
+	},
+	{
+		id: "isConfirmed",
+		numeric: false,
+		disablePadding: true,
+		label: "Confirmed"
+	},
+	{
+		id: "dateEntered",
+		numeric: false,
+		disablePadding: true,
+		label: "Date Entered"
+	},
+	{
+		id: "type",
+		numeric: false,
+		disablePadding: true,
+		label: "Type"
+	}
 ];
 
 function EnhancedTableHead(props) {
@@ -106,7 +109,8 @@ function EnhancedTableHead(props) {
               ) : null}
             </TableSortLabel>
           </TableCell>
-        ))}
+		))}
+		<TableCell align={"center"}>Actions</TableCell>
       </TableRow>
     </TableHead>
   );
@@ -205,7 +209,12 @@ export default function ParticipantTable({ participants }) {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [successOpen, setSuccessOpen] = React.useState(false);
+
+  const handleSuccessClose = () => {
+	setSuccessOpen(false);
+  };
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === "desc";
@@ -255,6 +264,38 @@ export default function ParticipantTable({ participants }) {
     setDense(event.target.checked);
   };
 
+	const handleFeedbackEmail = async (email) => {
+		console.error(email);
+		//let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
+			//Data: {
+				//Title_Header: event.target.value
+			//},
+			//EventId: id
+		//});
+
+		//if (response.success) {
+			setSuccessOpen(true);
+		//} else {
+			//setErrors(response.errors);
+		//}
+	};
+
+	const handleConfirmEmail = async (email) => {
+		console.error(email);
+		//let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
+		//Data: {
+		//Title_Header: event.target.value
+		//},
+		//EventId: id
+		//});
+
+		//if (response.success) {
+		setSuccessOpen(true);
+		//} else {
+		//setErrors(response.errors);
+		//}
+	};
+
   const isSelected = title => selected.indexOf(title) !== -1;
 
   const emptyRows =
@@ -262,15 +303,24 @@ export default function ParticipantTable({ participants }) {
     Math.min(rowsPerPage, participants.length - page * rowsPerPage);
 
   function getType(type) {
-    switch (type) {
-      case 0:
-        return "Volunteer";
-      case 1:
-        return "Attendee";
-      case 2:
-        return "Donor";
-    }
-  }
+		switch (type) {
+		  case 0:
+			return "Volunteer";
+		  case 1:
+			return "Attendee";
+		  case 2:
+			return "Donor";
+		}
+	}
+
+	function getConfirmed(isConfirmed) {
+		switch (isConfirmed) {
+			case false:
+				return "No";
+			case true:
+				return "Yes";
+		}
+	}
 
   return (
     <div className={classes.root}>
@@ -310,13 +360,35 @@ export default function ParticipantTable({ participants }) {
                     >
                       <TableCell component="th" id={labelId} scope="row">
                         {participant.email}
-                      </TableCell>
+					  </TableCell>
+					  <TableCell component="th" id={labelId} scope="row">
+						{getConfirmed(participant.isConfirmed)}
+					  </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
                         {new Date(participant.dateEntered).toLocaleDateString()}
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
                         {getType(participant.type)}
-                      </TableCell>
+					  </TableCell>
+					  <TableCell component="th" id={labelId} scope="row" align="center">
+							<Button
+								variant="outlined"
+								className={classes.button}
+								disabled={participant.confirmSent ? true : false}
+								onClick={() => handleFeedbackEmail(participant.email)}
+							>
+								Feedback
+							</Button>
+							<Button
+								variant="outlined"
+								className={classes.button}
+								value={participant.email}
+								disabled={participant.feedbackSent ? true : false}
+								onClick={() => handleConfirmEmail(participant.email)}
+							>
+								Confirm
+							</Button>
+					  </TableCell>
                     </TableRow>
                   );
                 })}
@@ -324,7 +396,26 @@ export default function ParticipantTable({ participants }) {
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
-              )}
+				)}
+				<Dialog
+					onClose={handleSuccessClose}
+					open={successOpen}
+					fullWidth
+					PaperProps={{ style: { maxWidth: 400 } }}
+				>
+					<DialogTitle align="center">
+						<Avatar style={{ backgroundColor: "#00cc00" }}>
+							<CheckIcon fontSize="large" />
+						</Avatar>
+						Email sent!
+					</DialogTitle>
+					<DialogContent align="center"></DialogContent>
+					<DialogActions>
+						<Button onClick={handleSuccessClose} variant="contained">
+							Close
+						</Button>
+					</DialogActions>
+				</Dialog>
             </TableBody>
           </Table>
         </div>

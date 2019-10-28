@@ -1,15 +1,12 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  TextField,
   DialogActions,
   Button,
-  DialogContentText,
-  Typography,
-  Box
+  Typography
 } from "@material-ui/core";
 import useAuth from "../hooks/useAuth";
 import Avatar from "@material-ui/core/Avatar";
@@ -24,10 +21,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login({ open, close }) {
   const classes = useStyles();
-  const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const { post } = useRequest();
 
@@ -35,27 +30,20 @@ export default function Login({ open, close }) {
     if (open) {
 	  setSuccess(false);
 	  setFailure(false);
-      setErrors([]);
     }
   }, [open]);
 
   const responseGoogle = async googleResponse => {
     if (googleResponse.tokenId) {
-      setSubmitting(true);
-      setErrors([]);
-
       let response = await post(config.GOOGLE_AUTH_CALLBACK_URL, {
         tokenId: googleResponse.tokenId
       });
-
       if (response.success) {
         login(response.data[0]);
         setSuccess(true);
 	  } else {
 		setFailure(true);
-        setErrors(response.errors);
       }
-      setSubmitting(false);
     }
   };
 

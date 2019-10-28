@@ -14,7 +14,6 @@ import Logo from "./Logo";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import DataIcon from "@material-ui/icons/DataUsage";
 import HelpIcon from "@material-ui/icons/Help";
-import SettingsIcon from "@material-ui/icons/Settings";
 import { Collapse } from "@material-ui/core";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
@@ -164,25 +163,14 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
         <ListItem
           button
           component={Link}
-          to="/reports"
-          selected={location.pathname === "/reports"}
+		  to="/view-emails"
+		  selected={location.pathname === "/view-emails"}
         >
           <ListItemIcon className={classes.icon}>
             <EqualizerIcon />
           </ListItemIcon>
-          <ListItemText primary={"Reports"} />
+          <ListItemText primary={"Emails"} />
         </ListItem>
-        {/*<ListItem
-          button
-          component={Link}
-          to="/settings"
-          selected={location.pathname === "/settings"}
-        >
-          <ListItemIcon className={classes.icon}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary={"Settings"} />
-        </ListItem>*/}
         <ListItem
           button
           component={Link}

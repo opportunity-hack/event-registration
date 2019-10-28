@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Chart from "react-apexcharts";
 import { Box, Button, makeStyles, Typography } from "@material-ui/core";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
@@ -12,9 +11,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function Reports() {
+export default function ViewEmails() {
   const classes = useStyles();
-  const [events, setEvents] = useState([]);
   const [data, setData] = useState([]);
   const { get } = useRequest();
   const { authState } = useAuth();
@@ -24,8 +22,6 @@ export default function Reports() {
     async function getEvents() {
       let response = await get(config.GET_ALL_EVENTS_GET_URL, {});
       if (response.success) {
-        setEvents(response.data);
-
         let scores = [];
         let labels = [];
         let positives = [];
@@ -111,7 +107,7 @@ export default function Reports() {
     <div>
       <Box>
         <Typography variant="h4" gutterBottom>
-          Reports
+          Emails
         </Typography>
         <Button
           variant="contained"

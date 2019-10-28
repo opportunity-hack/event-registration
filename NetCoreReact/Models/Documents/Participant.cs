@@ -15,6 +15,8 @@ namespace NetCoreReact.Models.Documents
 		[Required]
 		[BsonRequired]
 		public string DateEntered { get; set; }
+		public bool ConfirmSent { get; set; } = false;
+		public bool FeedbackSent { get; set; } = false;
 		public bool IsConfirmed { get; set; } = false;
 	}
 }

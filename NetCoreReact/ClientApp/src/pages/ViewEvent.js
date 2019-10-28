@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import SendIcon from '@material-ui/icons/Send';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Box from "@material-ui/core/Box";
 import { useParams } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
@@ -23,7 +26,7 @@ import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
-import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { Doughnut, Bar } from "react-chartjs-2";
 import { FilePicker } from "react-file-picker";
 import Axios from "axios";
 import useAuth from "../hooks/useAuth";
@@ -250,51 +253,47 @@ export default function ViewEvent() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <Box display="flex">
-            <FilePicker
-              extensions={["csv"]}
-              onChange={handleFileChange}
-              onError={errMsg => {}}
-            >
-              <Button
-                color="primary"
-                variant="contained"
-                className={classes.button}
-              >
-                Upload CSV
-              </Button>
-            </FilePicker>
-            <Button
-              color="primary"
-              variant="contained"
-              className={classes.button}
-              component="a"
-              href={
-                "/api/Csv/Download?eventID=" +
-                event.id +
-                "&token=" +
-                authState.token
-              }
-            >
-              Download CSV
-            </Button>
-          </Box>
+		<TabPanel value={value} index={0} dir={theme.direction}>
+			<Grid item xs={12}>
+				<ButtonGroup fullWidth aria-label="full width outlined button group">
+					<Button startIcon={<CloudUploadIcon />}>
+						<FilePicker
+							extensions={["csv"]}
+							onChange={handleFileChange}
+							onError={errMsg => { }}
+						>
+							<div>
+								Upload Emails
+							</div>
+						</FilePicker>
+					</Button>
+					<Button
+						startIcon={<CloudDownloadIcon />}
+						component="a"
+						href={
+							"/api/Csv/Download?eventID=" +
+							event.id +
+							"&token=" +
+							authState.token
+						}
+					>
+						Download Emails
+					</Button>
+					<Button
+						startIcon={<SendIcon />}
+						disabled={event.sentFeedback ? true : false}
+						onClick={handleFeedbackSubmit}
+					>
+						Send Feedback Email (All)
+					</Button>
+				</ButtonGroup>
+			</Grid>
           {event.participants && (
             <ParticipantTable participants={event.participants} />
           )}
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <Box>
-            {!event.sentFeedback && (
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={handleFeedbackSubmit}
-              >
-                Send Feedback Request Emails
-              </Button>
-            )}
             {event.feedback && (
               <>
                 <Typography variant="h6" gutterBottom>

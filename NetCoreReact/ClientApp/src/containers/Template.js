@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SampleComponent from "../components/SampleComponent";
 import NavigationBar from "../components/NavigationBar";
 import Routes from "./Routes";
 import Sidebar from "../components/Sidebar";

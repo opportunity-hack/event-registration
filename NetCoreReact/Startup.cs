@@ -91,9 +91,9 @@ namespace NetCoreReact
 			if (CurrentEnvironment.IsDevelopment())
 			{
 				services.AddSingleton<IDAO<Event, DataResponse<Event>>>(service => new EventDAO(
-					Configuration["ConnectionStrings:MongoDBAtlasClusterConnection"],
-					Configuration["ConnectionStrings:MongoDBAtlasDatabase"],
-					Configuration["ConnectionStrings:MongoDBAtlasCollection"]));
+					Configuration["ConnectionStrings:MongoDBHerokuConnection"],
+					Configuration["ConnectionStrings:MongoDBHerokuDatabase"],
+					Configuration["ConnectionStrings:MongoDBHerokuCollection"]));
 			}
 			else
 			{

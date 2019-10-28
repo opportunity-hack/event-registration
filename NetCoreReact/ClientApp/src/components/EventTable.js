@@ -19,7 +19,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { is } from "@babel/types";
 import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
