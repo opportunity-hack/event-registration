@@ -12,6 +12,8 @@ import SendIcon from '@material-ui/icons/Send';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Box from "@material-ui/core/Box";
 import { useParams, Link } from "react-router-dom";
+import { ReactMultiEmail, isEmail } from 'react-multi-email';
+import "react-multi-email/style.css";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import {
@@ -68,6 +70,11 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
 	backgroundColor: "white"
+  },
+  recipients: {
+	marginTop: 16,
+	marginBottom: 8,
+	borderColor: "rgba(0, 0, 0, 0.23) !important"
   }
 }));
 
@@ -80,6 +87,7 @@ export default function ViewEvent() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const [body, setBody] = useState([]);
+  const [recipients, setRecipients] = useState([]);
   const [subject, setSubject] = useState("");
   const { authState } = useAuth();
   const [successOpen, setSuccessOpen] = useState(false);
@@ -90,6 +98,10 @@ export default function ViewEvent() {
 
   const handleBodyChange = e => {
     setBody(e.target.value);
+  };
+
+  const handleRecipientsChange = e => {
+	setRecipients(e);
   };
 
   const handleSubjectChange = e => {
@@ -107,7 +119,8 @@ export default function ViewEvent() {
     async function getEvent() {
       let response = await get(config.GET_EVENT_GET_URL, { eventID: id });
       if (response.success) {
-        setEvent(response.data[0]);
+		  setEvent(response.data[0]);
+		  setRecipients(response.data[0].participants.map(p => p.email));
       } else {
         setErrors(response.errors);
       }
@@ -229,7 +242,7 @@ export default function ViewEvent() {
       <Typography variant="h4" gutterBottom>
         {event.title}
 	  </Typography>
-	  <Typography variant="h8" gutterBottom>
+	  <Typography variant="subtitle1" gutterBottom>
 		{event.description}
 	  </Typography>
 	  <br /><br />
@@ -340,7 +353,33 @@ export default function ViewEvent() {
         </TabPanel>
 		<TabPanel value={value} index={2} dir={theme.direction}>
 		  <Box display="flex" flexDirection="column">
-            <Typography variant="h6">Send Email</Typography>
+			<Typography variant="h6">Send Email</Typography>
+			  <ReactMultiEmail
+				className={classes.recipients}
+				placeholder={
+						<div style={{ color: 'rgba(0, 0, 0, 0.54)' }}>To *</div>
+				}
+				emails={recipients}
+				value={recipients}
+				onChange={handleRecipientsChange}
+				validateEmail={email => {
+					return isEmail(email);
+				}}
+				getLabel={(
+					email: string,
+					index: number,
+					removeEmail: (index: number) => void,
+				) => {
+					return (
+						<div data-tag key={index}>
+							{email}
+							<span data-tag-handle onClick={() => removeEmail(index)}>
+								x
+							</span>
+						</div>
+					);
+				}}
+			/>
             <TextField
               autoFocus
               label="Subject *"
