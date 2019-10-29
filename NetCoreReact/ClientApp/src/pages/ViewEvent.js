@@ -5,11 +5,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import BorderColorIcon from '@material-ui/icons/BorderColor';
-import SendIcon from '@material-ui/icons/Send';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
+import SendIcon from "@material-ui/icons/Send";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Box from "@material-ui/core/Box";
 import { useParams, Link } from "react-router-dom";
 import { ReactMultiEmail, isEmail } from 'react-multi-email';
@@ -17,13 +17,13 @@ import "react-multi-email/style.css";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import {
-	Button,
-	TextField,
-	Grid,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions
+  Button,
+  TextField,
+  Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     marginLeft: theme.spacing(0.5),
-	marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(0.5)
   },
   label: {
 	backgroundColor: "white"
@@ -93,7 +93,7 @@ export default function ViewEvent() {
   const [successOpen, setSuccessOpen] = useState(false);
 
   const handleSuccessClose = () => {
-	  setSuccessOpen(false);
+    setSuccessOpen(false);
   };
 
   const handleBodyChange = e => {
@@ -131,16 +131,16 @@ export default function ViewEvent() {
   }, []);
 
   const handleFeedbackSubmit = async () => {
-	  let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
-		  EventId: id,
-		  Data: ""
-	  });
+    let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
+      EventId: id,
+      Data: ""
+    });
 
     if (response.success) {
       let tempEvent = { ...event };
       tempEvent.sentFeedback = true;
-	  setEvent(tempEvent);
-	  setSuccessOpen(true);
+      setEvent(tempEvent);
+      setSuccessOpen(true);
     }
   };
 
@@ -154,24 +154,24 @@ export default function ViewEvent() {
     });
 
     if (response.success) {
-	  setSuccessOpen(true);
+      setSuccessOpen(true);
       setSubject("");
-	  setBody("");
-	} else {
-	  setErrors(response.errors);
-	}
+      setBody("");
+    } else {
+      setErrors(response.errors);
+    }
   };
   const data = {
     labels: ["Negative", "Neutral", "Positive"],
     datasets: [
       {
         data: [
-		  event.feedback.filter(e => e.score <= -0.5).length,
-		  event.feedback.filter(e => e.score > -0.5 && e.score < 0.5).length,
+          event.feedback.filter(e => e.score <= -0.5).length,
+          event.feedback.filter(e => e.score > -0.5 && e.score < 0.5).length,
           event.feedback.filter(e => e.score >= 0.5).length
         ],
-		backgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"],
-		hoverBackgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"]
+        backgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"],
+        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"]
       }
     ]
   };
@@ -186,32 +186,37 @@ export default function ViewEvent() {
     datasets: [
       {
         label: "Engagement",
-		backgroundColor: "rgba(121,7,242,0.3)",
-		borderColor: "rgba(121,7,242,1)",
+        backgroundColor: "rgba(121,7,242,0.3)",
+        borderColor: "rgba(121,7,242,1)",
         borderWidth: 1,
-		hoverBackgroundColor: "rgba(121,7,242,0.5)",
-		hoverBorderColor: "rgba(121,7,242,1)",
+        hoverBackgroundColor: "rgba(121,7,242,0.5)",
+        hoverBorderColor: "rgba(121,7,242,1)",
         data: [
           event.participants.length,
           event.participants.filter(e => e.isConfirmed === true).length,
           event.sentFeedback ? event.participants.length : 0,
           event.feedback.length
-		]
-	  }
+        ]
+      }
     ]
   };
 
   const options = {
-	scales: {
-	  yAxes: [{
-		display: true,
-		ticks: {
-		  beginAtZero: true,
-		  steps: 10,
-		  max: (event.participants.length+10)-((event.participants.length+10)%10)
-		}
-	  }]
-	}
+    scales: {
+      yAxes: [
+        {
+          display: true,
+          ticks: {
+            beginAtZero: true,
+            steps: 10,
+            max:
+              event.participants.length +
+              10 -
+              ((event.participants.length + 10) % 10)
+          }
+        }
+      ]
+    }
   };
 
   const handleFileChange = file => {
@@ -228,12 +233,10 @@ export default function ViewEvent() {
           }
         }
       )
-		.then(function () {
-			setSuccessOpen(true);
-		})
-		.catch(function () {
-
-		});
+        .then(function() {
+          setSuccessOpen(true);
+        })
+        .catch(function() {});
     }
   };
 
@@ -245,7 +248,8 @@ export default function ViewEvent() {
 	  <Typography variant="subtitle1" gutterBottom>
 		{event.description}
 	  </Typography>
-	  <br /><br />
+	  <br />
+	  <br />
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -277,51 +281,52 @@ export default function ViewEvent() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
-		<TabPanel value={value} index={0} dir={theme.direction}>
+        <TabPanel value={value} index={0} dir={theme.direction}>
           {event.participants && (
-			<ParticipantTable participants={event.participants} />
-		  )}
-			<Grid item xs={12}>
-				<ButtonGroup fullWidth aria-label="full width outlined button group">
-					<Button startIcon={<CloudUploadIcon />}>
-						<FilePicker
-							extensions={["csv"]}
-							onChange={handleFileChange}
-							onError={errMsg => { }}
-						>
-							<div>
-								Upload Emails
-					</div>
-						</FilePicker>
-					</Button>
-					<Button
-						startIcon={<CloudDownloadIcon />}
-						component="a"
-						href={
-							"/api/Csv/Download?eventID=" +
-							event.id +
-							"&token=" +
-							authState.token
-						}
-					>
-						Download Emails
-					</Button>
-					<Button
-						startIcon={<BorderColorIcon />}
-						component={Link}
-						to={`/event/add-email/${event.id}`}
-					>
-						Add Emails
-					</Button>
-					<Button
-						startIcon={<SendIcon />}
-						disabled={event.sentFeedback ? true : false}
-						onClick={handleFeedbackSubmit}
-					>
-						Send Feedback Email (All)
-					</Button>
-				</ButtonGroup>
-			</Grid>
+            <ParticipantTable participants={event.participants} />
+          )}
+          <Grid item xs={12}>
+            <ButtonGroup
+              fullWidth
+              aria-label="full width outlined button group"
+            >
+              <Button startIcon={<CloudUploadIcon />}>
+                <FilePicker
+                  extensions={["csv"]}
+                  onChange={handleFileChange}
+                  onError={errMsg => {}}
+                >
+                  <div>Upload Emails</div>
+                </FilePicker>
+              </Button>
+              <Button
+                startIcon={<CloudDownloadIcon />}
+                component="a"
+                href={
+                  "/api/Csv/Download?eventID=" +
+                  event.id +
+                  "&token=" +
+                  authState.token
+                }
+              >
+                Download Emails
+              </Button>
+              <Button
+                startIcon={<BorderColorIcon />}
+                component={Link}
+                to={`/event/add-email/${event.id}`}
+              >
+                Add Emails
+              </Button>
+              <Button
+                startIcon={<SendIcon />}
+                disabled={event.sentFeedback ? true : false}
+                onClick={handleFeedbackSubmit}
+              >
+                Send Feedback Email (All)
+              </Button>
+            </ButtonGroup>
+          </Grid>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <Box>
@@ -332,7 +337,7 @@ export default function ViewEvent() {
                 </Typography>
                 <Grid container>
                   <Grid item xs={6}>
-					<Doughnut data={data} />
+                    <Doughnut data={data} />
                   </Grid>
                   <Grid item xs={6}>
                     <Bar
@@ -385,36 +390,36 @@ export default function ViewEvent() {
               label="Subject *"
               className={classes.textField}
               value={subject}
-			  onChange={handleSubjectChange}
-			  InputLabelProps={{
-			  classes: {
-			      root: classes.label
-				}
-			  }}
-			  margin="normal"
-			  variant="outlined"
+              onChange={handleSubjectChange}
+              InputLabelProps={{
+                classes: {
+                  root: classes.label
+                }
+              }}
+              margin="normal"
+              variant="outlined"
               error={Boolean(errors["Data.Subject"])}
               helperText={errors["Data.Subject"]}
-			/>
+            />
             <TextField
               id="outlined-multiline-static"
               label="Body *"
               className={classes.textField}
               value={body}
-			  onChange={handleBodyChange}
-			  InputLabelProps={{
-			  classes: {
-				  root: classes.label
-			    }
-			  }}
+              onChange={handleBodyChange}
+              InputLabelProps={{
+                classes: {
+                  root: classes.label
+                }
+              }}
               margin="normal"
               variant="outlined"
               multiline
               rows="10"
               error={Boolean(errors["Data.Body"])}
               helperText={errors["Data.Body"]}
-			/>
-			<br/>
+            />
+            <br />
             <Button
               color="primary"
               variant="contained"
@@ -422,26 +427,26 @@ export default function ViewEvent() {
             >
               Send Email
             </Button>
-			</Box>
-			<Dialog
-				onClose={handleSuccessClose}
-				open={successOpen}
-				fullWidth
-				PaperProps={{ style: { maxWidth: 400 } }}
-			>
-				<DialogTitle align="center">
-					<Avatar style={{ backgroundColor: "#00cc00" }}>
-						<CheckIcon fontSize="large" />
-					</Avatar>
-					Success!
-				</DialogTitle>
-				<DialogContent align="center"></DialogContent>
-				<DialogActions>
-					<Button onClick={handleSuccessClose} variant="contained">
-						Close
-					</Button>
-				</DialogActions>
-			</Dialog>
+          </Box>
+          <Dialog
+            onClose={handleSuccessClose}
+            open={successOpen}
+            fullWidth
+            PaperProps={{ style: { maxWidth: 400 } }}
+          >
+            <DialogTitle align="center">
+              <Avatar style={{ backgroundColor: "#00cc00" }}>
+                <CheckIcon fontSize="large" />
+              </Avatar>
+              Success!
+            </DialogTitle>
+            <DialogContent align="center"></DialogContent>
+            <DialogActions>
+              <Button onClick={handleSuccessClose} variant="contained">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
         </TabPanel>
       </SwipeableViews>
     </div>
