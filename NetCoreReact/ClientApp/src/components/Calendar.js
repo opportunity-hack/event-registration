@@ -7,6 +7,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
+import { getUTCDateObject } from '../helpers/dateHelper';
 import { makeStyles } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 
@@ -36,8 +37,8 @@ export default function Calendar() {
         setEvents(
           response.data.map(e => {
             return {
-              start: new Date(e.startDate),
-              end: new Date(e.endDate),
+			  start: getUTCDateObject(e.startDate),
+			  end: getUTCDateObject(e.endDate),
               title: e.title,
               id: e.id
             };
@@ -56,9 +57,11 @@ export default function Calendar() {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 700 }}
+        style={{ height: 650 }}
         onSelectEvent={handleSelectEvent}
       />
-    </div>
+	  <br />
+	  <br />
+	 </div>
   );
 }

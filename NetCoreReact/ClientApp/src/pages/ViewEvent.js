@@ -29,6 +29,7 @@ import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
+import { formatDate } from '../helpers/dateHelper';
 import { Doughnut, Bar } from "react-chartjs-2";
 import { FilePicker } from "react-file-picker";
 import Axios from "axios";
@@ -246,9 +247,11 @@ export default function ViewEvent() {
         {event.title}
 	  </Typography>
 	  <Typography variant="subtitle1" gutterBottom>
-		{event.description}
+		<b>Date:</b> {formatDate(event.startDate)} - {formatDate(event.endDate)}
 	  </Typography>
-	  <br />
+	  <Typography variant="subtitle1" gutterBottom>
+		<b>Description:</b> {event.description}
+	  </Typography>
 	  <br />
       <AppBar position="static" color="default">
         <Tabs

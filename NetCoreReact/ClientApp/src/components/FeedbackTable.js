@@ -67,7 +67,7 @@ const headCells = [
     id: "body",
     numeric: false,
     disablePadding: true,
-    label: "Body"
+    label: "Comment"
   },
   {
     id: "score",

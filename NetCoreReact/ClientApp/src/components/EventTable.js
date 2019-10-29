@@ -23,6 +23,7 @@ import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
+import { formatDate } from '../helpers/dateHelper';
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -354,10 +355,10 @@ export default function EventTable({ events, setEvents }) {
                         {event.title}
                       </TableCell>
                       <TableCell align="right">
-                        {new Date(event.startDate).toLocaleDateString()}
+						{formatDate(event.startDate)}
                       </TableCell>
-                      <TableCell align="right">
-                        {new Date(event.endDate).toLocaleDateString()}
+					  <TableCell align="right">
+						{formatDate(event.endDate)}
                       </TableCell>
                       <TableCell align="right">
                         {event.participants.length}
