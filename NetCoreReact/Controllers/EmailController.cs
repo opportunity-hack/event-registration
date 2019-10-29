@@ -36,9 +36,9 @@ namespace NetCoreReact.Controllers
 			try
 			{
 				var response = await _eventService.AddParticipant(newParticipant);
-				var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
-				var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
-				return email;
+				var email = await _emailService.SendConfirmationEmail(newParticipant, response.Data.FirstOrDefault());
+				var result = await _eventService.SetConfirmEmailSent(newParticipant.Data.Email, newParticipant.EventId);
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -103,17 +103,15 @@ namespace NetCoreReact.Controllers
 		}
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpGet("[action]")]
-		public async Task<DataResponse<Event>> SendFeedbackEmail(string eventID)
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> SendFeedbackEmail([FromBody] DataInput<string> data)
 		{
 			try
 			{
-				var currentEvent = await _eventService.GetEvent(eventID);
-				var feedbackEvent = currentEvent.Data.FirstOrDefault();
-				var sendFeedback = await _emailService.SendFeedbackEmail(feedbackEvent);
-				feedbackEvent.SentFeedback = true;
-				var update = await _eventService.UpdateEvent(feedbackEvent);
-				return update;
+				var currentEvent = await _eventService.GetEvent(data.EventId);
+				var sendFeedback = await _emailService.SendFeedbackEmail(data.Data, currentEvent.Data.FirstOrDefault());
+				var result = await _eventService.SetFeedbackEmailSent(data.Data, data.EventId);
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -123,6 +121,31 @@ namespace NetCoreReact.Controllers
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "Emails failed to send. Please try again." },
+					},
+					Success = false
+				};
+			}
+		}
+
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> SendConfirmationEmail([FromBody] DataInput<Participant> newParticipant)
+		{
+			try
+			{
+				var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
+				var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
+				var result = await _eventService.SetConfirmEmailSent(newParticipant.Data.Email, newParticipant.EventId);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "Sorry, failed to send confirmation email." },
 					},
 					Success = false
 				};

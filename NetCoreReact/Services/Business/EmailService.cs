@@ -8,6 +8,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -46,7 +47,7 @@ namespace NetCoreReact.Services.Business
 				{
 					Event_Name = currentEvent.Title,
 					//Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={jwt}"
-					 Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
+					Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
 				};
 
 				emailMessage.SetTemplateData(dynamicTemplateData);
@@ -70,15 +71,21 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
-		public async Task<DataResponse<Event>> SendFeedbackEmail(Event currentEvent)
+		public async Task<DataResponse<Event>> SendFeedbackEmail(string email, Event currentEvent)
 		{
 			try
 			{
 				var client = new SendGridClient(_sendGridApiKey);
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
+				var participants = currentEvent.Participants.Where(x => x.FeedbackSent.Equals(false)).ToList();
 
-				foreach(var participant in currentEvent.Participants)
+				if (!string.IsNullOrEmpty(email))
+				{
+					participants = participants.Where(x => x.Email.Equals(email)).ToList();
+				}
+
+				foreach(var participant in participants)
 				{
 					emailList.Add(new EmailAddress(participant.Email));
 					var jwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
@@ -88,7 +95,7 @@ namespace NetCoreReact.Services.Business
 						{
 							Event_Name = currentEvent.Title,
 							//Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={jwt}"
-							 Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
+							Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
 						}
 					);
 				}

@@ -170,14 +170,11 @@ namespace NetCoreReact.Services.Business
 			{
 				var response = await _eventDAO.Get(eventID);
 				var currentEvent = response.Data.FirstOrDefault();
-				var participants = currentEvent.Participants;
+				var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
 
-				var participant = participants.FirstOrDefault(x => x.Email.Equals(email));
 				if (participant != null)
 				{
 					participant.IsConfirmed = true;
-					currentEvent.Participants = participants;
-
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
 					return result;
 				}
@@ -185,6 +182,65 @@ namespace NetCoreReact.Services.Business
 				{
 					throw new Exception();
 				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		public async Task<DataResponse<Event>> SetConfirmEmailSent(string email, string eventID)
+		{
+			try
+			{
+				var response = await _eventDAO.Get(eventID);
+				var currentEvent = response.Data.FirstOrDefault();
+
+				if (string.IsNullOrEmpty(email))
+				{
+					currentEvent.Participants.ForEach(x => x.ConfirmSent = true);
+				}
+				else
+				{
+					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
+					if (participant != null)
+					{
+						participant.ConfirmSent = true;
+					}
+				}
+
+				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+				return result;
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
+
+		public async Task<DataResponse<Event>> SetFeedbackEmailSent(string email, string eventID)
+		{
+			try
+			{
+				var response = await _eventDAO.Get(eventID);
+				var currentEvent = response.Data.FirstOrDefault();
+
+				if (string.IsNullOrEmpty(email))
+				{
+					currentEvent.Participants.ForEach(x => x.FeedbackSent = true);
+					currentEvent.SentFeedback = true;
+				}
+				else
+				{
+					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
+					if (participant != null)
+					{
+						participant.FeedbackSent = true;
+					}
+				}
+
+				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
+				return result;
 			}
 			catch (Exception e)
 			{

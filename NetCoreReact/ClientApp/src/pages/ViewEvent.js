@@ -117,14 +117,16 @@ export default function ViewEvent() {
   }, []);
 
   const handleFeedbackSubmit = async () => {
-    let response = await get(config.SEND_FEEDBACK_EMAIL_GET_URL, {
-      eventID: id
-    });
+	  let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
+		  EventId: id,
+		  Data: ""
+	  });
 
     if (response.success) {
       let tempEvent = { ...event };
       tempEvent.sentFeedback = true;
-      setEvent(tempEvent);
+	  setEvent(tempEvent);
+	  setSuccessOpen(true);
     }
   };
 
@@ -212,8 +214,12 @@ export default function ViewEvent() {
           }
         }
       )
-        .then(function() {})
-        .catch(function() {});
+		.then(function () {
+			setSuccessOpen(true);
+		})
+		.catch(function () {
+
+		});
     }
   };
 
@@ -376,7 +382,7 @@ export default function ViewEvent() {
 					<Avatar style={{ backgroundColor: "#00cc00" }}>
 						<CheckIcon fontSize="large" />
 					</Avatar>
-					Email sent!
+					Success!
 				</DialogTitle>
 				<DialogContent align="center"></DialogContent>
 				<DialogActions>

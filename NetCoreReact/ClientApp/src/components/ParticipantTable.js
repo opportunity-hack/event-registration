@@ -1,5 +1,8 @@
 import React from "react";
+import config from "../config.json";
 import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
+import useRequest from "../hooks/useRequest";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -203,8 +206,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ParticipantTable({ participants }) {
+  const { id } = useParams();
+  const { post } = useRequest();
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
+  const [errors, setErrors] = React.useState([]);
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
@@ -265,35 +271,35 @@ export default function ParticipantTable({ participants }) {
   };
 
 	const handleFeedbackEmail = async (email) => {
-		console.error(email);
-		//let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
-			//Data: {
-				//Title_Header: event.target.value
-			//},
-			//EventId: id
-		//});
+		document.getElementById(email).disabled = true;
+		let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
+			EventId: id,
+			Data: email
+		});
 
-		//if (response.success) {
+		if (response.success) {
 			setSuccessOpen(true);
-		//} else {
-			//setErrors(response.errors);
-		//}
+		} else {
+			setErrors(response.errors);
+		}
 	};
 
 	const handleConfirmEmail = async (email) => {
-		console.error(email);
-		//let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
-		//Data: {
-		//Title_Header: event.target.value
-		//},
-		//EventId: id
-		//});
+		document.getElementById(email).disabled = true;
+		let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
+			EventId: id,
+			Data: {
+				Email: email,
+				Type: 1,
+				DateEntered: new Date()
+			}
+		});
 
-		//if (response.success) {
-		setSuccessOpen(true);
-		//} else {
-		//setErrors(response.errors);
-		//}
+		if (response.success) {
+			setSuccessOpen(true);
+		} else {
+			setErrors(response.errors);
+		}
 	};
 
   const isSelected = title => selected.indexOf(title) !== -1;
@@ -373,17 +379,18 @@ export default function ParticipantTable({ participants }) {
 					  <TableCell component="th" id={labelId} scope="row" align="center">
 							<Button
 								variant="outlined"
-								className={classes.button}
-								disabled={participant.confirmSent ? true : false}
+								  className={classes.button}
+								  id={participant.email}
+								disabled={participant.feedbackSent ? true : false}
 								onClick={() => handleFeedbackEmail(participant.email)}
 							>
 								Feedback
 							</Button>
 							<Button
 								variant="outlined"
-								className={classes.button}
-								value={participant.email}
-								disabled={participant.feedbackSent ? true : false}
+								  className={classes.button}
+								  id={participant.email}
+								disabled={participant.confirmSent ? true : false}
 								onClick={() => handleConfirmEmail(participant.email)}
 							>
 								Confirm
