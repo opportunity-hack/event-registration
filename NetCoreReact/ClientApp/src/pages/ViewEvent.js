@@ -7,10 +7,11 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import BorderColorIcon from '@material-ui/icons/BorderColor';
 import SendIcon from '@material-ui/icons/Send';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Box from "@material-ui/core/Box";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import {
@@ -227,7 +228,11 @@ export default function ViewEvent() {
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
         {event.title}
-      </Typography>
+	  </Typography>
+	  <Typography variant="h8" gutterBottom>
+		{event.description}
+	  </Typography>
+	  <br /><br />
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -260,6 +265,9 @@ export default function ViewEvent() {
         onChangeIndex={handleChangeIndex}
       >
 		<TabPanel value={value} index={0} dir={theme.direction}>
+          {event.participants && (
+			<ParticipantTable participants={event.participants} />
+		  )}
 			<Grid item xs={12}>
 				<ButtonGroup fullWidth aria-label="full width outlined button group">
 					<Button startIcon={<CloudUploadIcon />}>
@@ -270,7 +278,7 @@ export default function ViewEvent() {
 						>
 							<div>
 								Upload Emails
-							</div>
+					</div>
 						</FilePicker>
 					</Button>
 					<Button
@@ -286,6 +294,13 @@ export default function ViewEvent() {
 						Download Emails
 					</Button>
 					<Button
+						startIcon={<BorderColorIcon />}
+						component={Link}
+						to={`/event/add-email/${event.id}`}
+					>
+						Add Emails
+					</Button>
+					<Button
 						startIcon={<SendIcon />}
 						disabled={event.sentFeedback ? true : false}
 						onClick={handleFeedbackSubmit}
@@ -294,9 +309,6 @@ export default function ViewEvent() {
 					</Button>
 				</ButtonGroup>
 			</Grid>
-          {event.participants && (
-            <ParticipantTable participants={event.participants} />
-          )}
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <Box>
