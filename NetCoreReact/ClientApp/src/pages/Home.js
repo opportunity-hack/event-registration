@@ -5,10 +5,11 @@ import Cookies from "js-cookie";
 import MonthlyEvents from "react-monthly-events";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
+import Calendar from "../components/Calendar";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    paddingTop: theme.spacing(2)
+    //paddingTop: theme.spacing(1)
   },
   image: {
     marginTop: theme.spacing(5),
@@ -63,11 +64,13 @@ export default function Home() {
       <Typography variant="h4" gutterBottom>
         Zuri's Dashboard
       </Typography>
-      <Typography gutterBottom color="textSecondary">
-        An event management tool built for Zuri's Circle at Opportunity Hack 2019
+
+      {/*<Typography gutterBottom color="textSecondary">
+        An event management tool built for Zuri's Circle at Opportunity Hack
+        2019
       </Typography>
 
-      {authState.isAuthenticated && (
+      authState.isAuthenticated && (
         <>
           <Typography gutterBottom>
             Welcome, {Cookies.get("User-Email")}
@@ -78,7 +81,8 @@ export default function Home() {
             src="https://42f2671d685f51e10fc6-b9fcecea3e50b3b59bdc28dead054ebc.ssl.cf5.rackcdn.com/illustrations/data_report_bi6l.svg"
           />
         </>
-      )}
+      )*/}
+      <Calendar />
     </Box>
   );
 }
