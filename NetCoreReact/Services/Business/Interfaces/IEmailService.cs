@@ -9,6 +9,6 @@ namespace NetCoreReact.Services.Business.Interfaces
 	{
 		Task<DataResponse<Event>> SendConfirmationEmail(DataInput<Participant> email, Event currentEvent);
 		Task<DataResponse<Event>> SendFeedbackEmail(string email, Event currentEvent);
-		Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email, Event currentEvent);
+		Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email);
 	}
 }

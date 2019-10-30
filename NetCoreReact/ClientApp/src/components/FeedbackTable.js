@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Emoji from 'react-emoji-render';
 import Table from "@material-ui/core/Table";
@@ -10,19 +9,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import { is } from "@babel/types";
-import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { formatDate } from '../helpers/dateHelper';
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -312,15 +301,13 @@ export default function FeedbackTable({ feedbacks, title }) {
                           hover
                           role="checkbox"
                           tabIndex={-1}
-                          key={feedback.email}
+                          key={feedback.score + "-" + feedback.dateEntered}
                         >
                           <TableCell component="th" id={labelId} scope="row">
                             {feedback.email}
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row">
-                            {new Date(
-                              feedback.dateEntered
-                            ).toLocaleDateString()}
+							{formatDate(feedback.dateEntered)}
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row">
                             {feedback.body}

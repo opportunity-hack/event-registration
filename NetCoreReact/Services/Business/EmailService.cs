@@ -128,7 +128,7 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
-		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email, Event currentEvent)
+		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email)
 		{
 			try
 			{
@@ -136,9 +136,9 @@ namespace NetCoreReact.Services.Business
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
 
-				foreach(var participant in currentEvent.Participants)
+				foreach(var recipient in email.Data.Recipient_List)
 				{
-					emailList.Add(new EmailAddress(participant.Email));
+					emailList.Add(new EmailAddress(recipient));
 					dynamicTemplateDataList.Add(email.Data);
 				}
 

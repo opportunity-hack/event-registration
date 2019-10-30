@@ -74,7 +74,14 @@ namespace NetCoreReact.Controllers
 
 					var currentEvent = await _eventService.GetEvent(eventID);
 					var eventData = currentEvent.Data.FirstOrDefault();
-					eventData.Participants.AddRange(emails.Select(x => new Participant() { Email = x, DateEntered = DateTime.UtcNow.ToString("o"), Type = ParticipantType.Attendee }));
+					var currentEmails = eventData.Participants.Select(x => x.Email);
+					foreach (var email in emails)
+					{
+						if (!currentEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
+						{
+							eventData.Participants.Add(new Participant() { Email = email, DateEntered = DateTime.UtcNow.ToString("o"), Type = ParticipantType.Attendee });
+						}
+					}
 					var updateEvent = _eventService.UpdateEvent(eventData);
 					return new DataResponse<string>()
 					{

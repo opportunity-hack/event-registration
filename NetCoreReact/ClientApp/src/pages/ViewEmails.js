@@ -1,129 +1,426 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, makeStyles, Typography } from "@material-ui/core";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import useAuth from "../hooks/useAuth";
-import { Line, Bar } from "react-chartjs-2";
+import SwipeableViews from "react-swipeable-views";
+import { useTheme } from "@material-ui/core/styles";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
+import { useParams, Link } from "react-router-dom";
+import { ReactMultiEmail, isEmail } from 'react-multi-email';
+import "react-multi-email/style.css";
+import {
+	Box,
+	Button,
+	TextField,
+	Grid,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Typography,
+	makeStyles,
+	ButtonGroup,
+	AppBar,
+	Tabs,
+	Tab
+} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
+import CheckIcon from "@material-ui/icons/Check";
+import ParticipantTable from "../components/ParticipantTable";
+import FeedbackTable from "../components/FeedbackTable";
+import { Doughnut, Bar } from "react-chartjs-2";
 
+function TabPanel(props) {
+	const { children, value, index, ...other } = props;
+
+	return (
+		<Typography
+			component="div"
+			role="tabpanel"
+			hidden={value !== index}
+			id={`full-width-tabpanel-${index}`}
+			aria-labelledby={`full-width-tab-${index}`}
+			{...other}
+		>
+			<Box p={3}>{children}</Box>
+		</Typography>
+	);
+}
 const useStyles = makeStyles(theme => ({
-  graph: {
-    marginTop: theme.spacing(2)
-  }
+	form: {
+		maxWidth: 500,
+		marginTop: theme.spacing(2)
+	},
+	submit: {
+		marginTop: theme.spacing(2)
+	},
+	formControl: {
+		marginTop: theme.spacing(2)
+	},
+	root: {
+		backgroundColor: theme.palette.background.paper
+	},
+	button: {
+		marginLeft: theme.spacing(0.5),
+		marginRight: theme.spacing(0.5)
+	},
+	label: {
+		backgroundColor: "white"
+	},
+	recipients: {
+		marginTop: 16,
+		marginBottom: 8,
+		borderColor: "rgba(0, 0, 0, 0.23) !important"
+	}
 }));
 
 export default function ViewEmails() {
   const classes = useStyles();
-  const [data, setData] = useState([]);
-  const { get } = useRequest();
   const { authState } = useAuth();
-  const [barData, setBarData] = useState([]);
+  const { id } = useParams();
+  const [errors, setErrors] = useState([]);
+  const { get, post } = useRequest();
+  const [events, setEvents] = useState({ feedback: [], participants: [], sentFeedback: false });
+  const theme = useTheme();
+  const [value, setValue] = React.useState(0);
+  const [numberSignUps, setNumberSignUps] = React.useState(0);
+  const [numberFeedback, setNumberFeedback] = React.useState(0);
+  const [body, setBody] = useState([]);
+  const [recipients, setRecipients] = useState([]);
+  const [subject, setSubject] = useState("");
+  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     async function getEvents() {
       let response = await get(config.GET_ALL_EVENTS_GET_URL, {});
       if (response.success) {
-        let scores = [];
-        let labels = [];
-        let positives = [];
-        let negatives = [];
+		let participants = [];
+		let feedback = [];
+		let numSignUps = 0;
+		let numFeedback = 0;
 
-        response.data.forEach(e => {
-          let total = 0;
-          let totalPositive = 0;
-          let totalNegative = 0;
-          e.feedback.forEach(f => {
-            total += f.score;
-            if (f.score > 0) totalPositive++;
-            else totalNegative++;
-          });
-          if (total > 0) {
-            scores.push(total / e.feedback.length);
-            labels.push(e.title);
-            positives.push(totalPositive);
-            negatives.push(totalNegative);
-          }
-        });
+		response.data.forEach(e => {
+			e.feedback.forEach(f => {
+				feedback.push(f);
+			});
+			e.participants.forEach(p => {
+				++numSignUps;
+				if (p.feedbackSent) {
+					++numFeedback;
+				}
+				if (participants.length === 0) {
+					participants.push(p);
+				}
+				else {
+					var duplicate = participants.filter(o => o.email === p.email);
+					if (duplicate.length === 0) {
+						participants.push(p);
+					}
+					else {
+						if (!duplicate[0].isConfirmed && p.isConfirmed) {
+							participants.forEach(current => {
+								if (current.email === p.email) {
+									current.isConfirmed = true;
+								}
+							});
+						}
+					}
+				}
+			});
+		});
 
-        let newData = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Positive Feedback Score Average Over Time",
-              fill: false,
-              lineTension: 0.1,
-              backgroundColor: "rgba(75,192,192,0.4)",
-              borderColor: "rgba(75,192,192,1)",
-              borderCapStyle: "butt",
-              borderDash: [],
-              borderDashOffset: 0.0,
-              borderJoinStyle: "miter",
-              pointBorderColor: "rgba(75,192,192,1)",
-              pointBackgroundColor: "#fff",
-              pointBorderWidth: 1,
-              pointHoverRadius: 5,
-              pointHoverBackgroundColor: "rgba(75,192,192,1)",
-              pointHoverBorderColor: "rgba(220,220,220,1)",
-              pointHoverBorderWidth: 2,
-              pointRadius: 1,
-              pointHitRadius: 10,
-              data: scores
-            }
-          ]
-        };
-        setData(newData);
-
-        const barData = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Positive Feedback Responses",
-              backgroundColor: "rgba(75,192,192,0.4)",
-              borderColor: "rgba(75,192,192,1)",
-              borderWidth: 1,
-              pointHoverBackgroundColor: "rgba(75,192,192,1)",
-              pointHoverBorderColor: "rgba(220,220,220,1)",
-              data: positives
-            },
-            {
-              label: "Negative Feedback Responses",
-              backgroundColor: "rgba(255,99,132,0.2)",
-              borderColor: "rgba(255,99,132,1)",
-              borderWidth: 1,
-              hoverBackgroundColor: "rgba(255,99,132,0.4)",
-              hoverBorderColor: "rgba(255,99,132,1)",
-              data: negatives
-            }
-          ]
-        };
-        setBarData(barData);
-      } else {
+		var events = { feedback: feedback, participants: participants, sentFeedback: false };
+		setEvents(events);
+		setRecipients(participants.map(p => p.email));
+		setNumberSignUps(numSignUps);
+		setNumberFeedback(numFeedback);
+	  } else {
+		setErrors(response.errors);
       }
     }
     getEvents();
     return () => {};
   }, []);
 
-  return (
-    <div>
-      <Box>
-        <Typography variant="h4" gutterBottom>
-          Emails
-        </Typography>
-        <Button
-          variant="contained"
-          component="a"
-          href={
-            config.DOWNLOAD_ALL_EMAILS_GET_URL + "?token=" + authState.token
-          }
-        >
-          Export All Emails
-        </Button>
-        <div className={classes.graph} />
-        <Line data={data} />
+	const handleSuccessClose = () => {
+		setSuccessOpen(false);
+	};
 
-        <div className={classes.graph} />
-        <Bar data={barData} className={classes.graph} />
-      </Box>
-    </div>
+	const handleBodyChange = e => {
+		setBody(e.target.value);
+	};
+
+	const handleRecipientsChange = e => {
+		setRecipients(e);
+	};
+
+	const handleSubjectChange = e => {
+		setSubject(e.target.value);
+	};
+
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
+
+	const handleChangeIndex = index => {
+		setValue(index);
+	};
+
+	const handleEmailSubmit = async () => {
+		let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
+			Data: {
+				Recipient_List: recipients,
+				Title_Header: subject,
+				Body_Copy: body
+			},
+			EventId: id
+		});
+
+		if (response.success) {
+			setSuccessOpen(true);
+			setSubject("");
+			setBody("");
+		} else {
+			setErrors(response.errors);
+		}
+	};
+	const data1 = {
+		labels: ["Negative", "Neutral", "Positive"],
+		datasets: [
+			{
+				data: [
+					events.feedback.filter(e => e.score <= -0.5).length,
+					events.feedback.filter(e => e.score > -0.5 && e.score < 0.5).length,
+					events.feedback.filter(e => e.score >= 0.5).length
+				],
+				backgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"],
+				hoverBackgroundColor: ["#FF6384", "#36A2EB", "#00FF7F"]
+			}
+		]
+	};
+
+	const data2 = {
+		labels: [
+			"Sign ups",
+			"Email Confirmation",
+			"Surveys Sent",
+			"Survey Responses"
+		],
+		datasets: [
+			{
+				label: "Engagement",
+				backgroundColor: "rgba(121,7,242,0.3)",
+				borderColor: "rgba(121,7,242,1)",
+				borderWidth: 1,
+				hoverBackgroundColor: "rgba(121,7,242,0.5)",
+				hoverBorderColor: "rgba(121,7,242,1)",
+				data: [
+					numberSignUps,
+					events.participants.filter(e => e.isConfirmed === true).length,
+					numberFeedback,
+					events.feedback.length
+				]
+			}
+		]
+	};
+
+	const options = {
+		scales: {
+			yAxes: [
+				{
+					display: true,
+					ticks: {
+						beginAtZero: true,
+						steps: 10,
+						max:
+							numberSignUps +
+							10 -
+							((numberSignUps + 10) % 10)
+					}
+				}
+			]
+		}
+	};
+
+	return (
+		<div className={classes.root}>
+			<Typography variant="h4" gutterBottom>
+				All Event Emails
+			</Typography>
+			<br />
+			<AppBar position="static" color="default">
+				<Tabs
+					value={value}
+					onChange={handleChange}
+					indicatorColor="primary"
+					textColor="primary"
+					variant="fullWidth"
+					aria-label="full width tabs example"
+				>
+					<Tab
+						label={
+							"All Participants (" +
+							(events.participants ? events.participants.length : "0") +
+							")"
+						}
+					/>
+					<Tab
+						label={
+							"All Feedback (" +
+							(events.feedback ? events.feedback.length : "0") +
+							")"
+						}
+					/>
+					<Tab label={"Send All Email"} />
+				</Tabs>
+			</AppBar>
+			<SwipeableViews
+				axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+				index={value}
+				onChangeIndex={handleChangeIndex}
+			>
+				<TabPanel value={value} index={0} dir={theme.direction}>
+					{events.participants && (
+						<ParticipantTable participants={events.participants} isViewAll={true}/>
+					)}
+					<Grid item xs={12}>
+						<ButtonGroup
+							fullWidth
+							aria-label="full width outlined button group"
+						>
+							<Button
+								startIcon={<CloudDownloadIcon />}
+								component="a"
+								href={
+									config.DOWNLOAD_ALL_EMAILS_GET_URL + "?token=" + authState.token
+								}
+							>
+								Download Emails (All)
+							</Button>
+						</ButtonGroup>
+					</Grid>
+				</TabPanel>
+				<TabPanel value={value} index={1} dir={theme.direction}>
+					<Box>
+						{events.feedback && (
+							<>
+								<Typography variant="h6" gutterBottom>
+									Feedback Data
+                </Typography>
+								<Grid container>
+									<Grid item xs={6}>
+										<Doughnut data={data1} />
+									</Grid>
+									<Grid item xs={6}>
+										<Bar
+											data={data2}
+											width={100}
+											height={50}
+											options={options}
+										/>
+									</Grid>
+								</Grid>
+								<FeedbackTable
+									feedbacks={events.feedback}
+									title="Participants"
+								/>
+							</>
+						)}
+					</Box>
+				</TabPanel>
+				<TabPanel value={value} index={2} dir={theme.direction}>
+					<Box display="flex" flexDirection="column">
+						<Typography variant="h6">Send Email</Typography>
+						<ReactMultiEmail
+							className={classes.recipients}
+							placeholder={
+								<div style={{ color: 'rgba(0, 0, 0, 0.54)' }}>To *</div>
+							}
+							emails={recipients}
+							value={recipients}
+							onChange={handleRecipientsChange}
+							validateEmail={email => {
+								return isEmail(email);
+							}}
+							getLabel={(
+								email: string,
+								index: number,
+								removeEmail: (index: number) => void,
+							) => {
+								return (
+									<div data-tag key={index}>
+										{email}
+										<span data-tag-handle onClick={() => removeEmail(index)}>
+											x
+							</span>
+									</div>
+								);
+							}}
+						/>
+						<TextField
+							autoFocus
+							label="Subject *"
+							className={classes.textField}
+							value={subject}
+							onChange={handleSubjectChange}
+							InputLabelProps={{
+								classes: {
+									root: classes.label
+								}
+							}}
+							margin="normal"
+							variant="outlined"
+							error={Boolean(errors["Data.Subject"])}
+							helperText={errors["Data.Subject"]}
+						/>
+						<TextField
+							id="outlined-multiline-static"
+							label="Body *"
+							className={classes.textField}
+							value={body}
+							onChange={handleBodyChange}
+							InputLabelProps={{
+								classes: {
+									root: classes.label
+								}
+							}}
+							margin="normal"
+							variant="outlined"
+							multiline
+							rows="10"
+							error={Boolean(errors["Data.Body"])}
+							helperText={errors["Data.Body"]}
+						/>
+						<br />
+						<Button
+							color="primary"
+							variant="contained"
+							onClick={handleEmailSubmit}
+						>
+							Send Email
+            </Button>
+					</Box>
+					<Dialog
+						onClose={handleSuccessClose}
+						open={successOpen}
+						fullWidth
+						PaperProps={{ style: { maxWidth: 400 } }}
+					>
+						<DialogTitle align="center">
+							<Avatar style={{ backgroundColor: "#00cc00" }}>
+								<CheckIcon fontSize="large" />
+							</Avatar>
+							Success!
+            </DialogTitle>
+						<DialogContent align="center"></DialogContent>
+						<DialogActions>
+							<Button onClick={handleSuccessClose} variant="contained">
+								Close
+              </Button>
+						</DialogActions>
+					</Dialog>
+				</TabPanel>
+			</SwipeableViews>
+		</div>
   );
 }

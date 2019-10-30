@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
+import { formatDate } from '../helpers/dateHelper';
 import {
 	Button,
 	Dialog,
@@ -79,12 +80,10 @@ const headCells = [
 function EnhancedTableHead(props) {
   const {
     classes,
-    onSelectAllClick,
     order,
     orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort
+	onRequestSort,
+	isViewAll
   } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -113,7 +112,7 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
 		))}
-		<TableCell align={"center"}>Actions</TableCell>
+		{isViewAll ? (<></>) : (<TableCell align={"center"}>Actions</TableCell>)}
       </TableRow>
     </TableHead>
   );
@@ -121,12 +120,10 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired
+  isViewAll: PropTypes.bool.isRequired
 };
 
 const useToolbarStyles = makeStyles(theme => ({
@@ -205,7 +202,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ParticipantTable({ participants }) {
+export default function ParticipantTable({ participants, isViewAll }) {
   const { id } = useParams();
   const { post } = useRequest();
   const classes = useStyles();
@@ -271,7 +268,6 @@ export default function ParticipantTable({ participants }) {
   };
 
 	const handleFeedbackEmail = async (email) => {
-		document.getElementById(email).disabled = true;
 		let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
 			EventId: id,
 			Data: email
@@ -285,7 +281,6 @@ export default function ParticipantTable({ participants }) {
 	};
 
 	const handleConfirmEmail = async (email) => {
-		document.getElementById(email).disabled = true;
 		let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
 			EventId: id,
 			Data: {
@@ -340,13 +335,14 @@ export default function ParticipantTable({ participants }) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={participants.length}
+			  classes={classes}
+			  numSelected={selected.length}
+			  order={order}
+			  orderBy={orderBy}
+			  onSelectAllClick={handleSelectAllClick}
+			  onRequestSort={handleRequestSort}
+			  rowCount={participants.length}
+			  isViewAll={isViewAll}
             />
             <TableBody>
               {stableSort(participants, getSorting(order, orderBy))
@@ -361,7 +357,7 @@ export default function ParticipantTable({ participants }) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={participant.email}
+					  key={participant.email + "-" + participant.dateEntered}
                       selected={isItemSelected}
                     >
                       <TableCell component="th" id={labelId} scope="row">
@@ -371,31 +367,33 @@ export default function ParticipantTable({ participants }) {
 						{getConfirmed(participant.isConfirmed)}
 					  </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
-                        {new Date(participant.dateEntered).toLocaleDateString()}
+						{formatDate(participant.dateEntered)}
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
                         {getType(participant.type)}
 					  </TableCell>
-					  <TableCell component="th" id={labelId} scope="row" align="center">
-							<Button
-								variant="outlined"
-								  className={classes.button}
-								  id={participant.email}
-								disabled={participant.feedbackSent ? true : false}
-								onClick={() => handleFeedbackEmail(participant.email)}
-							>
-								Feedback
-							</Button>
-							<Button
-								variant="outlined"
-								  className={classes.button}
-								  id={participant.email}
-								disabled={participant.confirmSent ? true : false}
-								onClick={() => handleConfirmEmail(participant.email)}
-							>
-								Confirm
-							</Button>
-					  </TableCell>
+					  {isViewAll ?
+						(<></>) :
+						(<TableCell component="th" id={labelId} scope="row" align="center">
+						<Button
+							variant="outlined"
+							className={classes.button}
+							id={participant.email}
+							disabled={participant.feedbackSent ? true : false}
+							onClick={() => handleFeedbackEmail(participant.email)}
+						>
+							Feedback
+						</Button>
+						<Button
+							variant="outlined"
+							className={classes.button}
+							id={participant.email}
+							disabled={participant.confirmSent ? true : false}
+							onClick={() => handleConfirmEmail(participant.email)}
+						>
+							Confirm
+						</Button>
+					  </TableCell>)}
                     </TableRow>
                   );
                 })}

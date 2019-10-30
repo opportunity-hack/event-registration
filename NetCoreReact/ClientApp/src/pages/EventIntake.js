@@ -102,7 +102,6 @@ export default function EventIntake() {
       <Typography variant="h4" gutterBottom>
         {event.title} Sign up
       </Typography>
-      <Typography gutterBottom>{event.description}</Typography>
       <Box display="flex" flexDirection="column" className={classes.form}>
         {Boolean(errors["*"]) && (
           <Typography color="error">{errors["*"]}</Typography>

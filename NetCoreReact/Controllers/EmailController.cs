@@ -83,9 +83,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var currentEvent = await _eventService.GetEvent(email.EventId);
-				var eventData = currentEvent.Data.FirstOrDefault();
-				var sendEmail = await _emailService.SendGenericEmail(email, eventData);
+				var sendEmail = await _emailService.SendGenericEmail(email);
 				return sendEmail;
 			}
 			catch (Exception ex)

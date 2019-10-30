@@ -147,7 +147,8 @@ export default function ViewEvent() {
 
   const handleEmailSubmit = async () => {
     let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
-      Data: {
+	  Data: {
+		Recipient_List: recipients,
         Title_Header: subject,
         Body_Copy: body
       },
@@ -194,8 +195,8 @@ export default function ViewEvent() {
         hoverBorderColor: "rgba(121,7,242,1)",
         data: [
           event.participants.length,
-          event.participants.filter(e => e.isConfirmed === true).length,
-          event.sentFeedback ? event.participants.length : 0,
+		  event.participants.filter(e => e.isConfirmed === true).length,
+		  event.participants.filter(e => e.feedbackSent === true).length,
           event.feedback.length
         ]
       }
@@ -286,7 +287,7 @@ export default function ViewEvent() {
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
           {event.participants && (
-            <ParticipantTable participants={event.participants} />
+			<ParticipantTable participants={event.participants} isViewAll={false} />
           )}
           <Grid item xs={12}>
             <ButtonGroup
