@@ -263,10 +263,6 @@ export default function ParticipantTable({ participants, isViewAll }) {
     setPage(0);
   };
 
-  const handleChangeDense = event => {
-    setDense(event.target.checked);
-  };
-
 	const handleFeedbackEmail = async (email) => {
 		let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
 			EventId: id,

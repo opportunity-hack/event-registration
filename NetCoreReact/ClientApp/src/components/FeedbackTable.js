@@ -246,12 +246,6 @@ export default function FeedbackTable({ feedbacks, title }) {
     setPage(0);
   };
 
-  const handleChangeDense = event => {
-    setDense(event.target.checked);
-  };
-
-  const isSelected = title => selected.indexOf(title) !== -1;
-
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, feedbacks.length - page * rowsPerPage);
 
