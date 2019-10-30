@@ -4,24 +4,27 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import { lighten, makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
-import { formatDate } from '../helpers/dateHelper';
+import { formatDate } from "../helpers/dateHelper";
+import ReactTooltip from "react-tooltip";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
 	Button,
 	Dialog,
 	DialogTitle,
 	DialogContent,
-	DialogActions
+	DialogActions,
+	ButtonGroup,
+	TableBody,
+	Table,
+	TableCell,
+	TableHead,
+	TablePagination,
+	TableRow,
+	TableSortLabel,
+	Typography,
+	Paper,
+	Avatar
 } from "@material-ui/core";
 
 function desc(a, b, orderBy) {
@@ -195,10 +198,6 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     top: 20,
     width: 1
-  },
-  button: {
-    marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5)
   }
 }));
 
@@ -356,8 +355,18 @@ export default function ParticipantTable({ participants, isViewAll }) {
 					  key={participant.email + "-" + participant.dateEntered}
                       selected={isItemSelected}
                     >
-                      <TableCell component="th" id={labelId} scope="row">
-                        {participant.email}
+					  <TableCell data-tip data-for="tool-tip" component="th" id={labelId} scope="row">
+						<CopyToClipboard text={participant.email}>
+						  <span>{participant.email}</span>
+						</CopyToClipboard>
+						<ReactTooltip
+							id="tool-tip"
+							event="click"
+							eventOff="mouseleave"
+								  isCapture={true}
+						>
+						  <p>Copied!</p>
+						</ReactTooltip>
 					  </TableCell>
 					  <TableCell component="th" id={labelId} scope="row">
 						{getConfirmed(participant.isConfirmed)}
@@ -371,24 +380,24 @@ export default function ParticipantTable({ participants, isViewAll }) {
 					  {isViewAll ?
 						(<></>) :
 						(<TableCell component="th" id={labelId} scope="row" align="center">
-						<Button
-							variant="outlined"
-							className={classes.button}
-							id={participant.email}
-							disabled={participant.feedbackSent ? true : false}
-							onClick={() => handleFeedbackEmail(participant.email)}
-						>
-							Feedback
-						</Button>
-						<Button
-							variant="outlined"
-							className={classes.button}
-							id={participant.email}
-							disabled={participant.confirmSent ? true : false}
-							onClick={() => handleConfirmEmail(participant.email)}
-						>
-							Confirm
-						</Button>
+							<ButtonGroup color="primary" aria-label="outlined primary button group">
+								<Button
+									variant="outlined"
+									id={participant.email}
+									disabled={participant.feedbackSent ? true : false}
+									onClick={() => handleFeedbackEmail(participant.email)}
+								>
+									Feedback
+								</Button>
+								<Button
+									variant="outlined"
+									id={participant.email}
+									disabled={participant.confirmSent ? true : false}
+									onClick={() => handleConfirmEmail(participant.email)}
+								>
+									Confirm
+								</Button>
+							</ButtonGroup>
 					  </TableCell>)}
                     </TableRow>
                   );

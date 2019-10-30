@@ -336,9 +336,6 @@ export default function ViewEvent() {
           <Box>
             {event.feedback && (
               <>
-                <Typography variant="h6" gutterBottom>
-                  Feedback Data
-                </Typography>
                 <Grid container>
                   <Grid item xs={6}>
                     <Doughnut data={data} />
@@ -351,10 +348,10 @@ export default function ViewEvent() {
                       options={options}
                     />
                   </Grid>
-                </Grid>
+				</Grid>
+				<br/>
                 <FeedbackTable
                   feedbacks={event.feedback}
-                  title="Participants"
                 />
               </>
             )}
@@ -362,7 +359,6 @@ export default function ViewEvent() {
         </TabPanel>
 		<TabPanel value={value} index={2} dir={theme.direction}>
 		  <Box display="flex" flexDirection="column">
-			<Typography variant="h6">Send Email</Typography>
 			  <ReactMultiEmail
 				className={classes.recipients}
 				placeholder={

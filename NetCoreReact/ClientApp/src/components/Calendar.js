@@ -21,6 +21,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const eventStyleGetter = e => {
+	return {
+		style: {
+			backgroundColor: "rgba(132, 110, 130, 1)"
+		}
+	}
+};
+
 export default function Calendar() {
   const classes = useStyles();
   const { get } = useRequest();
@@ -53,12 +61,13 @@ export default function Calendar() {
   return (
     <div className={classes.root}>
       <ReactBigCalendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 650 }}
-        onSelectEvent={handleSelectEvent}
+		localizer={localizer}
+		events={events}
+		startAccessor="start"
+		endAccessor="end"
+		style={{ height: 650 }}
+		onSelectEvent={handleSelectEvent}
+		eventPropGetter={eventStyleGetter}
       />
 	  <br />
 	  <br />

@@ -8,8 +8,8 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: "rgb(101, 108, 224)",
-      main: "rgb(83, 93, 216)"
+	  light: "rgba(132, 110, 130, 1)",
+	  main: "rgba(91, 68, 89, 1)"
     }
   },
   typography: {

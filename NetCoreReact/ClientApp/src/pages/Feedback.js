@@ -66,16 +66,16 @@ export default function Feedback({ token }) {
           justifyContent="center"
           className={classes.root}
         >
-          <Typography variant="h4">Feedback</Typography>
+          <Typography variant="h4">Give us some feedback!</Typography>
           <Typography color="textSecondary" gutterBottom>
-            How was your experience?
+            How was your experience at Zuri's Circle?
           </Typography>
           <TextField
             id="outlined-multiline-static"
             label="Feedback"
             autoFocus
             multiline
-            rows="4"
+            rows="5"
             className={classes.textField}
             error={Boolean(errors["Data.Body"])}
             helperText={errors["Data.Body"]}
@@ -87,9 +87,10 @@ export default function Feedback({ token }) {
           <Button
             color="primary"
             variant="contained"
-            onClick={handleFeedbackSubmit}
+			onClick={handleFeedbackSubmit}
+			className={classes.textField}
           >
-            Send
+            Submit
           </Button>
         </Box>
       )}

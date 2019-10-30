@@ -50,7 +50,7 @@ namespace NetCoreReact.Services.Business
 			try
 			{
 				var result = await _eventDAO.GetAll();
-				DateTime now = DateTime.UtcNow.Date;
+				DateTime now = DateTime.UtcNow.Date.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(99);
 				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.EndDate)) > 0).ToList();
 				return result;
 			}

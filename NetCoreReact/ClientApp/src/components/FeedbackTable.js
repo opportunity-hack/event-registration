@@ -193,7 +193,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function FeedbackTable({ feedbacks, title }) {
+export default function FeedbackTable({ feedbacks }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -251,9 +251,6 @@ export default function FeedbackTable({ feedbacks, title }) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h6" gutterBottom>
-        {title}
-      </Typography>
       {feedbacks.length === 0 ? (
         <>No feedback yet</>
       ) : (

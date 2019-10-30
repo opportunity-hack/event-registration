@@ -2,28 +2,32 @@ import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import { formatDate } from '../helpers/dateHelper';
+import {
+	Button,
+	FormControlLabel,
+	ButtonGroup,
+	TableBody,
+	Table,
+	TableCell,
+	TableHead,
+	TablePagination,
+	TableRow,
+	TableSortLabel,
+	Typography,
+	Paper,
+	Tooltip,
+	Toolbar,
+	Switch,
+	IconButton,
+	Checkbox,
+
+} from "@material-ui/core";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -220,10 +224,6 @@ const useStyles = makeStyles(theme => ({
     position: "absolute",
     top: 20,
     width: 1
-  },
-  button: {
-    marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5)
   }
 }));
 
@@ -363,23 +363,23 @@ export default function EventTable({ events, setEvents }) {
                       <TableCell align="right">
                         {event.participants.length}
                       </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          component={Link}
-                          to={`/event/add-email/${event.id}`}
-                          variant="outlined"
-                          className={classes.button}
-                        >
-                          Add Emails
-                        </Button>
-                        <Button
-                          component={Link}
-                          to={`/event/${event.id}`}
-                          variant="outlined"
-                          className={classes.button}
-                        >
-                          View Event
-                        </Button>
+					  <TableCell align="center">
+						<ButtonGroup color="primary" aria-label="outlined primary button group">
+							<Button
+							  component={Link}
+							  to={`/event/add-email/${event.id}`}
+							  variant="outlined"
+							>
+							  Add Emails
+							</Button>
+							<Button
+							  component={Link}
+							  to={`/event/${event.id}`}
+							  variant="outlined"
+							>
+							  View Event
+							</Button>
+						</ButtonGroup>
                       </TableCell>
                     </TableRow>
                   );

@@ -112,14 +112,14 @@ export default function ViewEmails() {
 					participants.push(p);
 				}
 				else {
-					var duplicate = participants.filter(o => o.email === p.email);
+					var duplicate = participants.filter(o => o.email.toUpperCase() === p.email.toUpperCase());
 					if (duplicate.length === 0) {
 						participants.push(p);
 					}
 					else {
 						if (!duplicate[0].isConfirmed && p.isConfirmed) {
 							participants.forEach(current => {
-								if (current.email === p.email) {
+								if (current.email.toUpperCase() === p.email.toUpperCase()) {
 									current.isConfirmed = true;
 								}
 							});
@@ -304,9 +304,6 @@ export default function ViewEmails() {
 					<Box>
 						{events.feedback && (
 							<>
-								<Typography variant="h6" gutterBottom>
-									Feedback Data
-                </Typography>
 								<Grid container>
 									<Grid item xs={6}>
 										<Doughnut data={data1} />
@@ -320,9 +317,9 @@ export default function ViewEmails() {
 										/>
 									</Grid>
 								</Grid>
+								<br />
 								<FeedbackTable
 									feedbacks={events.feedback}
-									title="Participants"
 								/>
 							</>
 						)}
@@ -330,7 +327,6 @@ export default function ViewEmails() {
 				</TabPanel>
 				<TabPanel value={value} index={2} dir={theme.direction}>
 					<Box display="flex" flexDirection="column">
-						<Typography variant="h6">Send Email</Typography>
 						<ReactMultiEmail
 							className={classes.recipients}
 							placeholder={
@@ -398,7 +394,7 @@ export default function ViewEmails() {
 							onClick={handleEmailSubmit}
 						>
 							Send Email
-            </Button>
+						</Button>
 					</Box>
 					<Dialog
 						onClose={handleSuccessClose}
@@ -411,12 +407,12 @@ export default function ViewEmails() {
 								<CheckIcon fontSize="large" />
 							</Avatar>
 							Success!
-            </DialogTitle>
+						</DialogTitle>
 						<DialogContent align="center"></DialogContent>
 						<DialogActions>
 							<Button onClick={handleSuccessClose} variant="contained">
 								Close
-              </Button>
+							</Button>
 						</DialogActions>
 					</Dialog>
 				</TabPanel>
