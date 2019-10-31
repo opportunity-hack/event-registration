@@ -10,6 +10,7 @@ import { useLocation } from "react-router";
 import queryString from "query-string";
 import Confirm from "../pages/Confirm";
 import Feedback from "../pages/Feedback";
+import RemoveEmail from "../pages/RemoveEmail";
 
 const drawerWidth = 240;
 
@@ -53,48 +54,59 @@ export default function Template() {
     setOpen(false);
   };
 
+  //this isa chit code right here don't do this unless u awake for 30 hour
   return (
     <>
-      {location.pathname === "/feedback" ? (
+      {location.pathname === "/remove-email" ? (
         <>
           <NavigationBar />
           <div className={classes.toolbar} />
-          <Feedback token={values.token} />
+          <RemoveEmail token={values.token} />
         </>
       ) : (
         <>
-          {location.pathname === "/confirm" ? (
+          {location.pathname === "/feedback" ? (
             <>
               <NavigationBar />
               <div className={classes.toolbar} />
-              <Confirm token={values.token} />
+              <Feedback token={values.token} />
             </>
           ) : (
             <>
-              {authState.isAuthenticated ? (
+              {location.pathname === "/confirm" ? (
                 <>
-                  <NavigationBar
-                    open={open}
-                    handleDrawerOpen={handleDrawerOpen}
-                  />
-                  <Sidebar
-                    open={open}
-                    handleDrawerOpen={handleDrawerOpen}
-                    handleDrawerClose={handleDrawerClose}
-                  />
+                  <NavigationBar />
                   <div className={classes.toolbar} />
-                  <main
-                    className={clsx(classes.content, {
-                      [classes.contentShift]: open
-                    })}
-                  >
-                    <div className={classes.root}>
-                      <Routes />
-                    </div>
-                  </main>
+                  <Confirm token={values.token} />
                 </>
               ) : (
-                <Login open={true} />
+                <>
+                  {authState.isAuthenticated ? (
+                    <>
+                      <NavigationBar
+                        open={open}
+                        handleDrawerOpen={handleDrawerOpen}
+                      />
+                      <Sidebar
+                        open={open}
+                        handleDrawerOpen={handleDrawerOpen}
+                        handleDrawerClose={handleDrawerClose}
+                      />
+                      <div className={classes.toolbar} />
+                      <main
+                        className={clsx(classes.content, {
+                          [classes.contentShift]: open
+                        })}
+                      >
+                        <div className={classes.root}>
+                          <Routes />
+                        </div>
+                      </main>
+                    </>
+                  ) : (
+                    <Login open={true} />
+                  )}
+                </>
               )}
             </>
           )}
