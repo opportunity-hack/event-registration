@@ -9,9 +9,10 @@ namespace NetCoreReact.Models.Email
 		public string Event_Name { get; set; }
 		[JsonProperty("Confirm_Url")]
 		public string Confirm_Url { get; set; }
-
 		[JsonProperty("Feedback_Url")]
 		public string Feedback_Url { get; set; }
+		[JsonProperty("Remove_Email_Url")]
+		public string Remove_Email_Url { get; set; }
 		[JsonProperty("Recipient_List")]
 		public List<string> Recipient_List { get; set; }
 		[JsonProperty("Title_Header")]

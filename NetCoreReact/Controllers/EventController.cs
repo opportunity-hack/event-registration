@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
+using NetCoreReact.Models;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Models.ML;
@@ -173,7 +174,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(feedback.Data.Token);
+				var authenticate = _authenticationService.AuthenticateToken(feedback.Data.Token, AppSettingsModel.appSettings.FeedbackJwtSecret);
 				feedback.Data.Email = authenticate.Data[0];
 				feedback.EventId = authenticate.Data[1];
 

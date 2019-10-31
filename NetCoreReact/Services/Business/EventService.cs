@@ -247,5 +247,46 @@ namespace NetCoreReact.Services.Business
 				throw e;
 			}
 		}
+
+		public async Task<DataResponse<Event>> RemoveEmail(string email)
+		{
+			try
+			{
+				var response = await _eventDAO.GetAll();
+
+				foreach(var currentEvent in response.Data)
+				{
+					var updateEvent = false;
+
+					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+					if (participant != null)
+					{
+						currentEvent.Participants.Remove(participant);
+						updateEvent = true;
+					}
+
+					var feedback = currentEvent.Feedback.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+					if (feedback != null)
+					{
+						currentEvent.Feedback.Remove(feedback);
+						updateEvent = true;
+					}
+
+					if (updateEvent)
+					{
+						await _eventDAO.Update(currentEvent.Id, currentEvent);
+					}
+				}
+
+				return new DataResponse<Event>()
+				{
+					Success = true
+				};
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+		}
 	}
 }

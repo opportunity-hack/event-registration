@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
+using NetCoreReact.Models;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Services.Business;
@@ -119,7 +120,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var authenticate = _authenticationService.AuthenticateDownloadToken(token);
+				var authenticate = _authenticationService.AuthenticateToken(token, AppSettingsModel.appSettings.JwtSecret);
 				var response = await _eventService.GetEvent(eventID);
 				var emails = response?.Data?.FirstOrDefault()?.Participants?.Select(x => x.Email)?.ToList() ?? new List<string>();
 				var result = Helpers.CsvHelper.WriteCsvToMemory(emails);
@@ -138,7 +139,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var authenticate = _authenticationService.AuthenticateDownloadToken(token);
+				var authenticate = _authenticationService.AuthenticateToken(token, AppSettingsModel.appSettings.JwtSecret);
 				var response = await _eventService.GetAllEvents();
 				var emails = response?.Data?.SelectMany(x => x.Participants.Select(y => y.Email));
 				var result = Helpers.CsvHelper.WriteCsvToMemory(emails);

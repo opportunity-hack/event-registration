@@ -3,23 +3,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Typography,
-  Button,
-  DialogActions
+  Typography
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import NavigationBar from "../components/NavigationBar";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 
-const useStyles = makeStyles(theme => ({
-  root: {}
-}));
-
 export default function RemoveEmail({ token }) {
-  const classes = useStyles();
-
-  const [success, setSuccess] = useState(false);
   const [removing, setRemoving] = useState(true);
   const { post } = useRequest();
 
@@ -35,7 +24,7 @@ export default function RemoveEmail({ token }) {
   return (
     <div>
       <Dialog open={true} fullWidth PaperProps={{ style: { maxWidth: 400 } }}>
-        <DialogTitle>Remove Email</DialogTitle>
+        <DialogTitle>Email Removed</DialogTitle>
         <DialogContent align="center">
           <Typography gutterBottom>
             {removing

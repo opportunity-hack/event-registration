@@ -42,12 +42,13 @@ namespace NetCoreReact.Services.Business
 				emailMessage.AddTo(participant.Data.Email);
 				emailMessage.SetTemplateId(_confirmationTemplateID);
 
-				var jwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				var confirmJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+				var removeJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
-					//Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={jwt}"
-					Confirm_Url = $"https://localhost:44384/confirm?token={jwt}"
+					Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
+					Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 				};
 
 				emailMessage.SetTemplateData(dynamicTemplateData);
@@ -88,14 +89,15 @@ namespace NetCoreReact.Services.Business
 				foreach(var participant in participants)
 				{
 					emailList.Add(new EmailAddress(participant.Email));
-					var jwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+					var feedbackJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent.Id);
+					var removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
 					dynamicTemplateDataList.Add
 					(
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							//Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={jwt}"
-							Feedback_Url = $"https://localhost:44384/feedback?token={jwt}"
+							Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
+							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 						}
 					);
 				}
@@ -139,7 +141,16 @@ namespace NetCoreReact.Services.Business
 				foreach(var recipient in email.Data.Recipient_List)
 				{
 					emailList.Add(new EmailAddress(recipient));
-					dynamicTemplateDataList.Add(email.Data);
+					var removeJwt = TokenHelper.GenerateToken(recipient, AppSettingsModel.appSettings.RemoveEmailJwtSecret, string.Empty);
+					dynamicTemplateDataList.Add
+					(
+						new EmailTemplateData
+						{
+							Title_Header = email.Data.Title_Header,
+							Body_Copy = email.Data.Body_Copy,
+							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+						}
+					);
 				}
 
 				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients

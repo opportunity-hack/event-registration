@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreReact.Helpers;
+using NetCoreReact.Models;
 using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Models.Email;
@@ -59,7 +60,7 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var authenticate = _authenticationService.AuthenticateConfirmEmailToken(token.Data);
+				var authenticate = _authenticationService.AuthenticateToken(token.Data, AppSettingsModel.appSettings.ConfirmEmailJwtSecret);
 				var currentEvent = await _eventService.ConfirmEmail(authenticate.Data[0], authenticate.Data[1]);
 				return currentEvent;
 			}
@@ -144,6 +145,29 @@ namespace NetCoreReact.Controllers
 					Errors = new Dictionary<string, List<string>>()
 					{
 						["*"] = new List<string> { "Sorry, failed to send confirmation email." },
+					},
+					Success = false
+				};
+			}
+		}
+
+		[HttpPost("[action]")]
+		public async Task<DataResponse<Event>> RemoveEmail([FromBody] DataInput<string> token)
+		{
+			try
+			{
+				var authenticate = _authenticationService.AuthenticateToken(token.Data, AppSettingsModel.appSettings.RemoveEmailJwtSecret);
+				var result = await _eventService.RemoveEmail(authenticate.Data[0]);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				LoggerHelper.Log(ex);
+				return new DataResponse<Event>()
+				{
+					Errors = new Dictionary<string, List<string>>()
+					{
+						["*"] = new List<string> { "An exception occurred, please try again." },
 					},
 					Success = false
 				};

@@ -18,5 +18,6 @@ namespace NetCoreReact.Services.Business.Interfaces
 		Task<DataResponse<Event>> ConfirmEmail(string email, string eventID);
 		Task<DataResponse<Event>> SetConfirmEmailSent(string email, string eventID);
 		Task<DataResponse<Event>> SetFeedbackEmailSent(string email, string eventID);
+		Task<DataResponse<Event>> RemoveEmail(string email);
 	}
 }
