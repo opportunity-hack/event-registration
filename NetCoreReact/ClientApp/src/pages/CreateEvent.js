@@ -57,11 +57,13 @@ export default function CreateEvent() {
   };
 
   const handleStartDateChange = date => {
-    setStartDate(date);
+	date.setHours(0, 0, 0, 0);
+	setStartDate(date);
   };
 
   const handleEndDateChange = date => {
-    setEndDate(date);
+	date.setHours(23, 59, 59, 999);
+	setEndDate(date);
   };
 
   const resetForm = () => {

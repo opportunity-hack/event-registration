@@ -1,6 +1,6 @@
 ﻿export function formatDate(date) {
 	let time = new Date(date);
-	return time.getUTCMonth()+1 + "/" + time.getUTCDate() + "/" + time.getUTCFullYear();
+	return time.getMonth() + 1 + "/" + time.getDate() + "/" + time.getFullYear();
 }
 
 export function getUTCDateObject(date) {
