@@ -335,15 +335,15 @@ export default function ParticipantTable({ participants, isViewAll }) {
 					  key={participant.email + "-" + participant.dateEntered}
                       selected={isItemSelected}
                     >
-					  <TableCell data-tip data-for="tool-tip" component="th" id={labelId} scope="row">
+					  <TableCell data-tip data-for="participant-tool-tip" component="th" id={labelId} scope="row">
 						<CopyToClipboard text={participant.email}>
-						  <span>{participant.email}</span>
+						  <span style={{ cursor: "pointer" }}>{participant.email}</span>
 						</CopyToClipboard>
 						<ReactTooltip
-							id="tool-tip"
-							event="click"
-							eventOff="mouseleave"
-								  isCapture={true}
+						  id="participant-tool-tip"
+						  event="click"
+						  eventOff="mouseleave"
+						  isCapture={true}
 						>
 						  <p>Copied!</p>
 						</ReactTooltip>

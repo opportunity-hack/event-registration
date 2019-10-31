@@ -12,6 +12,8 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import { formatDate } from '../helpers/dateHelper';
+import ReactTooltip from "react-tooltip";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -274,8 +276,18 @@ export default function FeedbackTable({ feedbacks }) {
                           tabIndex={-1}
                           key={feedback.score + "-" + feedback.dateEntered}
                         >
-                          <TableCell component="th" id={labelId} scope="row">
-                            {feedback.email}
+						  <TableCell data-tip data-for="feedback-tool-tip" component="th" id={labelId} scope="row">
+							<CopyToClipboard text={feedback.email}>
+							  <span style={{ cursor: "pointer" }}>{feedback.email}</span>
+							</CopyToClipboard>
+							<ReactTooltip
+							  id="feedback-tool-tip"
+							  event="click"
+							  eventOff="mouseleave"
+							  isCapture={true}
+							>
+							  <p>Copied!</p>
+							</ReactTooltip>
                           </TableCell>
                           <TableCell component="th" id={labelId} scope="row">
 							{formatDate(feedback.dateEntered)}
