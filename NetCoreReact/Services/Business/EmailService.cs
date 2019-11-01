@@ -35,37 +35,44 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				var client = new SendGridClient(_sendGridApiKey);
-				var emailMessage = new SendGridMessage();
-
-				emailMessage.SetFrom(_fromEmail, "Zuri's Circle");
-				emailMessage.AddTo(participant.Data.Email);
-				emailMessage.SetTemplateId(_confirmationTemplateID);
-
-				var confirmJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-				var removeJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
-				var dynamicTemplateData = new EmailTemplateData
+				if (!currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(participant.Data.Email, StringComparison.OrdinalIgnoreCase)).ConfirmSent)
 				{
-					Event_Name = currentEvent.Title,
-					//Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
-					//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-					Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
-					Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-				};
+					var client = new SendGridClient(_sendGridApiKey);
+					var emailMessage = new SendGridMessage();
 
-				emailMessage.SetTemplateData(dynamicTemplateData);
-				var response = await client.SendEmailAsync(emailMessage);
+					emailMessage.SetFrom(_fromEmail, "Zuri's Circle");
+					emailMessage.AddTo(participant.Data.Email);
+					emailMessage.SetTemplateId(_confirmationTemplateID);
 
-				if (response.StatusCode == HttpStatusCode.Accepted)
-				{
-					return new DataResponse<Event>()
+					var confirmJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+					var removeJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
+					var dynamicTemplateData = new EmailTemplateData
 					{
-						Success = true
+						Event_Name = currentEvent.Title,
+						//Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
+						//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+						Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
+						Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 					};
+
+					emailMessage.SetTemplateData(dynamicTemplateData);
+					var response = await client.SendEmailAsync(emailMessage);
+
+					if (response.StatusCode == HttpStatusCode.Accepted)
+					{
+						return new DataResponse<Event>()
+						{
+							Success = true
+						};
+					}
+					else
+					{
+						throw new Exception("Email(s) failed to send.");
+					}
 				}
 				else
 				{
-					throw new Exception("Email(s) failed to send.");
+					throw new Exception($"Confirmation email already sent for email: {participant.Data.Email}");
 				}
 			}
 			catch (Exception e)
