@@ -47,10 +47,10 @@ namespace NetCoreReact.Services.Business
 				var dynamicTemplateData = new EmailTemplateData
 				{
 					Event_Name = currentEvent.Title,
-					Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
-					Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-					//Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
-					//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+					//Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
+					//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+					Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
+					Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 				};
 
 				emailMessage.SetTemplateData(dynamicTemplateData);
@@ -98,10 +98,10 @@ namespace NetCoreReact.Services.Business
 						new EmailTemplateData
 						{
 							Event_Name = currentEvent.Title,
-							Feedback_Url = $"https://localhost:44384/feedback?token={feedbackJwt}",
-							Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-							//Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
-							//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							//Feedback_Url = $"https://localhost:44384/feedback?token={feedbackJwt}",
+							//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+							Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
+							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 						}
 					);
 				}
@@ -152,8 +152,8 @@ namespace NetCoreReact.Services.Business
 						{
 							Title_Header = email.Data.Title_Header,
 							Body_Copy = email.Data.Body_Copy,
-							Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-							//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 						}
 					);
 				}
