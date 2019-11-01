@@ -206,11 +206,9 @@ export default function ParticipantTable({ participants, isViewAll }) {
   const { post } = useRequest();
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
-  const [errors, setErrors] = React.useState([]);
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [successOpen, setSuccessOpen] = React.useState(false);
 
@@ -250,8 +248,6 @@ export default function ParticipantTable({ participants, isViewAll }) {
 
 		if (response.success) {
 			setSuccessOpen(true);
-		} else {
-			setErrors(response.errors);
 		}
 	};
 
@@ -267,8 +263,6 @@ export default function ParticipantTable({ participants, isViewAll }) {
 
 		if (response.success) {
 			setSuccessOpen(true);
-		} else {
-			setErrors(response.errors);
 		}
 	};
 
@@ -286,6 +280,9 @@ export default function ParticipantTable({ participants, isViewAll }) {
 			return "Attendee";
 		  case 2:
 			return "Donor";
+		  default:
+			return "Attendee";
+
 		}
 	}
 
@@ -295,6 +292,8 @@ export default function ParticipantTable({ participants, isViewAll }) {
 				return "No";
 			case true:
 				return "Yes";
+			default:
+				return "No";
 		}
 	}
 
@@ -306,7 +305,7 @@ export default function ParticipantTable({ participants, isViewAll }) {
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size={"medium"}
             aria-label="enhanced table"
           >
             <EnhancedTableHead
@@ -383,7 +382,7 @@ export default function ParticipantTable({ participants, isViewAll }) {
                   );
                 })}
               {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                <TableRow style={{ height: 53 * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
 				)}

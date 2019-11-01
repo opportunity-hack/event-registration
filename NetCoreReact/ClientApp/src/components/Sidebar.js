@@ -131,31 +131,19 @@ export default function Sidebar({ open, handleDrawerOpen, handleDrawerClose }) {
               <ListItemIcon>
                 <CreateIcon className={classes.icon} />
               </ListItemIcon>
-              <ListItemText primary="Create" />
+              <ListItemText primary="Create Event" />
             </ListItem>
             <ListItem
               button
               className={classes.nested}
               component={Link}
-              to="/event/upcoming"
-              selected={location.pathname === "/event/upcoming"}
+              to="/event/view-events"
+              selected={location.pathname === "/event/view-events"}
             >
               <ListItemIcon>
                 <ListIcon className={classes.icon} />
               </ListItemIcon>
-              <ListItemText primary="Upcoming" />
-            </ListItem>
-            <ListItem
-              button
-              className={classes.nested}
-              component={Link}
-              to="/event/past"
-              selected={location.pathname === "/event/past"}
-            >
-              <ListItemIcon>
-                <HistoryIcon className={classes.icon} />
-              </ListItemIcon>
-              <ListItemText primary="Past" />
+              <ListItemText primary="View Events" />
             </ListItem>
           </List>
         </Collapse>

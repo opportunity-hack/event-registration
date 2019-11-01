@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@material-ui/core/styles";
 import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ReactMultiEmail, isEmail } from 'react-multi-email';
 import "react-multi-email/style.css";
 import {

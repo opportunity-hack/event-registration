@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 export default function NavigationBar({ handleDrawerOpen, open }) {
   const classes = useStyles();
   const [loginOpen, setLoginOpen] = useState(false);
-  const { getToken, logout, authState } = useAuth();
+  const { logout, authState } = useAuth();
   const [avatarUrl, setAvatarUrl] = useState("");
   const [anchorEl, setAnchorEl] = React.useState(null);
 

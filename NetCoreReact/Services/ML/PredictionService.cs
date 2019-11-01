@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.ML;
-using Microsoft.ML;
 using NetCoreReact.Models.ML;
 using NetCoreReact.Services.ML.Interfaces;
 

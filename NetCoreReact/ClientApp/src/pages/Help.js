@@ -26,20 +26,20 @@ export default function Help() {
 		How to create an event:
 	  </Typography>
       <Typography color="textSecondary" gutterBottom>
-        Navigate to Events > Create and fill out the form to create a new event.
+        Navigate to Events > Create Event and fill out the form to create a new event.
       </Typography>
-      <img src={Help0} className={classes.image} />
+	  <img src={Help0} alt="Create Event" className={classes.image} />
 
       <Typography variant="h6" className={classes.section}>
         How to collect emails for an event:
       </Typography>
       <Typography color="textSecondary" gutterBottom>
-        Find the event in Events > Upcoming Events and click on the "Add Emails"
+        Find the event in Events > View Events and click on the "Add Emails"
 		button. This will take you to an input form where people can start
 		signing up for the event.
       </Typography>
-      <img src={Help1} className={classes.image} />
-      <img src={Help2} className={classes.image} />
+      <img src={Help1} alt="View Events" className={classes.image} />
+	  <img src={Help2} alt="Add Emails" className={classes.image} />
     </Box>
   );
 }

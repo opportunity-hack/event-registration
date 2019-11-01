@@ -22,36 +22,7 @@ namespace NetCoreReact.Services.Business
 			try
 			{
 				var result = await _eventDAO.GetAll();
-				return result;
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-		}
-
-		public async Task<DataResponse<Event>> GetUpcomingEvents()
-		{
-			try
-			{
-				var result = await _eventDAO.GetAll();
-				DateTime now = DateTime.UtcNow.Date;
-				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.StartDate)) <= 0).ToList();
-				return result;
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-		}
-
-		public async Task<DataResponse<Event>> GetPastEvents()
-		{
-			try
-			{
-				var result = await _eventDAO.GetAll();
-				DateTime now = DateTime.UtcNow.Date.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(99);
-				result.Data = result.Data.Where(x => DateTime.Compare(now, DateTime.Parse(x.EndDate)) > 0).ToList();
+				result.Data = result.Data.OrderByDescending(x => x.StartDate).ToList();
 				return result;
 			}
 			catch (Exception e)

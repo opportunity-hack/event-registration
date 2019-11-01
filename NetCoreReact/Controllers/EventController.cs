@@ -125,50 +125,6 @@ namespace NetCoreReact.Controllers
 			}
 		}
 
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpGet("[action]")]
-		public async Task<DataResponse<Event>> GetUpcomingEvents()
-		{
-			try
-			{
-				return await _eventService.GetUpcomingEvents();
-			}
-			catch (Exception ex)
-			{
-				LoggerHelper.Log(ex);
-				return new DataResponse<Event>()
-				{
-					Errors = new Dictionary<string, List<string>>()
-					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
-					},
-					Success = false
-				};
-			}
-		}
-
-		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-		[HttpGet("[action]")]
-		public async Task<DataResponse<Event>> GetPastEvents()
-		{
-			try
-			{
-				return await _eventService.GetPastEvents();
-			}
-			catch (Exception ex)
-			{
-				LoggerHelper.Log(ex);
-				return new DataResponse<Event>()
-				{
-					Errors = new Dictionary<string, List<string>>()
-					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
-					},
-					Success = false
-				};
-			}
-		}
-
 		[HttpPost("[action]")]
 		public async Task<DataResponse<Event>> PostFeedbackResponse([FromBody] DataInput<Feedback> feedback)
 		{

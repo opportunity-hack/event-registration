@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using NetCoreReact.Models;
 using System;
-using System.Linq;
 
 namespace NetCoreReact.Helpers
 {
@@ -17,6 +15,8 @@ namespace NetCoreReact.Helpers
 				{
 					Expires = expireTime.HasValue ? DateTime.UtcNow.AddMinutes(expireTime.Value) : DateTime.UtcNow.AddMonths(1),
 					IsEssential = true,
+					SameSite = SameSiteMode.None,
+					Secure = true
 				}
 			);
 		}

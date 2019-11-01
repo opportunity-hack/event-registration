@@ -6,7 +6,7 @@ import store from "./store";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 class App extends Component {
-  static displayName = "Opportunity Hack 2019";
+  static displayName = "Zuri's Dashboard";
 
   render() {
     return (

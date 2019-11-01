@@ -27,7 +27,6 @@ namespace NetCoreReact.Services.Business
 					var jwt = TokenHelper.GenerateToken(payload.Email, AppSettingsModel.appSettings.JwtSecret, string.Empty);
 
 					LoggerHelper.Log(payload.ExpirationTimeSeconds.ToString());
-					CookieHelper.AddCookie(response, "User-Email", payload.Email);
 					CookieHelper.AddCookie(response, "Authorization-Token", jwt);
 					CookieHelper.AddCookie(response, "Avatar-Url", payload.Picture);
 

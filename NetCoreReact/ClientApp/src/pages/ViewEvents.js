@@ -4,13 +4,13 @@ import useRequest from "../hooks/useRequest";
 import config from "../config.json";
 import { Typography } from "@material-ui/core";
 
-export default function UpcomingEvents() {
+export default function ViewEvents() {
   const { get } = useRequest();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
     async function getEvents() {
-      let response = await get(config.GET_UPCOMING_EVENTS_GET_URL, {});
+	  let response = await get(config.GET_ALL_EVENTS_GET_URL, {});
       if (response.success) {
         setEvents(response.data);
       } else {
@@ -23,7 +23,7 @@ export default function UpcomingEvents() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Upcoming Events
+        Events
       </Typography>
       <EventTable events={events} setEvents={setEvents} />
     </div>
