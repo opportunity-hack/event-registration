@@ -115,14 +115,14 @@ export default function EventIntake() {
           onChange={handleEmailChange}
           margin="normal"
           variant="outlined"
-          error={Boolean(errors["Participant.Email"])}
-          helperText={errors["Participant.Email"]}
+          error={Boolean(errors["Data.Email"])}
+		  helperText={errors["Data.Email"]}
         />
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel
             component="legend"
-            error={Boolean(errors["Participant.Type"])}
-            helperText={errors["Participant.Type"]}
+			error={Boolean(errors["Data.Type"])}
+			helperText={errors["Data.Type"]}
           >
             Who are you?
           </FormLabel>
