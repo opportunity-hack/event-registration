@@ -90,7 +90,7 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newParticipant.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (currentEvent.Participants.Count() == 0 || !currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email)))
+				if (currentEvent.Participants.Count() == 0 || !currentEvent.Participants.Any(x => x.Email.Equals(newParticipant.Data.Email, StringComparison.OrdinalIgnoreCase)))
 				{
 					currentEvent.Participants.Add(newParticipant.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
@@ -114,11 +114,11 @@ namespace NetCoreReact.Services.Business
 				var response = await _eventDAO.Get(newFeedback.EventId);
 				var currentEvent = response.Data.FirstOrDefault();
 
-				if (currentEvent.Feedback.Count() == 0 || !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email)))
+				if (currentEvent.Feedback.Count() == 0 || !currentEvent.Feedback.Any(x => x.Email.Equals(newFeedback.Data.Email, StringComparison.OrdinalIgnoreCase)))
 				{
 					if (currentEvent.Participants.Count() > 0)
 					{
-						newFeedback.Data.Type = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(newFeedback.Data.Email))?.Type ?? ParticipantType.Attendee;
+						newFeedback.Data.Type = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(newFeedback.Data.Email, StringComparison.OrdinalIgnoreCase))?.Type ?? ParticipantType.Attendee;
 					}
 					currentEvent.Feedback.Add(newFeedback.Data);
 					var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
@@ -141,7 +141,7 @@ namespace NetCoreReact.Services.Business
 			{
 				var response = await _eventDAO.Get(eventID);
 				var currentEvent = response.Data.FirstOrDefault();
-				var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
+				var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
 
 				if (participant != null)
 				{
@@ -173,7 +173,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
+					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
 					if (participant != null)
 					{
 						participant.ConfirmSent = true;
@@ -203,7 +203,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email));
+					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
 					if (participant != null)
 					{
 						participant.FeedbackSent = true;
