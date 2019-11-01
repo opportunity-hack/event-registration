@@ -38,7 +38,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Google token failed to validate.");
 				}
 
             }
@@ -67,7 +67,7 @@ namespace NetCoreReact.Services.Business
 
 				if (validatedToken == null)
 				{
-					throw new Exception();
+					throw new Exception("Failed to validate JWT.");
 				}
 				else
 				{

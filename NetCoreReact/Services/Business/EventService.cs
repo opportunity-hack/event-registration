@@ -98,7 +98,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Email has already been added.");
 				}
 			}
 			catch (Exception e)
@@ -126,7 +126,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Email has already given feedback.");
 				}
 			}
 			catch (Exception e)
@@ -151,7 +151,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Could not find participant.");
 				}
 			}
 			catch (Exception e)

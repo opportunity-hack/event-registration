@@ -48,7 +48,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "Sorry, that email has already been added for this event." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};
@@ -71,7 +71,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};
@@ -94,7 +94,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "Emails failed to send. Please try again." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};
@@ -119,7 +119,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "Emails failed to send. Please try again." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};
@@ -144,7 +144,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "Sorry, failed to send confirmation email." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};
@@ -167,7 +167,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "An exception occurred, please try again." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};

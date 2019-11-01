@@ -39,7 +39,7 @@ namespace NetCoreReact.Controllers
 				{
 					Errors = new Dictionary<string, List<string>>()
 					{
-						["*"] = new List<string> { "Sorry, an error occured while logging in with Google." },
+						["*"] = new List<string> { ex.Message },
 					},
 					Success = false
 				};

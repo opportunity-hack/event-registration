@@ -65,7 +65,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Email(s) failed to send.");
 				}
 			}
 			catch (Exception e)
@@ -125,7 +125,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Email(s) failed to send.");
 				}
 			}
 			catch (Exception e)
@@ -177,7 +177,7 @@ namespace NetCoreReact.Services.Business
 				}
 				else
 				{
-					throw new Exception();
+					throw new Exception("Email(s) failed to send.");
 				}
 			}
 			catch (Exception e)
