@@ -160,65 +160,6 @@ namespace NetCoreReact.Services.Business
 			}
 		}
 
-		public async Task<DataResponse<Event>> SetConfirmEmailSent(string email, string eventID)
-		{
-			try
-			{
-				var response = await _eventDAO.Get(eventID);
-				var currentEvent = response.Data.FirstOrDefault();
-
-				if (string.IsNullOrEmpty(email))
-				{
-					currentEvent.Participants.ForEach(x => x.ConfirmSent = true);
-				}
-				else
-				{
-					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-					if (participant != null)
-					{
-						participant.ConfirmSent = true;
-					}
-				}
-
-				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
-				return result;
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-		}
-
-		public async Task<DataResponse<Event>> SetFeedbackEmailSent(string email, string eventID)
-		{
-			try
-			{
-				var response = await _eventDAO.Get(eventID);
-				var currentEvent = response.Data.FirstOrDefault();
-
-				if (string.IsNullOrEmpty(email))
-				{
-					currentEvent.Participants.ForEach(x => x.FeedbackSent = true);
-					currentEvent.SentFeedback = true;
-				}
-				else
-				{
-					var participant = currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-					if (participant != null)
-					{
-						participant.FeedbackSent = true;
-					}
-				}
-
-				var result = await _eventDAO.Update(currentEvent.Id, currentEvent);
-				return result;
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-		}
-
 		public async Task<DataResponse<Event>> RemoveEmail(string email)
 		{
 			try

@@ -36,10 +36,10 @@ namespace NetCoreReact.Controllers
 		{
 			try
 			{
-				var response = await _eventService.AddParticipant(newParticipant);
-				var success = await _emailService.SendConfirmationEmail(newParticipant, response.Data.FirstOrDefault());
-				var result = await _eventService.SetConfirmEmailSent(newParticipant.Data.Email, newParticipant.EventId);
-				return result;
+				var currentEvent = await _eventService.AddParticipant(newParticipant);
+				var response = await _emailService.SendConfirmationEmail(newParticipant.Data.Email, currentEvent.Data.FirstOrDefault());
+				var result = await _eventService.UpdateEvent(response.Data.FirstOrDefault());
+				return currentEvent;
 			}
 			catch (Exception ex)
 			{
@@ -108,9 +108,9 @@ namespace NetCoreReact.Controllers
 			try
 			{
 				var currentEvent = await _eventService.GetEvent(data.EventId);
-				var sendFeedback = await _emailService.SendFeedbackEmail(data.Data, currentEvent.Data.FirstOrDefault());
-				var result = await _eventService.SetFeedbackEmailSent(data.Data, data.EventId);
-				return result;
+				var response = await _emailService.SendFeedbackEmail(data.Data, currentEvent.Data.FirstOrDefault());
+				var result = await _eventService.UpdateEvent(response.Data.FirstOrDefault());
+				return response;
 			}
 			catch (Exception ex)
 			{
@@ -128,14 +128,14 @@ namespace NetCoreReact.Controllers
 
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
-		public async Task<DataResponse<Event>> SendConfirmationEmail([FromBody] DataInput<Participant> newParticipant)
+		public async Task<DataResponse<Event>> SendConfirmationEmail([FromBody] DataInput<string> data)
 		{
 			try
 			{
-				var currentEvent = await _eventService.GetEvent(newParticipant.EventId);
-				var email = await _emailService.SendConfirmationEmail(newParticipant, currentEvent.Data.FirstOrDefault());
-				var result = await _eventService.SetConfirmEmailSent(newParticipant.Data.Email, newParticipant.EventId);
-				return result;
+				var currentEvent = await _eventService.GetEvent(data.EventId);
+				var response = await _emailService.SendConfirmationEmail(data.Data, currentEvent.Data.FirstOrDefault());
+				var result = await _eventService.UpdateEvent(response.Data.FirstOrDefault());
+				return response;
 			}
 			catch (Exception ex)
 			{

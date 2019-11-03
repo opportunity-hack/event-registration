@@ -26,6 +26,7 @@ import {
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from '@material-ui/icons/Close';
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
 import { Doughnut, Bar } from "react-chartjs-2";
@@ -89,6 +90,7 @@ export default function ViewEmails() {
   const [recipients, setRecipients] = useState([]);
   const [subject, setSubject] = useState("");
   const [successOpen, setSuccessOpen] = useState(false);
+  const [failureOpen, setFailureOpen] = React.useState(false);
 
   useEffect(() => {
     async function getEvents() {
@@ -146,6 +148,10 @@ export default function ViewEmails() {
 		setSuccessOpen(false);
 	};
 
+	const handleFailureClose = () => {
+		setFailureOpen(false);
+	};
+
 	const handleBodyChange = e => {
 		setBody(e.target.value);
 	};
@@ -182,6 +188,7 @@ export default function ViewEmails() {
 			setBody("");
 		} else {
 			setErrors(response.errors);
+			setFailureOpen(true);
 		}
 	};
 	const data1 = {
@@ -411,6 +418,25 @@ export default function ViewEmails() {
 						<DialogContent align="center"></DialogContent>
 						<DialogActions>
 							<Button onClick={handleSuccessClose} variant="contained">
+								Close
+							</Button>
+						</DialogActions>
+					</Dialog>
+					<Dialog
+						onClose={handleFailureClose}
+						open={failureOpen}
+						fullWidth
+						PaperProps={{ style: { maxWidth: 400 } }}
+					>
+						<DialogTitle align="center">
+							<Avatar style={{ backgroundColor: "#ff0000" }}>
+								<CloseIcon fontSize="large" />
+							</Avatar>
+							Failure: {errors["*"]}
+						</DialogTitle>
+						<DialogContent align="center"></DialogContent>
+						<DialogActions>
+							<Button onClick={handleFailureClose} variant="contained">
 								Close
 							</Button>
 						</DialogActions>

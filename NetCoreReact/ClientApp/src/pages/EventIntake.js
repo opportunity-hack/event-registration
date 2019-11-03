@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import config from "../config.json";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -43,6 +44,7 @@ export default function EventIntake() {
   const [event, setEvent] = useState({});
   const { id } = useParams();
   const [successOpen, setSuccessOpen] = useState(false);
+  const [failureOpen, setFailureOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [participantType, setParticipantType] = useState("0");
 
@@ -86,13 +88,18 @@ export default function EventIntake() {
 	  setName("");
       setParticipantType("0");
     } else {
-      setErrors(response.errors);
+	  setErrors(response.errors);
+	  setFailureOpen(true);
     }
     setSubmitting(false);
   };
 
   const handleSuccessClose = () => {
     setSuccessOpen(false);
+  };
+
+  const handleFailureClose = () => {
+	setFailureOpen(false);
   };
 
   const handleParticipantTypeChange = e => {
@@ -125,7 +132,6 @@ export default function EventIntake() {
 		  helperText={errors["Data.Email"]}
 		/>
 		<TextField
-			autoFocus
 			label="Name *"
 			className={classes.textField}
 			value={name}
@@ -176,7 +182,7 @@ export default function EventIntake() {
           <Avatar style={{ backgroundColor: "#00cc00" }}>
             <CheckIcon fontSize="large" />
           </Avatar>
-          Thank you
+          Thank you :)
         </DialogTitle>
         <DialogContent align="center"></DialogContent>
         <DialogActions>
@@ -184,7 +190,26 @@ export default function EventIntake() {
             Close
           </Button>
         </DialogActions>
-	  </Dialog>
+		</Dialog>
+		<Dialog
+			onClose={handleFailureClose}
+			open={failureOpen}
+			fullWidth
+			PaperProps={{ style: { maxWidth: 400 } }}
+		>
+			<DialogTitle align="center">
+				<Avatar style={{ backgroundColor: "#ff0000" }}>
+					<CloseIcon fontSize="large" />
+				</Avatar>
+				Failure: {errors["*"]}
+			</DialogTitle>
+			<DialogContent align="center"></DialogContent>
+			<DialogActions>
+				<Button onClick={handleFailureClose} variant="contained">
+					Close
+					</Button>
+			</DialogActions>
+		</Dialog>
 	</Box>
   );
 }

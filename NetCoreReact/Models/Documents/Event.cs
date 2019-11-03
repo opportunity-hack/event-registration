@@ -23,6 +23,7 @@ namespace NetCoreReact.Models.Documents
 		[BsonRequired]
 		public string Description { get; set; }
 		public bool SentFeedback { get; set; } = false;
+		public bool SentConfirm { get; set; } = false;
 		public List<Participant> Participants { get; set; } = new List<Participant>();
 		public List<Feedback> Feedback { get; set; } = new List<Feedback>();
 	}

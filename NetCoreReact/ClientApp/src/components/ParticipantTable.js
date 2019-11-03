@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from '@material-ui/icons/Close';
 import { formatDate } from "../helpers/dateHelper";
 import ReactTooltip from "react-tooltip";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -61,16 +62,16 @@ const headCells = [
 		label: "Email"
 	},
 	{
+		id: "name",
+		numeric: false,
+		disablePadding: true,
+		label: "Name"
+	},
+	{
 		id: "isConfirmed",
 		numeric: false,
 		disablePadding: true,
 		label: "Confirmed"
-	},
-	{
-		id: "dateEntered",
-		numeric: false,
-		disablePadding: true,
-		label: "Date Entered"
 	},
 	{
 		id: "type",
@@ -205,15 +206,21 @@ export default function ParticipantTable({ participants, isViewAll }) {
   const { id } = useParams();
   const { post } = useRequest();
   const classes = useStyles();
+  const [errors, setErrors] = React.useState([]);
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [successOpen, setSuccessOpen] = React.useState(false);
+  const [failureOpen, setFailureOpen] = React.useState(false);
 
   const handleSuccessClose = () => {
 	setSuccessOpen(false);
+  };
+
+  const handleFailureClose = () => {
+	setFailureOpen(false);
   };
 
   const handleRequestSort = (event, property) => {
@@ -249,20 +256,24 @@ export default function ParticipantTable({ participants, isViewAll }) {
 		if (response.success) {
 			setSuccessOpen(true);
 		}
+		else {
+			setErrors(response.errors);
+			setFailureOpen(true);
+		}
 	};
 
 	const handleConfirmEmail = async (email) => {
 		let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
 			EventId: id,
-			Data: {
-				Email: email,
-				Type: 1,
-				DateEntered: new Date()
-			}
+			Data: email
 		});
 
 		if (response.success) {
 			setSuccessOpen(true);
+		}
+		else {
+			setErrors(response.errors);
+			setFailureOpen(true);
 		}
 	};
 
@@ -354,9 +365,6 @@ export default function ParticipantTable({ participants, isViewAll }) {
 						{getConfirmed(participant.isConfirmed)}
 					  </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
-						{formatDate(participant.dateEntered)}
-                      </TableCell>
-                      <TableCell component="th" id={labelId} scope="row">
                         {getType(participant.type)}
 					  </TableCell>
 					  {isViewAll ?
@@ -404,6 +412,25 @@ export default function ParticipantTable({ participants, isViewAll }) {
 					<DialogContent align="center"></DialogContent>
 					<DialogActions>
 						<Button onClick={handleSuccessClose} variant="contained">
+							Close
+						</Button>
+					</DialogActions>
+				</Dialog>
+				<Dialog
+					onClose={handleFailureClose}
+					open={failureOpen}
+					fullWidth
+					PaperProps={{ style: { maxWidth: 400 } }}
+				>
+					<DialogTitle align="center">
+						<Avatar style={{ backgroundColor: "#ff0000" }}>
+							<CloseIcon fontSize="large" />
+						</Avatar>
+						Failure: {errors["*"]}
+					</DialogTitle>
+					<DialogContent align="center"></DialogContent>
+					<DialogActions>
+						<Button onClick={handleFailureClose} variant="contained">
 							Close
 						</Button>
 					</DialogActions>

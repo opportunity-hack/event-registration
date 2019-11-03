@@ -6,7 +6,6 @@ import Help1 from "../resources/images/1.PNG";
 import Help2 from "../resources/images/2.PNG";
 import Help3 from "../resources/images/3.PNG";
 import Help4 from "../resources/images/4.PNG";
-import Help5 from "../resources/images/5.PNG";
 import Help6 from "../resources/images/6.PNG";
 import Help7 from "../resources/images/7.PNG";
 import Help8 from "../resources/images/8.PNG";

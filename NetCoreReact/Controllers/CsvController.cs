@@ -29,7 +29,6 @@ namespace NetCoreReact.Controllers
 			this._authenticationService = authenticationService;
 		}
 
-		/**
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
 		public async Task<DataResponse<string>> Upload(string eventID)
@@ -79,10 +78,11 @@ namespace NetCoreReact.Controllers
 					var currentEmails = eventData.Participants.Select(x => x.Email);
 					foreach (var email in emails)
 					{
-						if (!currentEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
-						{
+						// UNCOMMENT THIS IS JUST FOR TESTING
+						//if (!currentEmails.Contains(email, StringComparer.OrdinalIgnoreCase))
+						//{
 							eventData.Participants.Add(new Participant() { Email = email, DateEntered = DateTime.UtcNow.ToString("o"), Type = ParticipantType.Attendee });
-						}
+						//}
 					}
 					var updateEvent = _eventService.UpdateEvent(eventData);
 					return new DataResponse<string>()
@@ -115,7 +115,7 @@ namespace NetCoreReact.Controllers
 				};
 			}
 		}
-		**/
+
 		[HttpGet("[action]")]
 		public async Task<IActionResult> Download(string eventID, string token)
 		{

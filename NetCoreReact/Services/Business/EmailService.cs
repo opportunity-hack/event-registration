@@ -20,59 +20,95 @@ namespace NetCoreReact.Services.Business
 		{
 		}
 
-		public async Task<DataResponse<Event>> SendConfirmationEmail(DataInput<Participant> participant, Event currentEvent)
+		public async Task<DataResponse<Event>> SendConfirmationEmail(string email, Event currentEvent)
 		{
 			try
 			{
-				if (!currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(participant.Data.Email, StringComparison.OrdinalIgnoreCase)).ConfirmSent)
-				{
-					var success = false;
-					var clientKey = 0;
-					var emailMessage = new SendGridMessage();
-					var confirmJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-					var removeJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
-					var dynamicTemplateData = new EmailTemplateData
-					{
-						Event_Name = currentEvent.Title,
-						//Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
-						//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-						Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
-						Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-					};
+				var allClientsFailed = false;
+				var success = false;
+				var clientKey = 0;
+				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
+				var participants = currentEvent.Participants.Where(x => x.ConfirmSent.Equals(false)).ToList();
+				string confirmJwt = string.Empty;
+				string removeJwt = string.Empty;
+				SendGridMessage emailMessage = null;
+				SendGrid.Response response = null;
 
-					emailMessage.AddTo(participant.Data.Email);
-					emailMessage.SetTemplateData(dynamicTemplateData);
+				if (string.IsNullOrEmpty(email))
+				{
+					currentEvent.SentConfirm = true;
+				}
+				else
+				{
+					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
+				}
+
+				foreach (var participant in participants)
+				{
+					if (allClientsFailed)
+					{
+						break;
+					}
+
+					success = false;
+					confirmJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
+					removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
 
 					while (!success)
 					{
-						var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
-						emailMessage.SetFrom(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle");
-						emailMessage.SetTemplateId(AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[0]);
-						var response = await client.SendEmailAsync(emailMessage);
+						emailMessage = MailHelper.CreateSingleTemplateEmail
+						(
+							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
+							new EmailAddress(participant.Email),
+							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[0],
+							new EmailTemplateData
+							{
+								Event_Name = currentEvent.Title,
+								User_Name = participant.Name,
+								Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
+								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+								//Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
+								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							}
+						);
+
+						response = await client.SendEmailAsync(emailMessage);
 
 						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
 						{
+							participant.ConfirmSent = true;
 							success = true;
 						}
 						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
 						{
+							allClientsFailed = true;
 							break;
 						}
 						else
 						{
-							++clientKey;
+							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
 						}
 					}
+				}
 
+				if (allClientsFailed)
+				{
 					return new DataResponse<Event>()
 					{
-						Success = success
+						Data = new List<Event> { currentEvent },
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "Some or all emails failed to send. Daily email limit may have been reached." },
+						},
+						Success = false
 					};
 				}
-				else
+
+				return new DataResponse<Event>()
 				{
-					throw new Exception($"Confirmation email already sent for email: {participant.Data.Email}");
-				}
+					Data = new List<Event> { currentEvent },
+					Success = true
+				};
 			}
 			catch (Exception e)
 			{
@@ -84,64 +120,90 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
+				var allClientsFailed = false;
 				var success = false;
 				var clientKey = 0;
-				var emailList = new List<EmailAddress>();
-				var dynamicTemplateDataList = new List<object>();
+				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
 				var participants = currentEvent.Participants.Where(x => x.FeedbackSent.Equals(false)).ToList();
+				string feedbackJwt = string.Empty;
+				string removeJwt = string.Empty;
+				SendGridMessage emailMessage = null;
+				SendGrid.Response response = null;
 
-				if (!string.IsNullOrEmpty(email))
+				if (string.IsNullOrEmpty(email))
+				{
+					currentEvent.SentFeedback = true;
+				}
+				else 
 				{
 					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
 				foreach(var participant in participants)
 				{
-					emailList.Add(new EmailAddress(participant.Email));
-					var feedbackJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent.Id);
-					var removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
-					dynamicTemplateDataList.Add
-					(
-						new EmailTemplateData
-						{
-							Event_Name = currentEvent.Title,
-							//Feedback_Url = $"https://localhost:44384/feedback?token={feedbackJwt}",
-							//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-							Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
-							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-						}
-					);
-				}
-
-				while (!success)
-				{
-					var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
-					var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
-					(
-						new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
-						emailList,
-						AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[1],
-						dynamicTemplateDataList
-					);
-					var response = await client.SendEmailAsync(emailMessage);
-
-					if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-					{
-						success = true;
-					}
-					else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
+					if (allClientsFailed)
 					{
 						break;
 					}
-					else
+
+					success = false;
+					feedbackJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent.Id);
+					removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
+
+					while (!success)
 					{
-						++clientKey;
+						emailMessage = MailHelper.CreateSingleTemplateEmail
+						(
+							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
+							new EmailAddress(participant.Email),
+							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[1],
+							new EmailTemplateData
+							{
+								Event_Name = currentEvent.Title,
+								User_Name = participant.Name,
+								Feedback_Url = $"https://localhost:44384/feedback?token={feedbackJwt}",
+								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+								//Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
+								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							}
+						);
+
+						response = await client.SendEmailAsync(emailMessage);
+
+						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+						{
+							participant.FeedbackSent = true;
+							success = true;
+						}
+						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
+						{
+							allClientsFailed = true;
+							break;
+						}
+						else
+						{
+							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
+						}
 					}
+				}
+
+				if (allClientsFailed)
+				{
+					return new DataResponse<Event>()
+					{
+						Data = new List<Event> { currentEvent },
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "Some or all emails failed to send. Daily email limit may have been reached." },
+						},
+						Success = false
+					};
 				}
 
 				return new DataResponse<Event>()
 				{
-					Success = success
+					Data = new List<Event> { currentEvent },
+					Success = true
 				};
 			}
 			catch (Exception e)
@@ -154,47 +216,74 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				var client = new SendGridClient(_sendGridApiKey);
-				var emailList = new List<EmailAddress>();
-				var dynamicTemplateDataList = new List<object>();
+				var allClientsFailed = false;
+				var success = false;
+				var clientKey = 0;
+				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
+				string removeJwt = string.Empty;
+				SendGridMessage emailMessage = null;
+				SendGrid.Response response = null;
 
-				foreach(var recipient in email.Data.Recipient_List.Distinct())
+				foreach (var recipient in email.Data.Recipient_List)//.Distinct())
 				{
-					emailList.Add(new EmailAddress(recipient));
-					var removeJwt = TokenHelper.GenerateToken(recipient, AppSettingsModel.appSettings.RemoveEmailJwtSecret, string.Empty);
-					dynamicTemplateDataList.Add
-					(
-						new EmailTemplateData
+					if (allClientsFailed)
+					{
+						break;
+					}
+
+					success = false;
+					removeJwt = TokenHelper.GenerateToken(recipient, AppSettingsModel.appSettings.RemoveEmailJwtSecret, string.Empty);
+
+					while (!success)
+					{
+						emailMessage = MailHelper.CreateSingleTemplateEmail
+						(
+							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
+							new EmailAddress(recipient),
+							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[2],
+							new EmailTemplateData
+							{
+								Title_Header = email.Data.Title_Header,
+								Body_Copy = email.Data.Body_Copy,
+								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
+								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							}
+						);
+
+						response = await client.SendEmailAsync(emailMessage);
+
+						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
 						{
-							Title_Header = email.Data.Title_Header,
-							Body_Copy = email.Data.Body_Copy,
-							//Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-							Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
+							success = true;
 						}
-					);
+						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
+						{
+							allClientsFailed = true;
+							break;
+						}
+						else
+						{
+							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
+						}
+					}
 				}
 
-				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
-				(
-					new EmailAddress(_fromEmail, "Zuri's Circle"),
-					emailList,
-					_genericTemplateID,
-					dynamicTemplateDataList
-				);
-
-				var response = await client.SendEmailAsync(emailMessage);
-
-				if (response.StatusCode == HttpStatusCode.Accepted)
+				if (allClientsFailed)
 				{
 					return new DataResponse<Event>()
 					{
-						Success = true
+						Errors = new Dictionary<string, List<string>>()
+						{
+							["*"] = new List<string> { "Some or all emails failed to send. Daily email limit may have been reached." },
+						},
+						Success = false
 					};
 				}
-				else
+
+				return new DataResponse<Event>()
 				{
-					throw new Exception("Email(s) failed to send.");
-				}
+					Success = true
+				};
 			}
 			catch (Exception e)
 			{

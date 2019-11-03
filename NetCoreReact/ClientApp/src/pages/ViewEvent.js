@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-//import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import SendIcon from "@material-ui/icons/Send";
@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from '@material-ui/icons/Close';
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
 import { formatDate } from '../helpers/dateHelper';
@@ -92,9 +93,14 @@ export default function ViewEvent() {
   const [subject, setSubject] = useState("");
   const { authState } = useAuth();
   const [successOpen, setSuccessOpen] = useState(false);
+  const [failureOpen, setFailureOpen] = React.useState(false);
 
   const handleSuccessClose = () => {
     setSuccessOpen(false);
+  };
+
+  const handleFailureClose = () => {
+	setFailureOpen(false);
   };
 
   const handleBodyChange = e => {
@@ -131,6 +137,24 @@ export default function ViewEvent() {
     return () => {};
   }, []);
 
+  const handleConfirmSubmit = async () => {
+	let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
+		EventId: id,
+		Data: ""
+	});
+
+	if (response.success) {
+		let tempEvent = { ...event };
+		tempEvent.sentConfirm = true;
+		setEvent(tempEvent);
+		setSuccessOpen(true);
+	}
+	else {
+		setErrors(response.errors);
+		setFailureOpen(true);
+	}
+  };
+
   const handleFeedbackSubmit = async () => {
     let response = await post(config.SEND_FEEDBACK_EMAIL_POST_URL, {
       EventId: id,
@@ -142,7 +166,11 @@ export default function ViewEvent() {
       tempEvent.sentFeedback = true;
       setEvent(tempEvent);
       setSuccessOpen(true);
-    }
+	}
+	else {
+		setErrors(response.errors);
+		setFailureOpen(true);
+	}
   };
 
   const handleEmailSubmit = async () => {
@@ -159,8 +187,10 @@ export default function ViewEvent() {
       setSuccessOpen(true);
       setSubject("");
       setBody("");
-    } else {
-      setErrors(response.errors);
+	}
+	else {
+	  setErrors(response.errors);
+	  setFailureOpen(true);
     }
   };
   const data = {
@@ -220,7 +250,7 @@ export default function ViewEvent() {
       ]
     }
   };
-	/**
+
 	  const handleFileChange = file => {
 		if (file) {
 		  let formData = new FormData();
@@ -241,7 +271,7 @@ export default function ViewEvent() {
 			.catch(function() {});
 		}
 	  };
-	*/
+
 
   return (
     <div className={classes.root}>
@@ -295,7 +325,7 @@ export default function ViewEvent() {
               fullWidth
               aria-label="full width outlined button group"
 			>
-			{/*
+			
 			<Button startIcon={<CloudUploadIcon />}>
 			<FilePicker
 				extensions={["csv"]}
@@ -305,7 +335,7 @@ export default function ViewEvent() {
 				<div>Upload Emails</div>
 			</FilePicker>
 			</Button>		   
-			*/}
+			
               <Button
                 startIcon={<CloudDownloadIcon />}
                 component="a"
@@ -324,6 +354,13 @@ export default function ViewEvent() {
                 to={`/event/add-email/${event.id}`}
               >
                 Add Emails
+              </Button>
+			  <Button
+			    startIcon={<SendIcon />}
+				disabled={event.sentConfirm ? true : false}
+				onClick={handleConfirmSubmit}
+			  >
+				Confirm Emails (All)
               </Button>
               <Button
                 startIcon={<SendIcon />}
@@ -449,7 +486,26 @@ export default function ViewEvent() {
                 Close
               </Button>
             </DialogActions>
-          </Dialog>
+			</Dialog>
+			<Dialog
+				onClose={handleFailureClose}
+				open={failureOpen}
+				fullWidth
+				PaperProps={{ style: { maxWidth: 400 } }}
+			>
+				<DialogTitle align="center">
+					<Avatar style={{ backgroundColor: "#ff0000" }}>
+						<CloseIcon fontSize="large" />
+					</Avatar>
+					Failure: {errors["*"]}
+				</DialogTitle>
+				<DialogContent align="center"></DialogContent>
+				<DialogActions>
+					<Button onClick={handleFailureClose} variant="contained">
+						Close
+				</Button>
+				</DialogActions>
+			</Dialog>
         </TabPanel>
       </SwipeableViews>
     </div>
