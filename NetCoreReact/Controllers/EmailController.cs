@@ -37,7 +37,7 @@ namespace NetCoreReact.Controllers
 			try
 			{
 				var response = await _eventService.AddParticipant(newParticipant);
-				var email = await _emailService.SendConfirmationEmail(newParticipant, response.Data.FirstOrDefault());
+				var success = await _emailService.SendConfirmationEmail(newParticipant, response.Data.FirstOrDefault());
 				var result = await _eventService.SetConfirmEmailSent(newParticipant.Data.Email, newParticipant.EventId);
 				return result;
 			}

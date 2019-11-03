@@ -5,7 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+//import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import SendIcon from "@material-ui/icons/Send";
@@ -220,27 +220,28 @@ export default function ViewEvent() {
       ]
     }
   };
-
-  const handleFileChange = file => {
-    if (file) {
-      let formData = new FormData();
-      formData.append("file", file);
-      Axios.post(
-        config.UPLOAD_EMAILS_POST_URL + "?eventID=" + event.id,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + authState.token
-          }
-        }
-      )
-        .then(function() {
-          setSuccessOpen(true);
-        })
-        .catch(function() {});
-    }
-  };
+	/**
+	  const handleFileChange = file => {
+		if (file) {
+		  let formData = new FormData();
+		  formData.append("file", file);
+		  Axios.post(
+			config.UPLOAD_EMAILS_POST_URL + "?eventID=" + event.id,
+			formData,
+			{
+			  headers: {
+				"Content-Type": "multipart/form-data",
+				Authorization: "Bearer " + authState.token
+			  }
+			}
+		  )
+			.then(function() {
+			  setSuccessOpen(true);
+			})
+			.catch(function() {});
+		}
+	  };
+	*/
 
   return (
     <div className={classes.root}>
@@ -293,16 +294,18 @@ export default function ViewEvent() {
             <ButtonGroup
               fullWidth
               aria-label="full width outlined button group"
-            >
-              <Button startIcon={<CloudUploadIcon />}>
-                <FilePicker
-                  extensions={["csv"]}
-                  onChange={handleFileChange}
-                  onError={errMsg => {}}
-                >
-                  <div>Upload Emails</div>
-                </FilePicker>
-              </Button>
+			>
+			{/*
+			<Button startIcon={<CloudUploadIcon />}>
+			<FilePicker
+				extensions={["csv"]}
+				onChange={handleFileChange}
+				onError={errMsg => {}}
+			>
+				<div>Upload Emails</div>
+			</FilePicker>
+			</Button>		   
+			*/}
               <Button
                 startIcon={<CloudDownloadIcon />}
                 component="a"

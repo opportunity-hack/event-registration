@@ -11,6 +11,9 @@ namespace NetCoreReact.Models.Documents
 		public string Email { get; set; }
 		[Required]
 		[BsonRequired]
+		public string Name { get; set; }
+		[Required]
+		[BsonRequired]
 		public ParticipantType Type { get; set; }
 		[Required]
 		[BsonRequired]

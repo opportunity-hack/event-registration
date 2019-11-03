@@ -7,6 +7,8 @@ namespace NetCoreReact.Models.Email
 	{
 		[JsonProperty("Event_Name")]
 		public string Event_Name { get; set; }
+		[JsonProperty("User_Name")]
+		public string User_Name { get; set; }
 		[JsonProperty("Confirm_Url")]
 		public string Confirm_Url { get; set; }
 		[JsonProperty("Feedback_Url")]

@@ -348,6 +348,9 @@ export default function ParticipantTable({ participants, isViewAll }) {
 						</ReactTooltip>
 					  </TableCell>
 					  <TableCell component="th" id={labelId} scope="row">
+						{participant.name}
+					  </TableCell>
+					  <TableCell component="th" id={labelId} scope="row">
 						{getConfirmed(participant.isConfirmed)}
 					  </TableCell>
                       <TableCell component="th" id={labelId} scope="row">

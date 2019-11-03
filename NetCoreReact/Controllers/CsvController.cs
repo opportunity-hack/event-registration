@@ -29,6 +29,7 @@ namespace NetCoreReact.Controllers
 			this._authenticationService = authenticationService;
 		}
 
+		/**
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpPost("[action]")]
 		public async Task<DataResponse<string>> Upload(string eventID)
@@ -114,7 +115,7 @@ namespace NetCoreReact.Controllers
 				};
 			}
 		}
-
+		**/
 		[HttpGet("[action]")]
 		public async Task<IActionResult> Download(string eventID, string token)
 		{

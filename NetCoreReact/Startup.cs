@@ -87,6 +87,7 @@ namespace NetCoreReact
 			services.AddPredictionEnginePool<PredictionInput, PredictionOutput>()
 				.FromFile(modelName: "MLModel", filePath: Configuration["MLModels:SentimentMLModelFilePath"], watchForChanges: true);
 
+			// Inject dependencies here:
 			// Change development environment here (connection string to db or anything else necessary):
 			if (CurrentEnvironment.IsDevelopment())
 			{
@@ -103,13 +104,7 @@ namespace NetCoreReact
 					Configuration["ConnectionStrings:MongoDBAtlasCollection"]));
 			}
 
-			// Inject dependencies here:
-			services.AddSingleton<IEmailService>(service => new EmailService(
-				Configuration["APIKeys:SendGridAPIKey"],
-				Configuration["SendGrid:FromEmail"],
-				Configuration["SendGrid:ConfirmationTemplateID"],
-				Configuration["SendGrid:FeedbackTemplateID"],
-				Configuration["SendGrid:GenericTemplateID"]));
+			services.AddSingleton<IEmailService, EmailService>();
 			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();

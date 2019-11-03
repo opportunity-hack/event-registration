@@ -112,7 +112,8 @@ export default function Help() {
 		clicking the "<b>Add Emails</b>" button will take you to the input form for entering in emails to the event.
       </Typography>
 	  <img src={Help6} alt="Event Actions" className={classes.image} />
-	  <Typography color="textSecondary" gutterBottom>
+	  {/* 
+	   * <Typography color="textSecondary" gutterBottom>
 		While still on the "<b>Participants</b>" tab in the event view, you can upload emails to the event by clicking the "<b>Upload Emails</b>"
 		button. This will allow you to select a file from your file system containing a list of emails to upload.
 		The format of the file you want to upload needs to meet the following requirements:<br />
@@ -120,7 +121,8 @@ export default function Help() {
 		2. Must have 1 email per line <b>OR</b> emails can all be on 1 line, seperated by commas.<br />
 		Once you select the file, the emails will be uploaded to the system. Refresh the page to see the new emails.
       </Typography>
-	  <img src={Help5} alt="Upload Emails" className={classes.image} />
+	  <img src={Help5 This file has been deleted} alt="Upload Emails" className={classes.image} />
+	   * */}
 	  <Typography color="textSecondary" gutterBottom>
 		You can also download all the emails for the event by clicking the "<b>Download Emails</b>" button:
       </Typography>

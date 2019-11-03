@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 export default function EventIntake() {
   const classes = useStyles();
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [errors, setErrors] = useState([]);
   const { get, post } = useRequest();
   const [event, setEvent] = useState({});
@@ -63,20 +64,26 @@ export default function EventIntake() {
     setEmail(e.target.value);
   };
 
+  const handleNameChange = e => {
+	setName(e.target.value);
+  };
+
   const handleSubmit = async () => {
     setErrors([]);
     setSubmitting(true);
     const response = await post(config.ADD_EMAIL_POST_URL, {
       EventId: id,
       Data: {
-        Email: email,
+		Email: email,
+		Name: name,
         Type: parseInt(participantType, 10),
         DateEntered: new Date()
       }
     });
     if (response.success) {
       setSuccessOpen(true);
-      setEmail("");
+	  setEmail("");
+	  setName("");
       setParticipantType("0");
     } else {
       setErrors(response.errors);
@@ -106,7 +113,6 @@ export default function EventIntake() {
         {Boolean(errors["*"]) && (
           <Typography color="error">{errors["*"]}</Typography>
         )}
-        <FormLabel component="legend">Enter your email address</FormLabel>
         <TextField
           autoFocus
           label="Email Address *"
@@ -117,7 +123,18 @@ export default function EventIntake() {
           variant="outlined"
           error={Boolean(errors["Data.Email"])}
 		  helperText={errors["Data.Email"]}
-        />
+		/>
+		<TextField
+			autoFocus
+			label="Name *"
+			className={classes.textField}
+			value={name}
+			onChange={handleNameChange}
+			margin="normal"
+			variant="outlined"
+			error={Boolean(errors["Data.Name"])}
+			helperText={errors["Data.Name"]}
+		/>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel
             component="legend"
@@ -132,17 +149,10 @@ export default function EventIntake() {
             value={participantType}
             onChange={handleParticipantTypeChange}
           >
-            <FormControlLabel
-              value={"0"}
-              control={<Radio />}
-              label="Volunteer"
-            />
-            <FormControlLabel
-              value={"1"}
-              control={<Radio />}
-              label="Attendee"
-            />
-            <FormControlLabel value={"2"} control={<Radio />} label="Donor" />
+            <FormControlLabel value={"0"} control={<Radio />} label="Volunteer" />
+            <FormControlLabel value={"1"} control={<Radio />} label="Attendee" />
+			<FormControlLabel value={"2"} control={<Radio />} label="Donor" />
+			<FormControlLabel value={"3"} control={<Radio />} label="Other" />
           </RadioGroup>
         </FormControl>
         <Button

@@ -1,3 +1,4 @@
+using NetCoreReact.Models.Email;
 using System.Collections.Generic;
 
 namespace NetCoreReact.Models
@@ -9,10 +10,8 @@ namespace NetCoreReact.Models
 		public string ConfirmEmailJwtSecret { get; set; }
 		public string RemoveEmailJwtSecret { get; set; }
 		public string FeedbackJwtSecret { get; set; }
-		public string GoogleClientId  { get; set; }
-        public string GoogleClientSecret  { get; set; }
-        public string JwtEmailEncryption { get; set; }
 		public List<string> ValidEmails { get; set; }
+		public List<EmailClient> SendGridClients { get; set; }
 		public string AppDomain { get; set; }
 		public string AppAudience { get; set; }
 	}

@@ -16,19 +16,8 @@ namespace NetCoreReact.Services.Business
 {
 	public class EmailService : IEmailService
 	{
-		private readonly string _sendGridApiKey;
-		private readonly string _fromEmail;
-		private readonly string _confirmationTemplateID;
-		private readonly string _feedbackTemplateID;
-		private readonly string _genericTemplateID;
-
-		public EmailService(string aPIKey, string fromEmail, string confirmationTemplateID, string feedbackTemplateID, string genericTemplateID)
+		public EmailService()
 		{
-			this._sendGridApiKey = aPIKey;
-			this._fromEmail = fromEmail;
-			this._confirmationTemplateID = confirmationTemplateID;
-			this._feedbackTemplateID = feedbackTemplateID;
-			this._genericTemplateID = genericTemplateID;
 		}
 
 		public async Task<DataResponse<Event>> SendConfirmationEmail(DataInput<Participant> participant, Event currentEvent)
@@ -37,13 +26,9 @@ namespace NetCoreReact.Services.Business
 			{
 				if (!currentEvent.Participants.FirstOrDefault(x => x.Email.Equals(participant.Data.Email, StringComparison.OrdinalIgnoreCase)).ConfirmSent)
 				{
-					var client = new SendGridClient(_sendGridApiKey);
+					var success = false;
+					var clientKey = 0;
 					var emailMessage = new SendGridMessage();
-
-					emailMessage.SetFrom(_fromEmail, "Zuri's Circle");
-					emailMessage.AddTo(participant.Data.Email);
-					emailMessage.SetTemplateId(_confirmationTemplateID);
-
 					var confirmJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
 					var removeJwt = TokenHelper.GenerateToken(participant.Data.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
 					var dynamicTemplateData = new EmailTemplateData
@@ -55,20 +40,34 @@ namespace NetCoreReact.Services.Business
 						Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
 					};
 
+					emailMessage.AddTo(participant.Data.Email);
 					emailMessage.SetTemplateData(dynamicTemplateData);
-					var response = await client.SendEmailAsync(emailMessage);
 
-					if (response.StatusCode == HttpStatusCode.Accepted)
+					while (!success)
 					{
-						return new DataResponse<Event>()
+						var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
+						emailMessage.SetFrom(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle");
+						emailMessage.SetTemplateId(AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[0]);
+						var response = await client.SendEmailAsync(emailMessage);
+
+						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
 						{
-							Success = true
-						};
+							success = true;
+						}
+						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
+						{
+							break;
+						}
+						else
+						{
+							++clientKey;
+						}
 					}
-					else
+
+					return new DataResponse<Event>()
 					{
-						throw new Exception("Email(s) failed to send.");
-					}
+						Success = success
+					};
 				}
 				else
 				{
@@ -85,7 +84,8 @@ namespace NetCoreReact.Services.Business
 		{
 			try
 			{
-				var client = new SendGridClient(_sendGridApiKey);
+				var success = false;
+				var clientKey = 0;
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
 				var participants = currentEvent.Participants.Where(x => x.FeedbackSent.Equals(false)).ToList();
@@ -113,27 +113,36 @@ namespace NetCoreReact.Services.Business
 					);
 				}
 
-				var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
-				(
-					new EmailAddress(_fromEmail, "Zuri's Circle"),
-					emailList,
-					_feedbackTemplateID,
-					dynamicTemplateDataList
-				);
-
-				var response = await client.SendEmailAsync(emailMessage);
-
-				if (response.StatusCode == HttpStatusCode.Accepted)
+				while (!success)
 				{
-					return new DataResponse<Event>()
+					var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
+					var emailMessage = MailHelper.CreateMultipleTemplateEmailsToMultipleRecipients
+					(
+						new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
+						emailList,
+						AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[1],
+						dynamicTemplateDataList
+					);
+					var response = await client.SendEmailAsync(emailMessage);
+
+					if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
 					{
-						Success = true
-					};
+						success = true;
+					}
+					else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
+					{
+						break;
+					}
+					else
+					{
+						++clientKey;
+					}
 				}
-				else
+
+				return new DataResponse<Event>()
 				{
-					throw new Exception("Email(s) failed to send.");
-				}
+					Success = success
+				};
 			}
 			catch (Exception e)
 			{
@@ -149,7 +158,7 @@ namespace NetCoreReact.Services.Business
 				var emailList = new List<EmailAddress>();
 				var dynamicTemplateDataList = new List<object>();
 
-				foreach(var recipient in email.Data.Recipient_List)
+				foreach(var recipient in email.Data.Recipient_List.Distinct())
 				{
 					emailList.Add(new EmailAddress(recipient));
 					var removeJwt = TokenHelper.GenerateToken(recipient, AppSettingsModel.appSettings.RemoveEmailJwtSecret, string.Empty);

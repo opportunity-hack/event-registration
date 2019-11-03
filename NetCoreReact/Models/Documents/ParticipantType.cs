@@ -4,6 +4,7 @@
 	{
 		Volunteer = 0,
 		Attendee = 1,
-		Donor = 2
+		Donor = 2,
+		Other = 3
 	}
 }
