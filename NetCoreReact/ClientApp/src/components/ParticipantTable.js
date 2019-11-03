@@ -6,7 +6,6 @@ import useRequest from "../hooks/useRequest";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from '@material-ui/icons/Close';
-import { formatDate } from "../helpers/dateHelper";
 import ReactTooltip from "react-tooltip";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
