@@ -4,36 +4,82 @@ using NetCoreReact.Models.Documents;
 using NetCoreReact.Models.DTO;
 using NetCoreReact.Models.Email;
 using NetCoreReact.Services.Business.Interfaces;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using RestSharp;
+using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace NetCoreReact.Services.Business
 {
 	public class EmailService : IEmailService
 	{
-		public EmailService()
+		private readonly string _apiKey;
+		private readonly string _baseUrl;
+		private readonly string _domain;
+
+		public EmailService(string apiKey, string baseUrl, string domain)
 		{
+			this._apiKey = apiKey;
+			this._baseUrl = baseUrl;
+			this._domain = domain;
 		}
+
+		private string BuildRecipientVariables(List<Participant> participants, Event currentEvent = null, string title = "", string body = "", bool isGeneric = false)
+		{
+			var confirmJwt = string.Empty; 
+			var feedbackJwt = string.Empty;
+			var removeJwt = string.Empty;
+
+			var stringBuilder = new StringBuilder();
+			var length = participants?.Count ?? 0;
+			stringBuilder.Append("{");
+			for(int i=0; i<length; i++)
+			{
+				confirmJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent?.Id ?? string.Empty);
+				feedbackJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent?.Id ?? string.Empty);
+				removeJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent?.Id ?? string.Empty);
+				stringBuilder.Append($"\"{participants[i]?.Email ?? string.Empty}\": {{" +
+					$"\"User_Name\": \"{participants[i]?.Name ?? string.Empty}\"," +
+					$"\"Event_Name\": \"{currentEvent?.Title ?? string.Empty}\"," +
+					$"\"Confirm_Url\": \"https://localhost:44384/confirm?token={confirmJwt}\"," +
+					$"\"Feedback_Url\": \"https://localhost:44384/feedback?token={feedbackJwt}\"," +
+					$"\"Remove_Email_Url\": \"https://localhost:44384/remove-email?token={removeJwt}\"," +
+					$"\"Title_Header\": \"{title}\"," +
+					$"\"Body_Copy\": \"{body}\"" +
+					$"}}");
+				if(i<length-1)
+				{
+					stringBuilder.Append(",");
+				}
+			}
+			if(isGeneric)
+			{
+				stringBuilder.Append(",");
+				stringBuilder.Append($"\"trevomoo@gmail.com\": {{" +
+					$"\"Title_Header\": \"{title}\"," +
+					$"\"Body_Copy\": \"{body}\"" +
+					$"}}");
+			}
+
+			stringBuilder.Append("}");
+			return stringBuilder.ToString();
+		}
+
 
 		public async Task<DataResponse<Event>> SendConfirmationEmail(string email, Event currentEvent)
 		{
+			var request = new RestRequest();
+			var response = new RestResponse();
+			var tcs = new TaskCompletionSource<IRestResponse>();
+			var client = new RestClient();
+
 			try
 			{
-				var allClientsFailed = false;
-				var success = false;
-				var clientKey = 0;
-				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
 				var participants = currentEvent.Participants.Where(x => x.ConfirmSent.Equals(false)).ToList();
-				string confirmJwt = string.Empty;
-				string removeJwt = string.Empty;
-				SendGridMessage emailMessage = null;
-				SendGrid.Response response = null;
-
 				if (string.IsNullOrEmpty(email))
 				{
 					currentEvent.SentConfirm = true;
@@ -43,55 +89,34 @@ namespace NetCoreReact.Services.Business
 					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
-				foreach (var participant in participants)
+				client.BaseUrl = new Uri(this._baseUrl);
+				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+				request.Resource = $"{this._domain}/messages";
+				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+				foreach(var participant in participants)
 				{
-					if (allClientsFailed)
-					{
-						break;
-					}
-
-					success = false;
-					confirmJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent.Id);
-					removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
-
-					while (!success)
-					{
-						emailMessage = MailHelper.CreateSingleTemplateEmail
-						(
-							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
-							new EmailAddress(participant.Email),
-							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[0],
-							new EmailTemplateData
-							{
-								Event_Name = currentEvent.Title,
-								User_Name = participant.Name,
-								Confirm_Url = $"https://localhost:44384/confirm?token={confirmJwt}",
-								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-								//Confirm_Url = $"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}",
-								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-							}
-						);
-
-						response = await client.SendEmailAsync(emailMessage);
-
-						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-						{
-							participant.ConfirmSent = true;
-							success = true;
-						}
-						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
-						{
-							allClientsFailed = true;
-							break;
-						}
-						else
-						{
-							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
-						}
-					}
+					request.AddParameter("to", participant.Email);
+					participant.ConfirmSent = true;
 				}
+				request.AddParameter("subject", "Thanks for Coming!");
+				request.AddParameter("template", "thanksandconfirmation");
+				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, currentEvent));
+				request.Method = Method.POST;
+				client.ExecuteAsync(request, response => {
+					tcs.SetResult(response);
+				});
+				response = await tcs.Task as RestResponse;
 
-				if (allClientsFailed)
+				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+				{
+					return new DataResponse<Event>()
+					{
+						Data = new List<Event> { currentEvent },
+						Success = true
+					};
+				}
+				else
 				{
 					return new DataResponse<Event>()
 					{
@@ -103,12 +128,6 @@ namespace NetCoreReact.Services.Business
 						Success = false
 					};
 				}
-
-				return new DataResponse<Event>()
-				{
-					Data = new List<Event> { currentEvent },
-					Success = true
-				};
 			}
 			catch (Exception e)
 			{
@@ -118,76 +137,51 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendFeedbackEmail(string email, Event currentEvent)
 		{
+			var request = new RestRequest();
+			var response = new RestResponse();
+			var tcs = new TaskCompletionSource<IRestResponse>();
+			var client = new RestClient();
+
 			try
 			{
-				var allClientsFailed = false;
-				var success = false;
-				var clientKey = 0;
-				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
 				var participants = currentEvent.Participants.Where(x => x.FeedbackSent.Equals(false)).ToList();
-				string feedbackJwt = string.Empty;
-				string removeJwt = string.Empty;
-				SendGridMessage emailMessage = null;
-				SendGrid.Response response = null;
-
 				if (string.IsNullOrEmpty(email))
 				{
 					currentEvent.SentFeedback = true;
 				}
-				else 
+				else
 				{
 					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
-				foreach(var participant in participants)
+				client.BaseUrl = new Uri(this._baseUrl);
+				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+				request.Resource = $"{this._domain}/messages";
+				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+				foreach (var participant in participants)
 				{
-					if (allClientsFailed)
-					{
-						break;
-					}
-
-					success = false;
-					feedbackJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent.Id);
-					removeJwt = TokenHelper.GenerateToken(participant.Email, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent.Id);
-
-					while (!success)
-					{
-						emailMessage = MailHelper.CreateSingleTemplateEmail
-						(
-							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
-							new EmailAddress(participant.Email),
-							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[1],
-							new EmailTemplateData
-							{
-								Event_Name = currentEvent.Title,
-								User_Name = participant.Name,
-								Feedback_Url = $"https://localhost:44384/feedback?token={feedbackJwt}",
-								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-								//Feedback_Url = $"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}",
-								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-							}
-						);
-
-						response = await client.SendEmailAsync(emailMessage);
-
-						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-						{
-							participant.FeedbackSent = true;
-							success = true;
-						}
-						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
-						{
-							allClientsFailed = true;
-							break;
-						}
-						else
-						{
-							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
-						}
-					}
+					request.AddParameter("to", participant.Email);
+					participant.FeedbackSent = true;
 				}
+				request.AddParameter("subject", "Tell us how we did!");
+				request.AddParameter("template", "feedback");
+				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, currentEvent));
+				request.Method = Method.POST;
+				client.ExecuteAsync(request, response => {
+					tcs.SetResult(response);
+				});
+				response = await tcs.Task as RestResponse;
 
-				if (allClientsFailed)
+				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+				{
+					return new DataResponse<Event>()
+					{
+						Data = new List<Event> { currentEvent },
+						Success = true
+					};
+				}
+				else
 				{
 					return new DataResponse<Event>()
 					{
@@ -199,12 +193,6 @@ namespace NetCoreReact.Services.Business
 						Success = false
 					};
 				}
-
-				return new DataResponse<Event>()
-				{
-					Data = new List<Event> { currentEvent },
-					Success = true
-				};
 			}
 			catch (Exception e)
 			{
@@ -214,61 +202,43 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email)
 		{
+			var request = new RestRequest();
+			var response = new RestResponse();
+			var tcs = new TaskCompletionSource<IRestResponse>();
+			var client = new RestClient();
+
 			try
 			{
-				var allClientsFailed = false;
-				var success = false;
-				var clientKey = 0;
-				var client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[clientKey].ApiKey);
-				string removeJwt = string.Empty;
-				SendGridMessage emailMessage = null;
-				SendGrid.Response response = null;
+				var participants = email.Data.Recipient_List.Distinct().Select(x => new Participant() { Email = x }).ToList();
 
-				foreach (var recipient in email.Data.Recipient_List)//.Distinct())
+				client.BaseUrl = new Uri(this._baseUrl);
+				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+				request.Resource = $"{this._domain}/messages";
+				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+				foreach (var participant in participants)
 				{
-					if (allClientsFailed)
-					{
-						break;
-					}
-
-					success = false;
-					removeJwt = TokenHelper.GenerateToken(recipient, AppSettingsModel.appSettings.RemoveEmailJwtSecret, string.Empty);
-
-					while (!success)
-					{
-						emailMessage = MailHelper.CreateSingleTemplateEmail
-						(
-							new EmailAddress(AppSettingsModel.appSettings.SendGridClients[clientKey].FromEmail, "Zuri's Circle"),
-							new EmailAddress(recipient),
-							AppSettingsModel.appSettings.SendGridClients[clientKey].TemplateIDs[2],
-							new EmailTemplateData
-							{
-								Title_Header = email.Data.Title_Header,
-								Body_Copy = email.Data.Body_Copy,
-								Remove_Email_Url = $"https://localhost:44384/remove-email?token={removeJwt}"
-								//Remove_Email_Url = $"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}"
-							}
-						);
-
-						response = await client.SendEmailAsync(emailMessage);
-
-						if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-						{
-							success = true;
-						}
-						else if (clientKey.Equals(AppSettingsModel.appSettings.SendGridClients.Count - 1))
-						{
-							allClientsFailed = true;
-							break;
-						}
-						else
-						{
-							client = new SendGridClient(AppSettingsModel.appSettings.SendGridClients[++clientKey].ApiKey);
-						}
-					}
+					request.AddParameter("to", participant.Email);
 				}
+				//request.AddParameter("bcc", "zuriscircle.mbc@gmail.com");
+				request.AddParameter("bcc", "trevomoo@gmail.com");
+				request.AddParameter("subject", "Zuri's Circle");
+				request.AddParameter("template", "generic");
+				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, title: email.Data.Title_Header, body: email.Data.Body_Copy, isGeneric: true));
+				request.Method = Method.POST;
+				client.ExecuteAsync(request, response => {
+					tcs.SetResult(response);
+				});
+				response = await tcs.Task as RestResponse;
 
-				if (allClientsFailed)
+				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+				{
+					return new DataResponse<Event>()
+					{
+						Success = true
+					};
+				}
+				else
 				{
 					return new DataResponse<Event>()
 					{
@@ -279,11 +249,6 @@ namespace NetCoreReact.Services.Business
 						Success = false
 					};
 				}
-
-				return new DataResponse<Event>()
-				{
-					Success = true
-				};
 			}
 			catch (Exception e)
 			{

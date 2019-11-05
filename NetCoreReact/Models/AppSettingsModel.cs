@@ -11,7 +11,7 @@ namespace NetCoreReact.Models
 		public string RemoveEmailJwtSecret { get; set; }
 		public string FeedbackJwtSecret { get; set; }
 		public List<string> ValidEmails { get; set; }
-		public List<EmailClient> SendGridClients { get; set; }
+		public EmailClient EmailClient { get; set; }
 		public string AppDomain { get; set; }
 		public string AppAudience { get; set; }
 	}

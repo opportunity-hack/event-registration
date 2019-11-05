@@ -104,7 +104,10 @@ namespace NetCoreReact
 					Configuration["ConnectionStrings:MongoDBAtlasCollection"]));
 			}
 
-			services.AddSingleton<IEmailService, EmailService>();
+			services.AddSingleton<IEmailService>(service => new EmailService(
+					Configuration["AppSettings:EmailClient:ApiKey"],
+					Configuration["AppSettings:EmailClient:BaseUrl"],
+					Configuration["AppSettings:EmailClient:Domain"]));
 			services.AddSingleton<IEventService, EventService>();
 			services.AddSingleton<IAuthenticationService, AuthenticationService>();
 			services.AddSingleton<IPredictionService, PredictionService>();
