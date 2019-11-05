@@ -10,7 +10,8 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(3)
   },
   textField: {
-    width: 300
+    width: 500,
+    maxWidth: "100%"
   }
 }));
 
@@ -66,8 +67,8 @@ export default function Feedback({ token }) {
           justifyContent="center"
           className={classes.root}
         >
-          <Typography variant="h4">Give us some feedback!</Typography>
-          <Typography color="textSecondary" gutterBottom>
+          <Typography variant="h4" align="center">Give us some feedback!</Typography>
+          <Typography color="textSecondary" gutterBottom align="center">
             How was your experience at Zuri's Circle?
           </Typography>
           <TextField
@@ -75,6 +76,7 @@ export default function Feedback({ token }) {
             label="Feedback"
             autoFocus
             multiline
+            fullWidth
             rows="5"
             className={classes.textField}
             error={Boolean(errors["Data.Body"])}
@@ -87,8 +89,8 @@ export default function Feedback({ token }) {
           <Button
             color="primary"
             variant="contained"
-			onClick={handleFeedbackSubmit}
-			className={classes.textField}
+            onClick={handleFeedbackSubmit}
+            className={classes.textField}
           >
             Submit
           </Button>

@@ -71,7 +71,9 @@ const useStyles = makeStyles(theme => ({
 	recipients: {
 		marginTop: 16,
 		marginBottom: 8,
-		borderColor: "rgba(0, 0, 0, 0.23) !important"
+		borderColor: "rgba(0, 0, 0, 0.23) !important",
+		maxHeight: "300px",
+		overflowY: "scroll"
 	}
 }));
 

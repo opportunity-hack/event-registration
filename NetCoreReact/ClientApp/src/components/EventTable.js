@@ -290,14 +290,17 @@ export default function EventTable({ events, setEvents }) {
     rowsPerPage - Math.min(rowsPerPage, events.length - page * rowsPerPage);
 
   const handleDelete = async () => {
-    let response = await post(config.DELETE_EVENT_POST_URL, {
+    /*let response = await post(config.DELETE_EVENT_POST_URL, {
       Data: selected
     });
     if (response.success) {
       setEvents([...events].filter(e => !selected.includes(e.id)));
       setSelected([]);
     } else {
-    }
+    }*/
+
+    
+
   };
 
   return (

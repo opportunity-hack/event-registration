@@ -12,7 +12,7 @@ import SendIcon from "@material-ui/icons/Send";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Box from "@material-ui/core/Box";
 import { useParams, Link } from "react-router-dom";
-import { ReactMultiEmail, isEmail } from 'react-multi-email';
+import { ReactMultiEmail, isEmail } from "react-multi-email";
 import "react-multi-email/style.css";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
@@ -27,10 +27,10 @@ import {
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
 import ParticipantTable from "../components/ParticipantTable";
 import FeedbackTable from "../components/FeedbackTable";
-import { formatDate } from '../helpers/dateHelper';
+import { formatDate } from "../helpers/dateHelper";
 import { Doughnut, Bar } from "react-chartjs-2";
 import { FilePicker } from "react-file-picker";
 import Axios from "axios";
@@ -71,12 +71,14 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5)
   },
   label: {
-	backgroundColor: "white"
+    backgroundColor: "white"
   },
   recipients: {
-	marginTop: 16,
-	marginBottom: 8,
-	borderColor: "rgba(0, 0, 0, 0.23) !important"
+    marginTop: 16,
+    marginBottom: 8,
+    borderColor: "rgba(0, 0, 0, 0.23) !important",
+    maxHeight: "300px",
+    overflowY: "scroll"
   }
 }));
 
@@ -100,7 +102,7 @@ export default function ViewEvent() {
   };
 
   const handleFailureClose = () => {
-	setFailureOpen(false);
+    setFailureOpen(false);
   };
 
   const handleBodyChange = e => {
@@ -108,7 +110,7 @@ export default function ViewEvent() {
   };
 
   const handleRecipientsChange = e => {
-	setRecipients(e);
+    setRecipients(e);
   };
 
   const handleSubjectChange = e => {
@@ -126,8 +128,8 @@ export default function ViewEvent() {
     async function getEvent() {
       let response = await get(config.GET_EVENT_GET_URL, { eventID: id });
       if (response.success) {
-		  setEvent(response.data[0]);
-		  setRecipients(response.data[0].participants.map(p => p.email));
+        setEvent(response.data[0]);
+        setRecipients(response.data[0].participants.map(p => p.email));
       } else {
         setErrors(response.errors);
       }
@@ -138,21 +140,20 @@ export default function ViewEvent() {
   }, []);
 
   const handleConfirmSubmit = async () => {
-	let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
-		EventId: id,
-		Data: ""
-	});
+    let response = await post(config.SEND_CONFIRMATION_EMAIL_POST_URL, {
+      EventId: id,
+      Data: ""
+    });
 
-	if (response.success) {
-		let tempEvent = { ...event };
-		tempEvent.sentConfirm = true;
-		setEvent(tempEvent);
-		setSuccessOpen(true);
-	}
-	else {
-		setErrors(response.errors);
-		setFailureOpen(true);
-	}
+    if (response.success) {
+      let tempEvent = { ...event };
+      tempEvent.sentConfirm = true;
+      setEvent(tempEvent);
+      setSuccessOpen(true);
+    } else {
+      setErrors(response.errors);
+      setFailureOpen(true);
+    }
   };
 
   const handleFeedbackSubmit = async () => {
@@ -166,17 +167,16 @@ export default function ViewEvent() {
       tempEvent.sentFeedback = true;
       setEvent(tempEvent);
       setSuccessOpen(true);
-	}
-	else {
-		setErrors(response.errors);
-		setFailureOpen(true);
-	}
+    } else {
+      setErrors(response.errors);
+      setFailureOpen(true);
+    }
   };
 
   const handleEmailSubmit = async () => {
     let response = await post(config.SEND_GENERIC_EMAIL_POST_URL, {
-	  Data: {
-		Recipient_List: recipients,
+      Data: {
+        Recipient_List: recipients,
         Title_Header: subject,
         Body_Copy: body
       },
@@ -187,10 +187,9 @@ export default function ViewEvent() {
       setSuccessOpen(true);
       setSubject("");
       setBody("");
-	}
-	else {
-	  setErrors(response.errors);
-	  setFailureOpen(true);
+    } else {
+      setErrors(response.errors);
+      setFailureOpen(true);
     }
   };
   const data = {
@@ -225,8 +224,8 @@ export default function ViewEvent() {
         hoverBorderColor: "rgba(121,7,242,1)",
         data: [
           event.participants.length,
-		  event.participants.filter(e => e.isConfirmed === true).length,
-		  event.participants.filter(e => e.feedbackSent === true).length,
+          event.participants.filter(e => e.isConfirmed === true).length,
+          event.participants.filter(e => e.feedbackSent === true).length,
           event.feedback.length
         ]
       }
@@ -251,40 +250,39 @@ export default function ViewEvent() {
     }
   };
 
-	  const handleFileChange = file => {
-		if (file) {
-		  let formData = new FormData();
-		  formData.append("file", file);
-		  Axios.post(
-			config.UPLOAD_EMAILS_POST_URL + "?eventID=" + event.id,
-			formData,
-			{
-			  headers: {
-				"Content-Type": "multipart/form-data",
-				Authorization: "Bearer " + authState.token
-			  }
-			}
-		  )
-			.then(function() {
-			  setSuccessOpen(true);
-			})
-			.catch(function() {});
-		}
-	  };
-
+  const handleFileChange = file => {
+    if (file) {
+      let formData = new FormData();
+      formData.append("file", file);
+      Axios.post(
+        config.UPLOAD_EMAILS_POST_URL + "?eventID=" + event.id,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + authState.token
+          }
+        }
+      )
+        .then(function() {
+          setSuccessOpen(true);
+        })
+        .catch(function() {});
+    }
+  };
 
   return (
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
         {event.title}
-	  </Typography>
-	  <Typography variant="subtitle1" gutterBottom>
-		<b>Date:</b> {formatDate(event.startDate)} - {formatDate(event.endDate)}
-	  </Typography>
-	  <Typography variant="subtitle1" gutterBottom>
-		<b>Description:</b> {event.description}
-	  </Typography>
-	  <br />
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        <b>Date:</b> {formatDate(event.startDate)} - {formatDate(event.endDate)}
+      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+        <b>Description:</b> {event.description}
+      </Typography>
+      <br />
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -318,24 +316,26 @@ export default function ViewEvent() {
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
           {event.participants && (
-			<ParticipantTable participants={event.participants} isViewAll={false} />
+            <ParticipantTable
+              participants={event.participants}
+              isViewAll={false}
+            />
           )}
           <Grid item xs={12}>
             <ButtonGroup
               fullWidth
               aria-label="full width outlined button group"
-			>
-			
-			<Button startIcon={<CloudUploadIcon />}>
-			<FilePicker
-				extensions={["csv"]}
-				onChange={handleFileChange}
-				onError={errMsg => {}}
-			>
-				<div>Upload Emails</div>
-			</FilePicker>
-			</Button>		   
-			
+            >
+              <Button startIcon={<CloudUploadIcon />}>
+                <FilePicker
+                  extensions={["csv"]}
+                  onChange={handleFileChange}
+                  onError={errMsg => {}}
+                >
+                  <div>Upload Emails</div>
+                </FilePicker>
+              </Button>
+
               <Button
                 startIcon={<CloudDownloadIcon />}
                 component="a"
@@ -355,12 +355,12 @@ export default function ViewEvent() {
               >
                 Add Emails
               </Button>
-			  <Button
-			    startIcon={<SendIcon />}
-				disabled={event.sentConfirm ? true : false}
-				onClick={handleConfirmSubmit}
-			  >
-				Confirm Emails (All)
+              <Button
+                startIcon={<SendIcon />}
+                disabled={event.sentConfirm ? true : false}
+                onClick={handleConfirmSubmit}
+              >
+                Confirm Emails (All)
               </Button>
               <Button
                 startIcon={<SendIcon />}
@@ -388,43 +388,41 @@ export default function ViewEvent() {
                       options={options}
                     />
                   </Grid>
-				</Grid>
-				<br/>
-                <FeedbackTable
-                  feedbacks={event.feedback}
-                />
+                </Grid>
+                <br />
+                <FeedbackTable feedbacks={event.feedback} />
               </>
             )}
           </Box>
         </TabPanel>
-		<TabPanel value={value} index={2} dir={theme.direction}>
-		  <Box display="flex" flexDirection="column">
-			  <ReactMultiEmail
-				className={classes.recipients}
-				placeholder={
-						<div style={{ color: 'rgba(0, 0, 0, 0.54)' }}>To *</div>
-				}
-				emails={recipients}
-				value={recipients}
-				onChange={handleRecipientsChange}
-				validateEmail={email => {
-					return isEmail(email);
-				}}
-				getLabel={(
-					email: string,
-					index: number,
-					removeEmail: (index: number) => void,
-				) => {
-					return (
-						<div data-tag key={index}>
-							{email}
-							<span data-tag-handle onClick={() => removeEmail(index)}>
-								x
-							</span>
-						</div>
-					);
-				}}
-			/>
+        <TabPanel value={value} index={2} dir={theme.direction}>
+          <Box display="flex" flexDirection="column">
+            <ReactMultiEmail
+              className={classes.recipients}
+              placeholder={
+                <div style={{ color: "rgba(0, 0, 0, 0.54)" }}>To *</div>
+              }
+              emails={recipients}
+              value={recipients}
+              onChange={handleRecipientsChange}
+              validateEmail={email => {
+                return isEmail(email);
+              }}
+              getLabel={(
+                email: string,
+                index: number,
+                removeEmail: (index: number) => void
+              ) => {
+                return (
+                  <div data-tag key={index}>
+                    {email}
+                    <span data-tag-handle onClick={() => removeEmail(index)}>
+                      x
+                    </span>
+                  </div>
+                );
+              }}
+            />
             <TextField
               autoFocus
               label="Subject *"
@@ -486,26 +484,26 @@ export default function ViewEvent() {
                 Close
               </Button>
             </DialogActions>
-			</Dialog>
-			<Dialog
-				onClose={handleFailureClose}
-				open={failureOpen}
-				fullWidth
-				PaperProps={{ style: { maxWidth: 400 } }}
-			>
-				<DialogTitle align="center">
-					<Avatar style={{ backgroundColor: "#ff0000" }}>
-						<CloseIcon fontSize="large" />
-					</Avatar>
-					Failure: {errors["*"]}
-				</DialogTitle>
-				<DialogContent align="center"></DialogContent>
-				<DialogActions>
-					<Button onClick={handleFailureClose} variant="contained">
-						Close
-				</Button>
-				</DialogActions>
-			</Dialog>
+          </Dialog>
+          <Dialog
+            onClose={handleFailureClose}
+            open={failureOpen}
+            fullWidth
+            PaperProps={{ style: { maxWidth: 400 } }}
+          >
+            <DialogTitle align="center">
+              <Avatar style={{ backgroundColor: "#ff0000" }}>
+                <CloseIcon fontSize="large" />
+              </Avatar>
+              Failure: {errors["*"]}
+            </DialogTitle>
+            <DialogContent align="center"></DialogContent>
+            <DialogActions>
+              <Button onClick={handleFailureClose} variant="contained">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
         </TabPanel>
       </SwipeableViews>
     </div>
