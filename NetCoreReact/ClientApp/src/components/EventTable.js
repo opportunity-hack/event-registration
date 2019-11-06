@@ -7,27 +7,27 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
 import config from "../config.json";
-import { formatDate } from '../helpers/dateHelper';
+import { formatDate } from "../helpers/dateHelper";
 import {
-	Button,
-	FormControlLabel,
-	ButtonGroup,
-	TableBody,
-	Table,
-	TableCell,
-	TableHead,
-	TablePagination,
-	TableRow,
-	TableSortLabel,
-	Typography,
-	Paper,
-	Tooltip,
-	Toolbar,
-	Switch,
-	IconButton,
-	Checkbox,
-
+  Button,
+  FormControlLabel,
+  ButtonGroup,
+  TableBody,
+  Table,
+  TableCell,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Typography,
+  Paper,
+  Tooltip,
+  Toolbar,
+  Switch,
+  IconButton,
+  Checkbox
 } from "@material-ui/core";
+import Confirm from "./Confirm";
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -236,6 +236,19 @@ export default function EventTable({ events, setEvents }) {
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const { post } = useRequest();
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+
+  const handleDelete = async () => {
+    setDeleteOpen(false);
+    let response = await post(config.DELETE_EVENT_POST_URL, {
+      Data: selected
+    });
+    if (response.success) {
+      setEvents([...events].filter(e => !selected.includes(e.id)));
+      setSelected([]);
+    } else {
+    }
+  };
 
   const handleRequestSort = (event, property) => {
     const isDesc = orderBy === property && order === "desc";
@@ -289,26 +302,12 @@ export default function EventTable({ events, setEvents }) {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, events.length - page * rowsPerPage);
 
-  const handleDelete = async () => {
-    /*let response = await post(config.DELETE_EVENT_POST_URL, {
-      Data: selected
-    });
-    if (response.success) {
-      setEvents([...events].filter(e => !selected.includes(e.id)));
-      setSelected([]);
-    } else {
-    }*/
-
-    
-
-  };
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar
           numSelected={selected.length}
-          handleDelete={handleDelete}
+          handleDelete={() => setDeleteOpen(true)}
         />
         <div className={classes.tableWrapper}>
           <Table
@@ -358,31 +357,34 @@ export default function EventTable({ events, setEvents }) {
                         {event.title}
                       </TableCell>
                       <TableCell align="right">
-						{formatDate(event.startDate)}
+                        {formatDate(event.startDate)}
                       </TableCell>
-					  <TableCell align="right">
-						{formatDate(event.endDate)}
+                      <TableCell align="right">
+                        {formatDate(event.endDate)}
                       </TableCell>
                       <TableCell align="right">
                         {event.participants.length}
                       </TableCell>
-					  <TableCell align="center">
-						<ButtonGroup color="primary" aria-label="outlined primary button group">
-							<Button
-							  component={Link}
-							  to={`/event/add-email/${event.id}`}
-							  variant="outlined"
-							>
-							  Add Emails
-							</Button>
-							<Button
-							  component={Link}
-							  to={`/event/${event.id}`}
-							  variant="outlined"
-							>
-							  View Event
-							</Button>
-						</ButtonGroup>
+                      <TableCell align="center">
+                        <ButtonGroup
+                          color="primary"
+                          aria-label="outlined primary button group"
+                        >
+                          <Button
+                            component={Link}
+                            to={`/event/add-email/${event.id}`}
+                            variant="outlined"
+                          >
+                            Add Emails
+                          </Button>
+                          <Button
+                            component={Link}
+                            to={`/event/${event.id}`}
+                            variant="outlined"
+                          >
+                            View Event
+                          </Button>
+                        </ButtonGroup>
                       </TableCell>
                     </TableRow>
                   );
@@ -414,6 +416,11 @@ export default function EventTable({ events, setEvents }) {
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
+      />
+      <Confirm
+        open={deleteOpen}
+        handleClose={() => setDeleteOpen(false)}
+        handleDelete={handleDelete}
       />
     </div>
   );
