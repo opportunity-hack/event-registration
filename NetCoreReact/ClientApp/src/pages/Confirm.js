@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Emoji from 'react-emoji-render';
 import {
   Dialog,
   DialogTitle,
@@ -27,7 +28,9 @@ export default function Confirm({ token }) {
         <DialogTitle>Success!</DialogTitle>
         <DialogContent align="center">
           <Typography gutterBottom>
-            {confirming ? "Loading" : "Your email has been confirmed! Keep an eye out for future emails to stay up to date with our events :)"}
+			{confirming ? "Loading" : <>Your email has been confirmed! Keep an eye out for future emails to stay up to date with our events<Emoji text=":smiley:" /></>}
+			<br/>
+			{confirming ? "" : <>You're all good to leave this page<Emoji text=":+1:" /></>}
           </Typography>
         </DialogContent>
       </Dialog>

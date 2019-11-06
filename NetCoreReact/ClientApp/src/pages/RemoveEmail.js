@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Emoji from 'react-emoji-render';
 import {
   Dialog,
   DialogTitle,
@@ -27,9 +28,9 @@ export default function RemoveEmail({ token }) {
         <DialogTitle>Email Removed</DialogTitle>
         <DialogContent align="center">
           <Typography gutterBottom>
-            {removing
-              ? "Loading"
-              : "Your email has successfully been removed from our mailing list."}
+			{removing ? "Loading" : <>Your email has successfully been removed from our mailing list.</>}
+			<br />
+			{removing ? "" : <>You're all good to leave this page<Emoji text=":+1:" /></>}
           </Typography>
         </DialogContent>
       </Dialog>

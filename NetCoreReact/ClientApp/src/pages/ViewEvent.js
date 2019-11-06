@@ -209,10 +209,10 @@ export default function ViewEvent() {
 
   const data2 = {
     labels: [
-      "Sign ups",
-      "Email Confirmation",
-      "Surveys Sent",
-      "Survey Responses"
+      "Emails",
+      "Confirmed Emails",
+      "Feedback Sent",
+      "Feedback Received"
     ],
     datasets: [
       {

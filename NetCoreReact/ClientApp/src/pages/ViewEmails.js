@@ -210,10 +210,10 @@ export default function ViewEmails() {
 
 	const data2 = {
 		labels: [
-			"Sign ups",
-			"Email Confirmation",
-			"Surveys Sent",
-			"Survey Responses"
+			"Emails",
+			"Confirmed Emails",
+			"Feedback Sent",
+			"Feedback Received"
 		],
 		datasets: [
 			{

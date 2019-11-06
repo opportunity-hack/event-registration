@@ -290,6 +290,8 @@ export default function ParticipantTable({ participants, isViewAll }) {
 			return "Attendee";
 		  case 2:
 			return "Donor";
+		  case 3:
+			return "Other";
 		  default:
 			return "Attendee";
 

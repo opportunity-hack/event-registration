@@ -46,7 +46,7 @@ export default function EventIntake() {
   const [successOpen, setSuccessOpen] = useState(false);
   const [failureOpen, setFailureOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [participantType, setParticipantType] = useState("0");
+  const [participantType, setParticipantType] = useState("1");
 
   useEffect(() => {
     async function getEvent() {
@@ -86,7 +86,7 @@ export default function EventIntake() {
       setSuccessOpen(true);
 	  setEmail("");
 	  setName("");
-      setParticipantType("0");
+      setParticipantType("1");
     } else {
 	  setErrors(response.errors);
 	  setFailureOpen(true);
@@ -114,7 +114,7 @@ export default function EventIntake() {
 		  flexDirection="column"
 	  >
       <Typography variant="h4" gutterBottom>
-        {event.title} Sign up
+        {event.title} Sign Up
       </Typography>
       <Box display="flex" flexDirection="column" className={classes.form}>
         {Boolean(errors["*"]) && (
@@ -155,8 +155,8 @@ export default function EventIntake() {
             value={participantType}
             onChange={handleParticipantTypeChange}
           >
-            <FormControlLabel value={"0"} control={<Radio />} label="Volunteer" />
             <FormControlLabel value={"1"} control={<Radio />} label="Attendee" />
+            <FormControlLabel value={"0"} control={<Radio />} label="Volunteer" />
 			<FormControlLabel value={"2"} control={<Radio />} label="Donor" />
 			<FormControlLabel value={"3"} control={<Radio />} label="Other" />
           </RadioGroup>

@@ -37,32 +37,45 @@ namespace NetCoreReact.Services.Business
 			var stringBuilder = new StringBuilder();
 			var length = participants?.Count ?? 0;
 			stringBuilder.Append("{");
-			for(int i=0; i<length; i++)
+
+			for (int i=0; i<length; i++)
 			{
 				confirmJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent?.Id ?? string.Empty);
 				feedbackJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent?.Id ?? string.Empty);
 				removeJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent?.Id ?? string.Empty);
-				stringBuilder.Append($"\"{participants[i]?.Email ?? string.Empty}\": {{" +
+				stringBuilder.Append($"\"{participants[i]?.Email ?? string.Empty}\":" +
+				$"{{" +
 					$"\"User_Name\": \"{participants[i]?.Name ?? string.Empty}\"," +
 					$"\"Event_Name\": \"{currentEvent?.Title ?? string.Empty}\"," +
+					// UNCOMMENT FOR LIVE:
+					//$"\"Confirm_Url\": \"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}\"," +
+					//$"\"Feedback_Url\": \"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}\"," +
+					//$"\"Remove_Email_Url\": \"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}\"," +
+					// REMOVE LINES FOR LIVE:
 					$"\"Confirm_Url\": \"https://localhost:44384/confirm?token={confirmJwt}\"," +
 					$"\"Feedback_Url\": \"https://localhost:44384/feedback?token={feedbackJwt}\"," +
 					$"\"Remove_Email_Url\": \"https://localhost:44384/remove-email?token={removeJwt}\"," +
 					$"\"Title_Header\": \"{title}\"," +
 					$"\"Body_Copy\": \"{body}\"" +
-					$"}}");
-				if(i<length-1)
+				$"}}");
+
+				if (i<length-1)
 				{
 					stringBuilder.Append(",");
 				}
 			}
-			if(isGeneric)
+
+			if (isGeneric)
 			{
 				stringBuilder.Append(",");
-				stringBuilder.Append($"\"trevomoo@gmail.com\": {{" +
+				// UNCOMMENT FOR LIVE:
+				//stringBuilder.Append($"\"zuriscircle.mbc@gmail.com\":" +
+				// REMOVE THIS LINE FOR LIVE:
+				stringBuilder.Append($"\"tmoore82@my.gcu.edu\":" +
+				$"{{" +
 					$"\"Title_Header\": \"{title}\"," +
 					$"\"Body_Copy\": \"{body}\"" +
-					$"}}");
+				$"}}");
 			}
 
 			stringBuilder.Append("}");
@@ -76,6 +89,7 @@ namespace NetCoreReact.Services.Business
 			var response = new RestResponse();
 			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
+			var success = 0;
 
 			try
 			{
@@ -89,26 +103,35 @@ namespace NetCoreReact.Services.Business
 					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
-				client.BaseUrl = new Uri(this._baseUrl);
-				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
-				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
-				request.Resource = $"{this._domain}/messages";
-				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
-				foreach(var participant in participants)
+				var participantLists = ListHelper.splitList(participants);
+				foreach (var participantList in participantLists)
 				{
-					request.AddParameter("to", participant.Email);
-					participant.ConfirmSent = true;
-				}
-				request.AddParameter("subject", "Thanks for Coming!");
-				request.AddParameter("template", "thanksandconfirmation");
-				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, currentEvent));
-				request.Method = Method.POST;
-				client.ExecuteAsync(request, response => {
-					tcs.SetResult(response);
-				});
-				response = await tcs.Task as RestResponse;
+					client.BaseUrl = new Uri(this._baseUrl);
+					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+					request.Resource = $"{this._domain}/messages";
+					request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+					foreach(var participant in participantList)
+					{
+						request.AddParameter("to", participant.Email);
+						participant.ConfirmSent = true;
+					}
+					request.AddParameter("subject", "Thanks for coming!");
+					request.AddParameter("template", "thanksandconfirmation");
+					request.AddParameter("recipient-variables", BuildRecipientVariables(participantList, currentEvent));
+					request.Method = Method.POST;
+					client.ExecuteAsync(request, response => {
+						tcs.SetResult(response);
+					});
+					response = await tcs.Task as RestResponse;
 
-				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+					if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK || response.ResponseStatus == ResponseStatus.Completed)
+					{
+						++success;
+					}
+				}
+
+				if (success.Equals(participantLists.ToList().Count))
 				{
 					return new DataResponse<Event>()
 					{
@@ -141,6 +164,7 @@ namespace NetCoreReact.Services.Business
 			var response = new RestResponse();
 			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
+			var success = 0;
 
 			try
 			{
@@ -154,26 +178,35 @@ namespace NetCoreReact.Services.Business
 					participants = participants.Where(x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 
-				client.BaseUrl = new Uri(this._baseUrl);
-				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
-				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
-				request.Resource = $"{this._domain}/messages";
-				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
-				foreach (var participant in participants)
+				var participantLists = ListHelper.splitList(participants);
+				foreach (var participantList in participantLists)
 				{
-					request.AddParameter("to", participant.Email);
-					participant.FeedbackSent = true;
-				}
-				request.AddParameter("subject", "Tell us how we did!");
-				request.AddParameter("template", "feedback");
-				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, currentEvent));
-				request.Method = Method.POST;
-				client.ExecuteAsync(request, response => {
-					tcs.SetResult(response);
-				});
-				response = await tcs.Task as RestResponse;
+					client.BaseUrl = new Uri(this._baseUrl);
+					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+					request.Resource = $"{this._domain}/messages";
+					request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+					foreach (var participant in participantList)
+					{
+						request.AddParameter("to", participant.Email);
+						participant.FeedbackSent = true;
+					}
+					request.AddParameter("subject", "How did we do?");
+					request.AddParameter("template", "feedback");
+					request.AddParameter("recipient-variables", BuildRecipientVariables(participantList, currentEvent));
+					request.Method = Method.POST;
+					client.ExecuteAsync(request, response => {
+						tcs.SetResult(response);
+					});
+					response = await tcs.Task as RestResponse;
 
-				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+					if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK || response.ResponseStatus == ResponseStatus.Completed)
+					{
+						++success;
+					}
+				}
+
+				if (success.Equals(participantLists.ToList().Count))
 				{
 					return new DataResponse<Event>()
 					{
@@ -206,32 +239,44 @@ namespace NetCoreReact.Services.Business
 			var response = new RestResponse();
 			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
+			var success = 0;
 
 			try
 			{
 				var participants = email.Data.Recipient_List.Distinct().Select(x => new Participant() { Email = x }).ToList();
 
-				client.BaseUrl = new Uri(this._baseUrl);
-				client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
-				request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
-				request.Resource = $"{this._domain}/messages";
-				request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
-				foreach (var participant in participants)
+				var participantLists = ListHelper.splitList(participants);
+				foreach (var participantList in participantLists)
 				{
-					request.AddParameter("to", participant.Email);
-				}
-				//request.AddParameter("bcc", "zuriscircle.mbc@gmail.com");
-				request.AddParameter("bcc", "trevomoo@gmail.com");
-				request.AddParameter("subject", "Zuri's Circle");
-				request.AddParameter("template", "generic");
-				request.AddParameter("recipient-variables", BuildRecipientVariables(participants, title: email.Data.Title_Header, body: email.Data.Body_Copy, isGeneric: true));
-				request.Method = Method.POST;
-				client.ExecuteAsync(request, response => {
-					tcs.SetResult(response);
-				});
-				response = await tcs.Task as RestResponse;
+					client.BaseUrl = new Uri(this._baseUrl);
+					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
+					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
+					request.Resource = $"{this._domain}/messages";
+					request.AddParameter("from", "Zuri's Circle <zuriscircle@zurisdashboard.org>");
+					foreach (var participant in participantList)
+					{
+						request.AddParameter("to", participant.Email);
+					}
+					// UNCOMMENT FOR LIVE:
+					//request.AddParameter("bcc", "zuriscircle.mbc@gmail.com");
+					// REMOVE THIS LINE FOR LIVE:
+					request.AddParameter("bcc", "tmoore82@my.gcu.edu");
+					request.AddParameter("subject", "Zuri's Circle");
+					request.AddParameter("template", "generic");
+					request.AddParameter("recipient-variables", BuildRecipientVariables(participantList, title: email.Data.Title_Header, body: email.Data.Body_Copy, isGeneric: true));
+					request.Method = Method.POST;
+					client.ExecuteAsync(request, response => {
+						tcs.SetResult(response);
+					});
+					response = await tcs.Task as RestResponse;
 
-				if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+					if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK || response.ResponseStatus == ResponseStatus.Completed)
+					{
+						++success;
+					}
+				}
+
+				if (success.Equals(participantLists.ToList().Count))
 				{
 					return new DataResponse<Event>()
 					{
