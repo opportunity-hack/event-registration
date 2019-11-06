@@ -25,7 +25,9 @@ import {
   Toolbar,
   Switch,
   IconButton,
-  Checkbox
+  Checkbox,
+  Box,
+  CircularProgress
 } from "@material-ui/core";
 import Confirm from "./Confirm";
 
@@ -227,7 +229,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function EventTable({ events, setEvents }) {
+export default function EventTable({ events, setEvents, loading }) {
   const classes = useStyles();
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -305,113 +307,123 @@ export default function EventTable({ events, setEvents }) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          handleDelete={() => setDeleteOpen(true)}
-        />
-        <div className={classes.tableWrapper}>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              classes={classes}
+        {loading ? (
+          <Box p={2} display="flex" justifyContent="center">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <EnhancedTableToolbar
               numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={events.length}
+              handleDelete={() => setDeleteOpen(true)}
             />
-            <TableBody>
-              {stableSort(events, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((event, index) => {
-                  const isItemSelected = isSelected(event.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+            <div className={classes.tableWrapper}>
+              <Table
+                className={classes.table}
+                aria-labelledby="tableTitle"
+                size={dense ? "small" : "medium"}
+                aria-label="enhanced table"
+              >
+                <EnhancedTableHead
+                  classes={classes}
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={events.length}
+                />
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={e => handleClick(e, event.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={event.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        {event.title}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatDate(event.startDate)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatDate(event.endDate)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {event.participants.length}
-                      </TableCell>
-                      <TableCell align="center">
-                        <ButtonGroup
-                          color="primary"
-                          aria-label="outlined primary button group"
+                <TableBody>
+                  {stableSort(events, getSorting(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((event, index) => {
+                      const isItemSelected = isSelected(event.id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+
+                      return (
+                        <TableRow
+                          hover
+                          onClick={e => handleClick(e, event.id)}
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={event.id}
+                          selected={isItemSelected}
                         >
-                          <Button
-                            component={Link}
-                            to={`/event/add-email/${event.id}`}
-                            variant="outlined"
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              inputProps={{ "aria-labelledby": labelId }}
+                            />
+                          </TableCell>
+                          <TableCell
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
                           >
-                            Add Emails
-                          </Button>
-                          <Button
-                            component={Link}
-                            to={`/event/${event.id}`}
-                            variant="outlined"
-                          >
-                            View Event
-                          </Button>
-                        </ButtonGroup>
-                      </TableCell>
+                            {event.title}
+                          </TableCell>
+                          <TableCell align="right">
+                            {formatDate(event.startDate)}
+                          </TableCell>
+                          <TableCell align="right">
+                            {formatDate(event.endDate)}
+                          </TableCell>
+                          <TableCell align="right">
+                            {event.participants.length}
+                          </TableCell>
+                          <TableCell align="center">
+                            <ButtonGroup
+                              color="primary"
+                              aria-label="outlined primary button group"
+                            >
+                              <Button
+                                component={Link}
+                                to={`/event/add-email/${event.id}`}
+                                variant="outlined"
+                              >
+                                Add Emails
+                              </Button>
+                              <Button
+                                component={Link}
+                                to={`/event/${event.id}`}
+                                variant="outlined"
+                              >
+                                View Event
+                              </Button>
+                            </ButtonGroup>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                      <TableCell colSpan={6} />
                     </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={events.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            "aria-label": "previous page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "next page"
-          }}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={events.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              backIconButtonProps={{
+                "aria-label": "previous page"
+              }}
+              nextIconButtonProps={{
+                "aria-label": "next page"
+              }}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </>
+        )}
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
