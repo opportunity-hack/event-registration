@@ -249,8 +249,8 @@ export default function ViewEvent() {
       ]
     }
   };
-
-  const handleFileChange = file => {
+/**
+ * const handleFileChange = file => {
     if (file) {
       let formData = new FormData();
       formData.append("file", file);
@@ -270,7 +270,7 @@ export default function ViewEvent() {
         .catch(function() {});
     }
   };
-
+ */
   return (
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
@@ -326,7 +326,7 @@ export default function ViewEvent() {
               fullWidth
               aria-label="full width outlined button group"
             >
-              <Button startIcon={<CloudUploadIcon />}>
+			{/**<Button startIcon={<CloudUploadIcon />}>
                 <FilePicker
                   extensions={["csv"]}
                   onChange={handleFileChange}
@@ -334,8 +334,7 @@ export default function ViewEvent() {
                 >
                   <div>Upload Emails</div>
                 </FilePicker>
-              </Button>
-
+              </Button>**/}
               <Button
                 startIcon={<CloudDownloadIcon />}
                 component="a"
@@ -360,7 +359,7 @@ export default function ViewEvent() {
                 disabled={event.sentConfirm ? true : false}
                 onClick={handleConfirmSubmit}
               >
-                Confirm Emails (All)
+                Send Confirm Email (All)
               </Button>
               <Button
                 startIcon={<SendIcon />}

@@ -48,13 +48,13 @@ namespace NetCoreReact.Services.Business
 					$"\"User_Name\": \"{participants[i]?.Name ?? string.Empty}\"," +
 					$"\"Event_Name\": \"{currentEvent?.Title ?? string.Empty}\"," +
 					// UNCOMMENT FOR LIVE:
-					//$"\"Confirm_Url\": \"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}\"," +
-					//$"\"Feedback_Url\": \"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}\"," +
-					//$"\"Remove_Email_Url\": \"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}\"," +
-					// REMOVE LINES FOR LIVE:
-					$"\"Confirm_Url\": \"https://localhost:44384/confirm?token={confirmJwt}\"," +
-					$"\"Feedback_Url\": \"https://localhost:44384/feedback?token={feedbackJwt}\"," +
-					$"\"Remove_Email_Url\": \"https://localhost:44384/remove-email?token={removeJwt}\"," +
+					$"\"Confirm_Url\": \"https://zurisdashboard.azurewebsites.net/confirm?token={confirmJwt}\"," +
+					$"\"Feedback_Url\": \"https://zurisdashboard.azurewebsites.net/feedback?token={feedbackJwt}\"," +
+					$"\"Remove_Email_Url\": \"https://zurisdashboard.azurewebsites.net/remove-email?token={removeJwt}\"," +
+					// COMMENT LINES FOR LIVE:
+					//$"\"Confirm_Url\": \"https://localhost:44384/confirm?token={confirmJwt}\"," +
+					//$"\"Feedback_Url\": \"https://localhost:44384/feedback?token={feedbackJwt}\"," +
+					//$"\"Remove_Email_Url\": \"https://localhost:44384/remove-email?token={removeJwt}\"," +
 					$"\"Title_Header\": \"{title}\"," +
 					$"\"Body_Copy\": \"{body}\"" +
 				$"}}");
@@ -69,9 +69,9 @@ namespace NetCoreReact.Services.Business
 			{
 				stringBuilder.Append(",");
 				// UNCOMMENT FOR LIVE:
-				//stringBuilder.Append($"\"zuriscircle.mbc@gmail.com\":" +
-				// REMOVE THIS LINE FOR LIVE:
-				stringBuilder.Append($"\"tmoore82@my.gcu.edu\":" +
+				stringBuilder.Append($"\"zuriscircle.mbc@gmail.com\":" +
+				// COMMENT THIS LINE FOR LIVE:
+				//stringBuilder.Append($"\"tmoore82@my.gcu.edu\":" +
 				$"{{" +
 					$"\"Title_Header\": \"{title}\"," +
 					$"\"Body_Copy\": \"{body}\"" +
@@ -258,9 +258,9 @@ namespace NetCoreReact.Services.Business
 						request.AddParameter("to", participant.Email);
 					}
 					// UNCOMMENT FOR LIVE:
-					//request.AddParameter("bcc", "zuriscircle.mbc@gmail.com");
-					// REMOVE THIS LINE FOR LIVE:
-					request.AddParameter("bcc", "tmoore82@my.gcu.edu");
+					request.AddParameter("bcc", "zuriscircle.mbc@gmail.com");
+					// COMMENT THIS LINE FOR LIVE:
+					//request.AddParameter("bcc", "tmoore82@my.gcu.edu");
 					request.AddParameter("subject", "Zuri's Circle");
 					request.AddParameter("template", "generic");
 					request.AddParameter("recipient-variables", BuildRecipientVariables(participantList, title: email.Data.Title_Header, body: email.Data.Body_Copy, isGeneric: true));
