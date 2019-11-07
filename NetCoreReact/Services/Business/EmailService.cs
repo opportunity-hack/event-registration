@@ -30,19 +30,15 @@ namespace NetCoreReact.Services.Business
 
 		private string BuildRecipientVariables(List<Participant> participants, Event currentEvent = null, string title = "", string body = "", bool isGeneric = false)
 		{
-			var confirmJwt = string.Empty; 
-			var feedbackJwt = string.Empty;
-			var removeJwt = string.Empty;
-
 			var stringBuilder = new StringBuilder();
 			var length = participants?.Count ?? 0;
 			stringBuilder.Append("{");
 
 			for (int i=0; i<length; i++)
 			{
-				confirmJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent?.Id ?? string.Empty);
-				feedbackJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent?.Id ?? string.Empty);
-				removeJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent?.Id ?? string.Empty);
+				var confirmJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.ConfirmEmailJwtSecret, currentEvent?.Id ?? string.Empty);
+				var feedbackJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.FeedbackJwtSecret, currentEvent?.Id ?? string.Empty);
+				var removeJwt = TokenHelper.GenerateToken(participants[i]?.Email ?? string.Empty, AppSettingsModel.appSettings.RemoveEmailJwtSecret, currentEvent?.Id ?? string.Empty);
 				stringBuilder.Append($"\"{participants[i]?.Email ?? string.Empty}\":" +
 				$"{{" +
 					$"\"User_Name\": \"{participants[i]?.Name ?? string.Empty}\"," +
@@ -82,10 +78,8 @@ namespace NetCoreReact.Services.Business
 			return stringBuilder.ToString();
 		}
 
-
 		public async Task<DataResponse<Event>> SendConfirmationEmail(string email, Event currentEvent)
 		{
-			var client = new RestClient();
 			var success = 0;
 
 			try
@@ -103,6 +97,7 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var client = new RestClient();
 					var request = new RestRequest();
 					var response = new RestResponse();
 					var tcs = new TaskCompletionSource<IRestResponse>();
@@ -160,7 +155,6 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendFeedbackEmail(string email, Event currentEvent)
 		{
-			var client = new RestClient();
 			var success = 0;
 
 			try
@@ -178,6 +172,7 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var client = new RestClient();
 					var request = new RestRequest();
 					var response = new RestResponse();
 					var tcs = new TaskCompletionSource<IRestResponse>();
@@ -235,7 +230,6 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email)
 		{
-			var client = new RestClient();
 			var success = 0;
 
 			try
@@ -245,6 +239,7 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var client = new RestClient();
 					var request = new RestRequest();
 					var response = new RestResponse();
 					var tcs = new TaskCompletionSource<IRestResponse>();
