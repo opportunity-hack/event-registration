@@ -85,9 +85,6 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendConfirmationEmail(string email, Event currentEvent)
 		{
-			var request = new RestRequest();
-			var response = new RestResponse();
-			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
 			var success = 0;
 
@@ -106,6 +103,9 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var request = new RestRequest();
+					var response = new RestResponse();
+					var tcs = new TaskCompletionSource<IRestResponse>();
 					client.BaseUrl = new Uri(this._baseUrl);
 					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
 					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
@@ -160,9 +160,6 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendFeedbackEmail(string email, Event currentEvent)
 		{
-			var request = new RestRequest();
-			var response = new RestResponse();
-			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
 			var success = 0;
 
@@ -181,6 +178,9 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var request = new RestRequest();
+					var response = new RestResponse();
+					var tcs = new TaskCompletionSource<IRestResponse>();
 					client.BaseUrl = new Uri(this._baseUrl);
 					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
 					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);
@@ -235,9 +235,6 @@ namespace NetCoreReact.Services.Business
 
 		public async Task<DataResponse<Event>> SendGenericEmail(DataInput<EmailTemplateData> email)
 		{
-			var request = new RestRequest();
-			var response = new RestResponse();
-			var tcs = new TaskCompletionSource<IRestResponse>();
 			var client = new RestClient();
 			var success = 0;
 
@@ -248,6 +245,9 @@ namespace NetCoreReact.Services.Business
 				var participantLists = ListHelper.splitList(participants);
 				foreach (var participantList in participantLists)
 				{
+					var request = new RestRequest();
+					var response = new RestResponse();
+					var tcs = new TaskCompletionSource<IRestResponse>();
 					client.BaseUrl = new Uri(this._baseUrl);
 					client.Authenticator = new HttpBasicAuthenticator("api", this._apiKey);
 					request.AddParameter("domain", this._domain, ParameterType.UrlSegment);

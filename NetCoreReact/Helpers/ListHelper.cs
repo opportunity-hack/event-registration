@@ -5,7 +5,7 @@ namespace NetCoreReact.Helpers
 {
 	public class ListHelper
 	{
-		public static IEnumerable<List<T>> splitList<T>(List<T> items, int size = 1000)
+		public static IEnumerable<List<T>> splitList<T>(List<T> items, int size = 900)
 		{
 			for (int i = 0; i < items.Count; i += size)
 			{
