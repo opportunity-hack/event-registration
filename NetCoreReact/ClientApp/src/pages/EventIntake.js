@@ -20,7 +20,8 @@ import { useParams } from "react-router-dom";
 import config from "../config.json";
 import Avatar from "@material-ui/core/Avatar";
 import CheckIcon from "@material-ui/icons/Check";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
+import Slider from "@material-ui/core/Slider";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -39,6 +40,7 @@ export default function EventIntake() {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [children, setChildren] = useState(0);
   const [errors, setErrors] = useState([]);
   const { get, post } = useRequest();
   const [event, setEvent] = useState({});
@@ -70,6 +72,10 @@ export default function EventIntake() {
 	setName(e.target.value);
   };
 
+  const handleChildrenChange = (e, v) => {
+	setChildren(v);
+  };
+
   const handleSubmit = async () => {
     setErrors([]);
     setSubmitting(true);
@@ -78,6 +84,7 @@ export default function EventIntake() {
       Data: {
 		Email: email,
 		Name: name,
+		Children: children,
         Type: parseInt(participantType, 10),
         DateEntered: new Date()
       }
@@ -86,6 +93,7 @@ export default function EventIntake() {
       setSuccessOpen(true);
 	  setEmail("");
 	  setName("");
+	  setChildren(0);
       setParticipantType("1");
     } else {
 	  setErrors(response.errors);
@@ -140,6 +148,21 @@ export default function EventIntake() {
 			variant="outlined"
 			error={Boolean(errors["Data.Name"])}
 			helperText={errors["Data.Name"]}
+		/>
+		<br/>
+		<FormLabel component="legend">
+			Have Any Kids?
+        </FormLabel>
+		<Slider
+			defaultValue={0}
+			value={children}
+			onChange={handleChildrenChange}
+			aria-labelledby="discrete-slider"
+			valueLabelDisplay="auto"
+			step={1}
+			marks
+			min={0}
+			max={20}
 		/>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel

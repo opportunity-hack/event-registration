@@ -13,6 +13,8 @@ namespace NetCoreReact.Models.Documents
 		[BsonRequired]
 		public string Name { get; set; }
 		[Required]
+		public int Children { get; set; }
+		[Required]
 		[BsonRequired]
 		public ParticipantType Type { get; set; }
 		[Required]

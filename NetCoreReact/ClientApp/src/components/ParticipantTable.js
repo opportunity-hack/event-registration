@@ -67,6 +67,12 @@ const headCells = [
 		label: "Name"
 	},
 	{
+		id: "children",
+		numeric: false,
+		disablePadding: true,
+		label: "Children"
+	},
+	{
 		id: "isConfirmed",
 		numeric: false,
 		disablePadding: true,
@@ -361,6 +367,9 @@ export default function ParticipantTable({ participants, isViewAll }) {
 					  </TableCell>
 					  <TableCell component="th" id={labelId} scope="row">
 						{participant.name}
+					  </TableCell>
+					  <TableCell component="th" id={labelId} scope="row">
+						{participant.children || 0}
 					  </TableCell>
 					  <TableCell component="th" id={labelId} scope="row">
 						{getConfirmed(participant.isConfirmed)}

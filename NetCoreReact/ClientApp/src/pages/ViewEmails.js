@@ -86,6 +86,7 @@ export default function ViewEmails() {
   const [events, setEvents] = useState({ feedback: [], participants: [], sentFeedback: false });
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [livesImpacted, setLivesImpacted] = useState(0);
   const [numberSignUps, setNumberSignUps] = React.useState(0);
   const [numberFeedback, setNumberFeedback] = React.useState(0);
   const [body, setBody] = useState([]);
@@ -100,6 +101,7 @@ export default function ViewEmails() {
       if (response.success) {
 		let participants = [];
 		let feedback = [];
+		let participantChildren = 0;
 		let numSignUps = 0;
 		let numFeedback = 0;
 
@@ -109,6 +111,9 @@ export default function ViewEmails() {
 			});
 			e.participants.forEach(p => {
 				++numSignUps;
+				if (p.children && p.children > 0) {
+					participantChildren += p.children;
+				}
 				if (p.feedbackSent) {
 					++numFeedback;
 				}
@@ -135,6 +140,7 @@ export default function ViewEmails() {
 
 		var events = { feedback: feedback, participants: participants, sentFeedback: false };
 		setEvents(events);
+		setLivesImpacted(numSignUps + participantChildren);
 		setRecipients(participants.map(p => p.email));
 		setNumberSignUps(numSignUps);
 		setNumberFeedback(numFeedback);
@@ -210,6 +216,7 @@ export default function ViewEmails() {
 
 	const data2 = {
 		labels: [
+			"Lives Impacted",
 			"Emails",
 			"Confirmed Emails",
 			"Feedback Sent",
@@ -224,6 +231,7 @@ export default function ViewEmails() {
 				hoverBackgroundColor: "rgba(121,7,242,0.5)",
 				hoverBorderColor: "rgba(121,7,242,1)",
 				data: [
+					livesImpacted,
 					numberSignUps,
 					events.participants.filter(e => e.isConfirmed === true).length,
 					numberFeedback,
@@ -242,9 +250,9 @@ export default function ViewEmails() {
 						beginAtZero: true,
 						steps: 10,
 						max:
-							numberSignUps +
+							livesImpacted +
 							10 -
-							((numberSignUps + 10) % 10)
+							((livesImpacted + 10) % 10)
 					}
 				}
 			]

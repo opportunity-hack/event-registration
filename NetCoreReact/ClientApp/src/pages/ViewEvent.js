@@ -88,6 +88,7 @@ export default function ViewEvent() {
   const [errors, setErrors] = useState([]);
   const { get, post } = useRequest();
   const [event, setEvent] = useState({ feedback: [], participants: [] });
+  const [livesImpacted, setLivesImpacted] = useState(0);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const [body, setBody] = useState([]);
@@ -128,7 +129,8 @@ export default function ViewEvent() {
     async function getEvent() {
       let response = await get(config.GET_EVENT_GET_URL, { eventID: id });
       if (response.success) {
-        setEvent(response.data[0]);
+		setEvent(response.data[0]);
+		setLivesImpacted(response.data[0].participants.map(e => e.children || 0).reduce((a, b) => a + b, response.data[0].participants.length));
         setRecipients(response.data[0].participants.map(p => p.email));
       } else {
         setErrors(response.errors);
@@ -209,10 +211,11 @@ export default function ViewEvent() {
 
   const data2 = {
     labels: [
+	  "Lives Impacted",
       "Emails",
       "Confirmed Emails",
       "Feedback Sent",
-      "Feedback Received"
+	  "Feedback Received"
     ],
     datasets: [
       {
@@ -222,11 +225,12 @@ export default function ViewEvent() {
         borderWidth: 1,
         hoverBackgroundColor: "rgba(121,7,242,0.5)",
         hoverBorderColor: "rgba(121,7,242,1)",
-        data: [
+		data: [
+		  livesImpacted,
           event.participants.length,
           event.participants.filter(e => e.isConfirmed === true).length,
           event.participants.filter(e => e.feedbackSent === true).length,
-          event.feedback.length
+		  event.feedback.length
         ]
       }
     ]
@@ -241,9 +245,9 @@ export default function ViewEvent() {
             beginAtZero: true,
             steps: 10,
             max:
-              event.participants.length +
+			  livesImpacted +
               10 -
-              ((event.participants.length + 10) % 10)
+			  ((livesImpacted + 10) % 10)
           }
         }
       ]
