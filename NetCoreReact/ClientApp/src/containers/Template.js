@@ -54,8 +54,6 @@ export default function Template() {
     setOpen(false);
   };
 
-  //this isa chit code right here don't do this unless u awake for 30 hour
-  //whoevr wrote this code should b ashamed, it really piece of shit code
   return (
     <>
       {location.pathname === "/remove-email" ? (
